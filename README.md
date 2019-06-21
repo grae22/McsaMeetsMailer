@@ -37,10 +37,14 @@
 
 ## Use-cases
 
-Meet = Event, activity, etc.
-Leader = Meet Leader (person co-ordinating and present at the Meet)
-Convenor = Committee member reponsible for Meets.
-Attendee = Person attending a meet.
+### Key
+
+* Meet = Event, activity, etc.
+* Leader = Meet Leader (person co-ordinating and present at the Meet)
+* Convenor = Committee member reponsible for Meets.
+* Attendee = Person attending a meet.
+
+### Cases
 
 * Leader adds Meet, provides valid input.
 * Leader adds Meet, provides invalid input.
