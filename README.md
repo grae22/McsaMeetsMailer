@@ -46,12 +46,15 @@
 
 ### Cases
 
-* Leader adds Meet, provides valid input.
-* Leader adds Meet, provides invalid input.
-* Leader updates Meet.
-* Leader removes Meet.
-* Leader receives confirmation of added/updated/removed Meet.
+* Leader adds Meet, provides valid input, receives confirmation.
+* Leader adds Meet, provides invalid input, receives instructions to correct.
+* Leader adds Meet, omits 'Leader Email', Convenor notified.
+* Leader updates Meet, provides valid input, receives confirmation
+* Leader updates Meet, provides invalid input, receives instructions to correct.
+* Leader updates Meet, omits 'Leader Email', Convenor notified.
+* Leader removes Meet, receives confirmation.
 * Convenor receives confirmation of added/updated/removed Meet.
+* Convenor receives notification of invalid Meets (delayed, give Leader time to correct).
 * Convenor previews next monthly mail.
 * Convenor previews next weekly mail.
 * Convenor 'forces' re-send of monthly mail.
