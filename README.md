@@ -65,3 +65,5 @@
 * Subscribed Attendee receives reminder of upcoming meet(s).
 * Members receive monthly mail.
 * Members receive weekly mail.
+* Maintainer views log via webpage.
+* Maintainer receives email notification of errors.
