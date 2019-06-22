@@ -43,6 +43,7 @@
 * Leader = Meet Leader (person co-ordinating and present at the Meet)
 * Convenor = Committee member reponsible for Meets.
 * Attendee = Person attending a meet.
+* Maintainer = Person(s) supporting the mailer system.
 
 ### Cases
 
