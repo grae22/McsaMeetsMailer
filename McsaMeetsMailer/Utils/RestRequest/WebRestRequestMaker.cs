@@ -8,16 +8,16 @@ namespace McsaMeetsMailer.Utils.RestRequest
 {
   internal class WebRestService : IRestRequestMaker
   {
-    private static Uri _address;
-
-    public WebRestService(in Uri address)
-    {
-      _address = address ?? throw new ArgumentNullException(nameof(address));
-    }
-
-    public async Task<T> Get<T>()
+    public async Task<T> Get<T>(Uri address)
     {
       const int maxAttempts = 5;
+
+      if (address == null)
+      {
+        throw new ArgumentNullException(nameof(address));
+      }
+
+      Exception lastException = null;
 
       for (int i = 0; i < maxAttempts; i++)
       {
@@ -25,7 +25,7 @@ namespace McsaMeetsMailer.Utils.RestRequest
         {
           using (var client = new HttpClient())
           {
-            using (var response = await client.GetAsync(_address))
+            using (var response = await client.GetAsync(address))
             {
               using (var content = response.Content)
               {
@@ -36,27 +36,31 @@ namespace McsaMeetsMailer.Utils.RestRequest
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          if (i == maxAttempts - 1)
-          {
-            throw;
-          }
+          lastException = ex;
 
           await Task.Delay(1000);
         }
       }
 
-      throw new Exception("Data retrieval failed");
+      throw new RestRequestException("Data retrieval failed", lastException);
     }
 
-    public async Task<bool> Put(string content)
+    public async Task<bool> Put(Uri address, string content)
     {
+      const int maxAttempts = 5;
+
+      if (address == null)
+      {
+        throw new ArgumentNullException(nameof(address));
+      }
+
       var httpContent = new StringContent(content);
 
       httpContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
 
-      const int maxAttempts = 5;
+      Exception lastException = null;
 
       for (int i = 0; i < maxAttempts; i++)
       {
@@ -64,24 +68,21 @@ namespace McsaMeetsMailer.Utils.RestRequest
         {
           using (var client = new HttpClient())
           {
-            using (var response = await client.PutAsync(_address, httpContent))
+            using (var response = await client.PutAsync(address, httpContent))
             {
               return response.IsSuccessStatusCode;
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          if (i == maxAttempts - 1)
-          {
-            throw;
-          }
+          lastException = ex;
 
           await Task.Delay(1000);
         }
       }
 
-      throw new Exception("Data retrieval failed");
+      throw new RestRequestException("Data update failed", lastException);
     }
   }
 }
