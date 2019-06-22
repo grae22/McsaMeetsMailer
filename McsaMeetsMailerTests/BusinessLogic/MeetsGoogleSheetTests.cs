@@ -23,7 +23,14 @@ namespace McsaMeetsMailerTests.BusinessLogic
 
       requestMaker
         .Get<GoogleSheet>(url)
-        .Returns(new GoogleSheet());
+        .Returns(new GoogleSheet
+        {
+          values = new []
+          {
+            new [] { "", "", "" },
+            new [] { "", "# Date", "" }
+          }
+        });
 
       // Act.
       MeetsGoogleSheet result = await MeetsGoogleSheet.Retrieve(
@@ -33,6 +40,63 @@ namespace McsaMeetsMailerTests.BusinessLogic
 
       // Assert.
       Assert.IsNotNull(result);
+    }
+
+    [Test]
+    public async Task Retrieve_GivenSheetWithoutDateColumn_ShouldReturnRaiseException()
+    {
+      // Arrange.
+      var url = new Uri("https://somegooglesheet");
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var logger = Substitute.For<ILogger>();
+
+      requestMaker
+        .Get<GoogleSheet>(url)
+        .Returns(new GoogleSheet());
+
+      // Act & Assert.
+      try
+      {
+        await MeetsGoogleSheet.Retrieve(
+          url,
+          requestMaker,
+          logger);
+      }
+      catch (MeetsGoogleSheetFormatException)
+      {
+        Assert.Pass();
+      }
+
+      Assert.Fail();
+    }
+
+    [Test]
+    public async Task Retrieve_GivenSheetWithDateColumn_ShouldReturnNotRaiseException()
+    {
+      // Arrange.
+      var url = new Uri("https://somegooglesheet");
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var logger = Substitute.For<ILogger>();
+
+      requestMaker
+        .Get<GoogleSheet>(url)
+        .Returns(new GoogleSheet
+        {
+          values = new []
+          {
+            new [] { "", "", "" },
+            new [] { "", "# Date", "" }
+          }
+        });
+
+      // Act.
+      await MeetsGoogleSheet.Retrieve(
+        url,
+        requestMaker,
+        logger);
+      
+      // Assert.
+      Assert.Pass();
     }
 
     [Test]

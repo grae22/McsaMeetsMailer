@@ -9,6 +9,8 @@ namespace McsaMeetsMailer.BusinessLogic
 {
   public class MeetsGoogleSheet
   {
+    private const string FirstCellText = "# Date";
+
     public static async Task<MeetsGoogleSheet> Retrieve(
       Uri googleSheetUrl,
       IRestRequestMaker requestMaker,
@@ -24,6 +26,16 @@ namespace McsaMeetsMailer.BusinessLogic
 
         var sheet = await requestMaker.Get<GoogleSheet>(googleSheetUrl);
 
+        if (sheet == null)
+        {
+          throw new RestRequestException("Null sheet returned", null);
+        }
+
+        FindFirstCellCoordinates(
+          sheet,
+          out int row,
+          out int column);
+
         // TODO: Extract data from sheet.
 
         return new MeetsGoogleSheet();
@@ -35,6 +47,30 @@ namespace McsaMeetsMailer.BusinessLogic
       }
 
       return null;
+    }
+
+    private static void FindFirstCellCoordinates(
+      in GoogleSheet sheet,
+      out int row,
+      out int column)
+    {
+      if (sheet.values == null)
+      {
+        throw new MeetsGoogleSheetFormatException("Sheet 'values' field cannot be null.");
+      }
+
+      for (row = 0; row < sheet.values.Length; row++)
+      {
+        for (column = 0; column < sheet.values[row].Length; column++)
+        {
+          if (sheet.values[row][column].Equals(FirstCellText, StringComparison.OrdinalIgnoreCase))
+          {
+            return;
+          }
+        }
+      }
+
+      throw new MeetsGoogleSheetFormatException($"First cell not found (\"{FirstCellText}\").");
     }
   }
 }
