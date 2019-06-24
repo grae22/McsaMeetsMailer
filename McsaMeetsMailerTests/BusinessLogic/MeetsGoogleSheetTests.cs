@@ -16,7 +16,7 @@ namespace McsaMeetsMailerTests.BusinessLogic
   [TestFixture]
   public class MeetsGoogleSheetTests
   {
-    private const string DateColumnText = "# Date*";
+    private const string DateColumnText = MeetsGoogleSheet.HeaderText_Date;
 
     [Test]
     public async Task Retrieve_GivenSuccessfulRetrieval_ShouldReturnNotNull()
@@ -299,6 +299,165 @@ namespace McsaMeetsMailerTests.BusinessLogic
       Assert.AreEqual("Meet 1", result.DataByRow.ElementAt(0).ElementAt(4));
       Assert.AreEqual("2019-7-10", result.DataByRow.ElementAt(1).ElementAt(0));
       Assert.AreEqual("Meet 2", result.DataByRow.ElementAt(1).ElementAt(4));
+    }
+
+    [TestCase(DateColumnText, 0)]
+    [TestCase("Title", 1)]
+    [TestCase("Leader Name", 2)]
+    public async Task FindHeaderIndex_GivenHeaderText_ShouldReturnCorrectIndex(string headerText, int expectedIndex)
+    {
+      // Arrange.
+      string[] columnNames =
+      {
+        DateColumnText,
+        "Title",
+        "Leader Name"
+      };
+
+      string[] rowValues1 =
+      {
+        "2019-01-01",
+        "Title 1",
+        "Leader 1"
+      };
+
+      string[] rowValues2 =
+      {
+        "2019-01-02",
+        "Title 2",
+        "Leader 2"
+      };
+
+      var url = new Uri("https://somegooglesheet");
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var logger = Substitute.For<ILogger>();
+
+      requestMaker
+        .Get<GoogleSheet>(url)
+        .Returns(new GoogleSheet
+        {
+          values = new[]
+          {
+            columnNames,
+            rowValues1,
+            rowValues2
+          }
+        });
+
+      MeetsGoogleSheet testObject = await MeetsGoogleSheet.Retrieve(
+        url,
+        requestMaker,
+        logger);
+
+      // Act.
+      int result = testObject.FindHeaderIndex(headerText);
+
+      // Assert.
+      Assert.AreEqual(expectedIndex, result);
+    }
+
+    [Test]
+    public async Task FindHeaderIndex_GivenMissingValueAndRequiredToRaiseException_ShouldRaiseException()
+    {
+      // Arrange.
+      string[] columnNames =
+      {
+        DateColumnText,
+        "Title",
+        "Leader Name"
+      };
+
+      string[] rowValues1 =
+      {
+        "2019-01-01",
+        "Title 1",
+        "Leader 1"
+      };
+
+      string[] rowValues2 =
+      {
+        "2019-01-02",
+        "Title 2",
+        "Leader 2"
+      };
+
+      var url = new Uri("https://somegooglesheet");
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var logger = Substitute.For<ILogger>();
+
+      requestMaker
+        .Get<GoogleSheet>(url)
+        .Returns(new GoogleSheet
+        {
+          values = new[]
+          {
+            columnNames,
+            rowValues1,
+            rowValues2
+          }
+        });
+
+      MeetsGoogleSheet testObject = await MeetsGoogleSheet.Retrieve(
+        url,
+        requestMaker,
+        logger);
+
+      // Act & Assert.
+      Assert.Throws<MeetsGoogleSheetFormatException>(() =>
+        testObject.FindHeaderIndex("missing header", true));
+    }
+
+    [Test]
+    public async Task FindHeaderIndex_GivenMissingValueAndNotRequiredToRaiseException_ShouldReturnNegativeOne()
+    {
+      // Arrange.
+      string[] columnNames =
+      {
+        DateColumnText,
+        "Title",
+        "Leader Name"
+      };
+
+      string[] rowValues1 =
+      {
+        "2019-01-01",
+        "Title 1",
+        "Leader 1"
+      };
+
+      string[] rowValues2 =
+      {
+        "2019-01-02",
+        "Title 2",
+        "Leader 2"
+      };
+
+      var url = new Uri("https://somegooglesheet");
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var logger = Substitute.For<ILogger>();
+
+      requestMaker
+        .Get<GoogleSheet>(url)
+        .Returns(new GoogleSheet
+        {
+          values = new[]
+          {
+            columnNames,
+            rowValues1,
+            rowValues2
+          }
+        });
+
+      MeetsGoogleSheet testObject = await MeetsGoogleSheet.Retrieve(
+        url,
+        requestMaker,
+        logger);
+      
+      // Act.
+      int result = testObject.FindHeaderIndex("missing header");
+
+      // Assert.
+      Assert.AreEqual(-1, result);
     }
   }
 }

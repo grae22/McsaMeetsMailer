@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Logging;
@@ -8,12 +9,16 @@ using McsaMeetsMailer.Utils.Validation;
 
 namespace McsaMeetsMailer.BusinessLogic
 {
-  public class MeetsGoogleSheet
+  public class MeetsGoogleSheet : IMeetsGoogleSheet
   {
+    public const string HeaderText_Date = "# Date*";
+    public const string HeaderText_LeaderName = "# Leader*";
+    public const string HeaderText_LeaderEmail = "Leader Email*";
+
     public IEnumerable<string> Headers { get; }
     public IEnumerable<IEnumerable<string>> DataByRow { get; }
 
-    private const string FirstCellText = "# Date*";
+    private const string FirstCellText = HeaderText_Date;
 
     public static async Task<MeetsGoogleSheet> Retrieve(
       Uri googleSheetUrl,
@@ -211,6 +216,30 @@ namespace McsaMeetsMailer.BusinessLogic
     {
       Headers = headers ?? throw new ArgumentNullException(nameof(headers));
       DataByRow = dataByRow ?? throw new ArgumentNullException(nameof(dataByRow));
+    }
+
+    public int FindHeaderIndex(
+      in string headerText,
+      in bool raiseExceptionIfNotFound = false)
+    {
+      for (var i = 0; i < Headers.Count(); i++)
+      {
+        bool isMatch = Headers
+          .ElementAt(i)
+          .Equals(headerText, StringComparison.OrdinalIgnoreCase);
+
+        if (isMatch)
+        {
+          return i;
+        }
+      }
+
+      if (raiseExceptionIfNotFound)
+      {
+        throw new MeetsGoogleSheetFormatException($"No header found with text \"{headerText}\".");
+      }
+
+      return -1;
     }
   }
 }
