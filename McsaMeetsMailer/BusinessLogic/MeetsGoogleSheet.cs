@@ -72,8 +72,6 @@ namespace McsaMeetsMailer.BusinessLogic
         logger.LogError($"Failed to retrieve google-sheet \"{googleSheetUrl.AbsolutePath}\", an exception occurred.", ex);
         return null;
       }
-
-      return null;
     }
 
     private static void FindFirstCellCoordinates(
