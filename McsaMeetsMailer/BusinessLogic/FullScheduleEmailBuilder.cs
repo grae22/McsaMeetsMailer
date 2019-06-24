@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using McsaMeetsMailer.Models;
-using McsaMeetsMailer.Utils.HtmlBuilder;
+using McsaMeetsMailer.Utils.Html;
 
-namespace McsaMeetsMailer.Services
+namespace McsaMeetsMailer.BusinessLogic
 {
   public class FullScheduleEmailBuilder
   {

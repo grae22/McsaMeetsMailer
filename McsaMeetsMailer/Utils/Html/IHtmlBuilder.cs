@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace McsaMeetsMailer.Utils.HtmlBuilder
+namespace McsaMeetsMailer.Utils.Html
 {
   public interface IHtmlBuilder
   {
