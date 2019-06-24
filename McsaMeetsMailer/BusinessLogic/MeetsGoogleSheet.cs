@@ -13,7 +13,7 @@ namespace McsaMeetsMailer.BusinessLogic
     public IEnumerable<string> Headers { get; }
     public IEnumerable<IEnumerable<string>> DataByRow { get; }
 
-    private const string FirstCellText = "# Date";
+    private const string FirstCellText = "# Date*";
 
     public static async Task<MeetsGoogleSheet> Retrieve(
       Uri googleSheetUrl,
@@ -165,7 +165,7 @@ namespace McsaMeetsMailer.BusinessLogic
     {
       headers = new List<string>();
 
-      for (var column = headerColumn; column < headerColumnCount; column++)
+      for (var column = headerColumn; headers.Count < headerColumnCount; column++)
       {
         headers.Add(sheet.values[headerRow][column]);
       }
@@ -183,17 +183,21 @@ namespace McsaMeetsMailer.BusinessLogic
 
       for (var row = headerRow + 1; row <= lastRow; row++)
       {
-        bool rowHasData = true;
+        bool rowHasData = false;
 
         var rowData = new List<string>();
 
-        for (var column = headerColumn; column < headerColumnCount; column++)
+        for (var column = headerColumn; column < headerColumn + headerColumnCount; column++)
         {
           string cellValue = sheet.values[row][column];
           
           rowData.Add(cellValue);
 
-          rowHasData &= !string.IsNullOrWhiteSpace(cellValue);
+          if (!rowHasData &&
+              !string.IsNullOrWhiteSpace(cellValue))
+          {
+            rowHasData = true;
+          }
         }
 
         if (rowHasData)
