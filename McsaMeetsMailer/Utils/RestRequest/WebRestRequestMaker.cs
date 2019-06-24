@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace McsaMeetsMailer.Utils.RestRequest
 {
-  internal class WebRestService : IRestRequestMaker
+  public class WebRestRequestMaker : IRestRequestMaker
   {
     public async Task<T> Get<T>(Uri address)
     {
