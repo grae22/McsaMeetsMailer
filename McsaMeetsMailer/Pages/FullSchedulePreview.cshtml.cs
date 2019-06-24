@@ -6,6 +6,7 @@ using McsaMeetsMailer.Models;
 using McsaMeetsMailer.BusinessLogic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using McsaMeetsMailer.Utils.Html;
 
 namespace McsaMeetsMailer.Pages
 {
@@ -29,7 +30,7 @@ namespace McsaMeetsMailer.Pages
             },
           };
 
-      html = FullScheduleEmailBuilder.Build( collection );
+      html = FullScheduleEmailBuilder.Build( collection, new HtmlBuilder() );
     }
   }
 }

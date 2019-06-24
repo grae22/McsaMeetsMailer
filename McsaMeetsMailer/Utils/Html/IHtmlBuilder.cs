@@ -11,9 +11,9 @@ namespace McsaMeetsMailer.Utils.Html
 
     void EndTable();
 
-    void AddHeadingRow( List<string> headings );
+    void AddHeadingRow( IEnumerable<string> headings );
 
-    void AddRow( List<string> values );
+    void AddRow( IEnumerable<string> values );
 
     string GetHtml();
   }

@@ -7,11 +7,10 @@ using McsaMeetsMailer.Utils.Html;
 
 namespace McsaMeetsMailer.BusinessLogic
 {
-  public class FullScheduleEmailBuilder
+  public static class FullScheduleEmailBuilder
   {
-    public static string Build(IEnumerable<MeetDetailsModel> meetDetails )
+    public static string Build(IEnumerable<MeetDetailsModel> meetDetails, IHtmlBuilder htmlBuilder )
     {
-      var htmlBuilder = new HtmlBuilder();
       htmlBuilder.StartTable();
 
       var headings = new List<string>

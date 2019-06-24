@@ -25,7 +25,7 @@ namespace McsaMeetsMailer.Utils.Html
       _htmlBuilder.Append("</table>");
     }
 
-    public void AddHeadingRow(List<string> headings)
+    public void AddHeadingRow( IEnumerable<string> headings)
     {
       _htmlBuilder.Append("<tr>");
 
@@ -37,7 +37,7 @@ namespace McsaMeetsMailer.Utils.Html
       _htmlBuilder.Append("</tr>");
     }
 
-    public void AddRow(List<string> values)
+    public void AddRow( IEnumerable<string> values)
     {
       _htmlBuilder.Append( "<tr>" );
 
