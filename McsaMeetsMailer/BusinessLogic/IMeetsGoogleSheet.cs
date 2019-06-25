@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace McsaMeetsMailer.BusinessLogic
 {
@@ -6,6 +7,8 @@ namespace McsaMeetsMailer.BusinessLogic
   {
     IEnumerable<string> Headers { get; }
     IEnumerable<IEnumerable<string>> DataByRow { get; }
+
+    Task<bool> Retrieve();
 
     int FindHeaderIndex(
       in string headerText,

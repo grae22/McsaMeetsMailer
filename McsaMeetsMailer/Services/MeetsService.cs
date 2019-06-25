@@ -20,11 +20,13 @@ namespace McsaMeetsMailer.Services
     private readonly string _meetsGoogleSheetId;
     private readonly string _googleAppKey;
     private readonly IRestRequestMaker _requestMaker;
+    private readonly IMeetsGoogleSheetFactory _googleSheetFactory;
     private readonly ILogger _logger;
 
     public MeetsService(
       in ISettings settings,
       in IRestRequestMaker requestMaker,
+      in IMeetsGoogleSheetFactory googleSheetFactory,
       in ILogger logger)
     {
       if (settings == null)
@@ -33,6 +35,7 @@ namespace McsaMeetsMailer.Services
       }
 
       _requestMaker = requestMaker ?? throw new ArgumentNullException(nameof(requestMaker));
+      _googleSheetFactory = googleSheetFactory ?? throw new ArgumentNullException(nameof(googleSheetFactory));
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
       _meetsGoogleSheetId = settings.GetValidValue(SettingName_MeetsGoogleSheetId);
@@ -57,7 +60,7 @@ namespace McsaMeetsMailer.Services
 
       _logger.LogDebug($"{LoggingClassName} Retrieving meets from \"{url}\"...");
 
-      var sheet = new MeetsGoogleSheet(
+      IMeetsGoogleSheet sheet = _googleSheetFactory.CreateSheet(
         uri,
         _requestMaker,
         _logger);

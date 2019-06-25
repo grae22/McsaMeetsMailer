@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+
+using McsaMeetsMailer.BusinessLogic;
 using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
@@ -17,12 +20,13 @@ namespace McsaMeetsMailerTests.Services
     private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";
 
     [Test]
-    [Ignore("WIP")]
     public async Task RetrieveMeets_GivenHappyPath_ShouldReturnNotNullMeetsCollection()
     {
       // Arrange.
       var settings = Substitute.For<ISettings>();
       var requestMaker = Substitute.For<IRestRequestMaker>();
+      var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
+      var googleSheet = Substitute.For<IMeetsGoogleSheet>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -33,11 +37,21 @@ namespace McsaMeetsMailerTests.Services
         .GetValidValue(SettingName_GoogleAppKey)
         .Returns("SomeAppKey");
 
+      googleSheetFactory
+        .CreateSheet(
+          Arg.Any<Uri>(),
+          Arg.Any<IRestRequestMaker>(),
+          Arg.Any<ILogger>())
+        .Returns(googleSheet);
 
+      googleSheet
+        .Retrieve()
+        .Returns(true);
 
       var testObject = new MeetsService(
         settings,
         requestMaker,
+        googleSheetFactory,
         logger);
 
       // Act.
@@ -45,6 +59,48 @@ namespace McsaMeetsMailerTests.Services
 
       // Assert.
       Assert.IsNotNull(result);
+    }
+
+    [Test]
+    public async Task RetrieveMeets_GivenRetrievalFail_ShouldReturnNullMeetsCollection()
+    {
+      // Arrange.
+      var settings = Substitute.For<ISettings>();
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
+      var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var logger = Substitute.For<ILogger>();
+
+      settings
+        .GetValidValue(SettingName_MeetsGoogleSheetId)
+        .Returns("SomeSheetId");
+
+      settings
+        .GetValidValue(SettingName_GoogleAppKey)
+        .Returns("SomeAppKey");
+
+      googleSheetFactory
+        .CreateSheet(
+          Arg.Any<Uri>(),
+          Arg.Any<IRestRequestMaker>(),
+          Arg.Any<ILogger>())
+        .Returns(googleSheet);
+
+      googleSheet
+        .Retrieve()
+        .Returns(false);
+
+      var testObject = new MeetsService(
+        settings,
+        requestMaker,
+        googleSheetFactory,
+        logger);
+
+      // Act.
+      var result = await testObject.RetrieveMeets();
+
+      // Assert.
+      Assert.IsNull(result);
     }
   }
 }
