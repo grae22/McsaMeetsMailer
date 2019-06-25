@@ -1,1 +1,1 @@
-table{width:100%}table tr{padding:5px}table th{padding:10px;background-color:black;color:white;border:1px solid grey;font-style:normal}table td{padding:10px;border:1px solid #dcdee2}
+table{width:100%}table tr{padding:5px}table tr:nth-child(odd){background-color:#F3F3F3}table tr:nth-child(even){background-color:white}table th{padding:10px;background-color:black;color:white;font-style:normal}table td{padding:10px}
