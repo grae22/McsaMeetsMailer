@@ -1,0 +1,56 @@
+﻿{
+  "range": "Sheet1!A1:Z500",
+  "majorDimension": "ROWS",
+  "values": [
+    [],
+    [],
+    [
+      "",
+      "# Date*",
+      "Time",
+      "End Date",
+      "End Time",
+      "Title*",
+      "# Description",
+      "Grade*",
+      "Leader*",
+      "Leader Email",
+      "Leader Cell",
+      "Venue",
+      "Address",
+      "Notes"
+    ],
+    [
+      "",
+      "2019-7-1",
+      "12:00",
+      "",
+      "",
+      "Meet 1",
+      "Test Meet #1",
+      "5",
+      "Leader A",
+      "leader.a@gmail.com",
+      "071 123 4567",
+      "Venue A",
+      "Some Address",
+      "Some Notes"
+    ],
+    [
+      "",
+      "2019-7-10",
+      "6:00",
+      "2019-7-15",
+      "17:00",
+      "Meet 2",
+      "Test Meet #2",
+      "4",
+      "Leader B",
+      "leader.b@gmail.com",
+      "071 987 6543",
+      "",
+      "Some Other Address",
+      "Some Other Notes"
+    ]
+  ]
+}

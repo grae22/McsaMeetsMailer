@@ -1,0 +1,10 @@
+﻿@page
+@model McsaMeetsMailer.Pages.FullSchedulePreviewModel
+@{
+    ViewData[ "Title" ] = "Full Schedule Preview";
+}
+
+<link href="@Url.Content("~/css/fullSchedulePreview.css")" rel="stylesheet" type="text/css" />
+<h1>Full Schedule Preview</h1>
+<br>
+@Html.Raw( Model.html )
