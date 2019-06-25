@@ -1,15 +1,13 @@
-﻿using System;
+﻿using McsaMeetsMailer.Models;
+using McsaMeetsMailer.Utils.Html;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using McsaMeetsMailer.Models;
-using McsaMeetsMailer.Utils.Html;
 
 namespace McsaMeetsMailer.BusinessLogic
 {
   public static class FullScheduleEmailBuilder
   {
-    public static string Build(IEnumerable<MeetDetailsModel> meetDetails, IHtmlBuilder htmlBuilder )
+    public static string Build(IEnumerable<MeetDetailsModel> meetDetails, IHtmlBuilder htmlBuilder)
     {
       htmlBuilder.StartTable();
 
@@ -19,11 +17,11 @@ namespace McsaMeetsMailer.BusinessLogic
         "Leader Email"
       };
 
-      headings.AddRange( meetDetails.FirstOrDefault()?.AdditionalFields.Keys );
+      headings.AddRange(meetDetails.FirstOrDefault()?.AdditionalFields.Keys);
 
-      htmlBuilder.AddHeadingRow( headings );
+      htmlBuilder.AddHeadingRow(headings);
 
-      foreach(var meetDetail in meetDetails )
+      foreach (var meetDetail in meetDetails)
       {
         var values = new List<string>
         {
@@ -31,9 +29,9 @@ namespace McsaMeetsMailer.BusinessLogic
           meetDetail.LeaderEmail
         };
 
-        values.AddRange( meetDetail.AdditionalFields.Values );
+        values.AddRange(meetDetail.AdditionalFields.Values);
 
-        htmlBuilder.AddRow( values );
+        htmlBuilder.AddRow(values);
       }
 
       htmlBuilder.EndTable();

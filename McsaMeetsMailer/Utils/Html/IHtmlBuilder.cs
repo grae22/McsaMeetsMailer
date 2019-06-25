@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace McsaMeetsMailer.Utils.Html
 {
@@ -11,9 +8,9 @@ namespace McsaMeetsMailer.Utils.Html
 
     void EndTable();
 
-    void AddHeadingRow( IEnumerable<string> headings );
+    void AddHeadingRow(IEnumerable<string> headings);
 
-    void AddRow( IEnumerable<string> values );
+    void AddRow(IEnumerable<string> values);
 
     string GetHtml();
   }

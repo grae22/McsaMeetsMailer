@@ -19,7 +19,7 @@ namespace McsaMeetsMailerTests.Utils.Html
       var html = htmlBuilder.GetHtml();
 
       // Assert
-      Assert.AreEqual( "<table>", html );
+      Assert.AreEqual("<table>", html);
     }
 
     [Test]
@@ -33,7 +33,7 @@ namespace McsaMeetsMailerTests.Utils.Html
       var html = htmlBuilder.GetHtml();
 
       // Assert
-      Assert.AreEqual( "</table>", html );
+      Assert.AreEqual("</table>", html);
     }
 
     [Test]
@@ -44,24 +44,24 @@ namespace McsaMeetsMailerTests.Utils.Html
       var testHeadings = new List<string>();
       var numberOfItems = 4;
 
-      for( int i = 1; i < numberOfItems; ++i )
+      for (int i = 1; i < numberOfItems; ++i)
       {
-        testHeadings.Add( $"heading{i}" );
+        testHeadings.Add($"heading{i}");
       }
 
       // Act
-      htmlBuilder.AddHeadingRow( testHeadings );
+      htmlBuilder.AddHeadingRow(testHeadings);
       var html = htmlBuilder.GetHtml();
 
       // Assert
-      var expectedHtml = new StringBuilder( "<tr>" );
-      for( int i = 1; i < numberOfItems; ++i )
+      var expectedHtml = new StringBuilder("<tr>");
+      for (int i = 1; i < numberOfItems; ++i)
       {
-        expectedHtml.Append( $"<th>heading{i}</th>" );
+        expectedHtml.Append($"<th>heading{i}</th>");
       }
-      expectedHtml.Append( "</tr>" );
+      expectedHtml.Append("</tr>");
 
-      Assert.AreEqual( expectedHtml.ToString(), html );
+      Assert.AreEqual(expectedHtml.ToString(), html);
     }
 
     [Test]
@@ -72,24 +72,24 @@ namespace McsaMeetsMailerTests.Utils.Html
       var testHeadings = new List<string>();
       var numberOfItems = 4;
 
-      for( int i = 1; i < numberOfItems; ++i )
+      for (int i = 1; i < numberOfItems; ++i)
       {
-        testHeadings.Add( $"value{i}" );
+        testHeadings.Add($"value{i}");
       }
 
       // Act
-      htmlBuilder.AddRow( testHeadings );
+      htmlBuilder.AddRow(testHeadings);
       var html = htmlBuilder.GetHtml();
 
       // Assert
-      var expectedHtml = new StringBuilder( "<tr>" );
-      for( int i = 1; i < numberOfItems; ++i )
+      var expectedHtml = new StringBuilder("<tr>");
+      for (int i = 1; i < numberOfItems; ++i)
       {
-        expectedHtml.Append( $"<td>value{i}</td>" );
+        expectedHtml.Append($"<td>value{i}</td>");
       }
-      expectedHtml.Append( "</tr>" );
+      expectedHtml.Append("</tr>");
 
-      Assert.AreEqual( expectedHtml.ToString(), html );
+      Assert.AreEqual(expectedHtml.ToString(), html);
     }
   }
 }

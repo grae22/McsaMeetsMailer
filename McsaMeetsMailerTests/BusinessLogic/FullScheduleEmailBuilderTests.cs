@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using McsaMeetsMailer.BusinessLogic;
+﻿using McsaMeetsMailer.BusinessLogic;
 using McsaMeetsMailer.Models;
-using NUnit.Framework;
-using NSubstitute;
 using McsaMeetsMailer.Utils.Html;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace McsaMeetsMailerTests.BusinessLogic
 {
@@ -39,16 +38,16 @@ namespace McsaMeetsMailerTests.BusinessLogic
 
       var htmlBuilder = new HtmlBuilder();
       htmlBuilder.StartTable();
-      htmlBuilder.AddHeadingRow( new List<string> { "Leader", "Leader Email", "heading1", "heading2" } );
-      htmlBuilder.AddRow( new List<string> { "test1", "test1@gmail.com", "value1", "value2" } );
-      htmlBuilder.AddRow( new List<string> { "testxyz", "testxyz@gmail.com", "valuexyz", "value2xyz" } );
+      htmlBuilder.AddHeadingRow(new List<string> { "Leader", "Leader Email", "heading1", "heading2" });
+      htmlBuilder.AddRow(new List<string> { "test1", "test1@gmail.com", "value1", "value2" });
+      htmlBuilder.AddRow(new List<string> { "testxyz", "testxyz@gmail.com", "valuexyz", "value2xyz" });
 
       // Act
-      var actual = FullScheduleEmailBuilder.Build( meetDetails, htmlBuilder );
+      var actual = FullScheduleEmailBuilder.Build(meetDetails, htmlBuilder);
 
       // Assert
       var expected = htmlBuilder.GetHtml();
-      Assert.AreEqual( expected, actual );
+      Assert.AreEqual(expected, actual);
     }
   }
 }

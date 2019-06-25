@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace McsaMeetsMailer.Utils.Html
@@ -25,11 +22,11 @@ namespace McsaMeetsMailer.Utils.Html
       _htmlBuilder.Append("</table>");
     }
 
-    public void AddHeadingRow( IEnumerable<string> headings)
+    public void AddHeadingRow(IEnumerable<string> headings)
     {
       _htmlBuilder.Append("<tr>");
 
-      foreach( var heading in headings )
+      foreach (var heading in headings)
       {
         _htmlBuilder.Append($"<th>{heading}</th>");
       }
@@ -37,16 +34,16 @@ namespace McsaMeetsMailer.Utils.Html
       _htmlBuilder.Append("</tr>");
     }
 
-    public void AddRow( IEnumerable<string> values)
+    public void AddRow(IEnumerable<string> values)
     {
-      _htmlBuilder.Append( "<tr>" );
+      _htmlBuilder.Append("<tr>");
 
       foreach (var value in values)
       {
-        _htmlBuilder.Append( $"<td>{value}</td>" );
+        _htmlBuilder.Append($"<td>{value}</td>");
       }
 
-      _htmlBuilder.Append( "</tr>");
+      _htmlBuilder.Append("</tr>");
     }
 
     public string GetHtml()
