@@ -42,6 +42,8 @@ namespace McsaMeetsMailer.BusinessLogic
           }
 
           string header = sheet.Headers.ElementAt(cellIndex);
+          header = header.Replace("#", "");
+          header = header.Replace("*", "");
 
           newModel
             .AdditionalFields
