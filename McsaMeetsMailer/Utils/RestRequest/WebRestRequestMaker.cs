@@ -27,6 +27,11 @@ namespace McsaMeetsMailer.Utils.RestRequest
           {
             using (var response = await client.GetAsync(address))
             {
+              if (!response.IsSuccessStatusCode)
+              {
+                continue;
+              }
+
               using (var content = response.Content)
               {
                 string data = await content.ReadAsStringAsync();

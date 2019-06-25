@@ -34,7 +34,7 @@ namespace McsaMeetsMailer
 
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-      var logger = new DummyLogger();
+      var logger = new ConsoleLogger();
       var requestMaker = new WebRestRequestMaker();
       var settings = new EnvironmentVariableSettings();
       var meetSheetFactory = new MeetsGoogleSheetFactory();
