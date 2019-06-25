@@ -57,12 +57,14 @@ namespace McsaMeetsMailer.Services
 
       _logger.LogDebug($"{LoggingClassName} Retrieving meets from \"{url}\"...");
 
-      MeetsGoogleSheet sheet = await MeetsGoogleSheet.Retrieve(
+      var sheet = new MeetsGoogleSheet(
         uri,
         _requestMaker,
         _logger);
 
-      if (sheet == null)
+      bool result = await sheet.Retrieve();
+
+      if (result == false)
       {
         _logger.LogError($"{LoggingClassName} Failed to retrieve meets.");
         return null;

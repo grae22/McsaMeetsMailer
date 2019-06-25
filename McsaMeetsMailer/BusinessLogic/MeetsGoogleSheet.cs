@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
-using McsaMeetsMailer.Utils.Validation;
 
 namespace McsaMeetsMailer.BusinessLogic
 {
@@ -15,29 +14,40 @@ namespace McsaMeetsMailer.BusinessLogic
     public const string HeaderText_LeaderName = "# Leader*";
     public const string HeaderText_LeaderEmail = "Leader Email*";
 
-    public IEnumerable<string> Headers { get; }
-    public IEnumerable<IEnumerable<string>> DataByRow { get; }
+    public IEnumerable<string> Headers => _headers;
+    public IEnumerable<IEnumerable<string>> DataByRow => _dataByRow;
 
+    private const string LoggingClassName = "[MeetsGoogleSheet]";
     private const string FirstCellText = HeaderText_Date;
 
-    public static async Task<MeetsGoogleSheet> Retrieve(
-      Uri googleSheetUrl,
+    private readonly Uri _googleSheetUri;
+    private readonly IRestRequestMaker _requestMaker;
+    private readonly ILogger _logger;
+    private List<string> _headers = new List<string>();
+    private List<List<string>> _dataByRow = new List<List<string>>();
+
+    public MeetsGoogleSheet(
+      Uri googleSheetUri,
       IRestRequestMaker requestMaker,
       ILogger logger)
     {
-      CommonValidation.RaiseExceptionIfArgumentNull(googleSheetUrl, nameof(googleSheetUrl));
-      CommonValidation.RaiseExceptionIfArgumentNull(requestMaker, nameof(requestMaker));
-      CommonValidation.RaiseExceptionIfArgumentNull(logger, nameof(logger));
+      _googleSheetUri = googleSheetUri ?? throw new ArgumentNullException(nameof(googleSheetUri));
+      _requestMaker = requestMaker ?? throw new ArgumentNullException(nameof(requestMaker));
+      _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
+    public async Task<bool> Retrieve()
+    {
       try
       {
-        logger.LogDebug($"Retrieving google-sheet \"{googleSheetUrl.AbsolutePath}\"...");
+        _logger.LogDebug($"{LoggingClassName} Retrieving google-sheet \"{_googleSheetUri.AbsolutePath}\"...");
 
-        var sheet = await requestMaker.Get<GoogleSheet>(googleSheetUrl);
+        GoogleSheet sheet = await _requestMaker.Get<GoogleSheet>(_googleSheetUri);
 
         if (sheet == null)
         {
-          throw new RestRequestException("Null sheet returned", null);
+          _logger.LogError($"{LoggingClassName} Null sheet returned.");
+          return false;
         }
 
         FindFirstCellCoordinates(
@@ -60,7 +70,7 @@ namespace McsaMeetsMailer.BusinessLogic
           headerRowIndex,
           headerColumnIndex,
           headerColumnCount,
-          out List<string> headers);
+          out _headers);
 
         ReadData(
           sheet,
@@ -68,15 +78,38 @@ namespace McsaMeetsMailer.BusinessLogic
           headerColumnIndex,
           headerColumnCount,
           lastRow,
-          out List<List<string>> dataByRow);
-
-        return new MeetsGoogleSheet(headers, dataByRow);
+          out _dataByRow);
       }
       catch (RestRequestException ex)
       {
-        logger.LogError($"Failed to retrieve google-sheet \"{googleSheetUrl.AbsolutePath}\", an exception occurred.", ex);
-        return null;
+        _logger.LogError(
+          $"{LoggingClassName} Failed to retrieve google-sheet \"{_googleSheetUri.AbsolutePath}\", an exception occurred.",
+          ex);
+
+        return false;
       }
+
+      return true;
+    }
+
+    public int FindHeaderIndex(in string headerText, in bool raiseExceptionIfNotFound = false)
+    {
+      for (var i = 0; i < Headers.Count(); i++)
+      {
+        bool isMatch = Headers.ElementAt(i).Equals(headerText, StringComparison.OrdinalIgnoreCase);
+
+        if (isMatch)
+        {
+          return i;
+        }
+      }
+
+      if (raiseExceptionIfNotFound)
+      {
+        throw new MeetsGoogleSheetFormatException($"No header found with text \"{headerText}\".");
+      }
+
+      return -1;
     }
 
     private static void FindFirstCellCoordinates(
@@ -193,7 +226,7 @@ namespace McsaMeetsMailer.BusinessLogic
         for (var column = headerColumn; column < headerColumn + headerColumnCount; column++)
         {
           string cellValue = sheet.values[row][column];
-          
+
           rowData.Add(cellValue);
 
           if (!rowHasData &&
@@ -208,38 +241,6 @@ namespace McsaMeetsMailer.BusinessLogic
           dataByRow.Add(rowData);
         }
       }
-    }
-
-    public MeetsGoogleSheet(
-      IEnumerable<string> headers,
-      IEnumerable<IEnumerable<string>> dataByRow)
-    {
-      Headers = headers ?? throw new ArgumentNullException(nameof(headers));
-      DataByRow = dataByRow ?? throw new ArgumentNullException(nameof(dataByRow));
-    }
-
-    public int FindHeaderIndex(
-      in string headerText,
-      in bool raiseExceptionIfNotFound = false)
-    {
-      for (var i = 0; i < Headers.Count(); i++)
-      {
-        bool isMatch = Headers
-          .ElementAt(i)
-          .Equals(headerText, StringComparison.OrdinalIgnoreCase);
-
-        if (isMatch)
-        {
-          return i;
-        }
-      }
-
-      if (raiseExceptionIfNotFound)
-      {
-        throw new MeetsGoogleSheetFormatException($"No header found with text \"{headerText}\".");
-      }
-
-      return -1;
     }
   }
 }

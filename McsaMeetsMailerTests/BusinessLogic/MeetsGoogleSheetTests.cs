@@ -19,7 +19,7 @@ namespace McsaMeetsMailerTests.BusinessLogic
     private const string DateColumnText = MeetsGoogleSheet.HeaderText_Date;
 
     [Test]
-    public async Task Retrieve_GivenSuccessfulRetrieval_ShouldReturnNotNull()
+    public async Task Retrieve_GivenSuccessfulRetrieval_ShouldReturnTrue()
     {
       // Arrange.
       var url = new Uri("https://somegooglesheet");
@@ -37,14 +37,16 @@ namespace McsaMeetsMailerTests.BusinessLogic
           }
         });
 
-      // Act.
-      MeetsGoogleSheet result = await MeetsGoogleSheet.Retrieve(
+      var testObject = new MeetsGoogleSheet(
         url,
         requestMaker,
         logger);
 
+      // Act.
+      bool result = await testObject.Retrieve();
+
       // Assert.
-      Assert.IsNotNull(result);
+      Assert.IsTrue(result);
     }
 
     [Test]
@@ -59,13 +61,15 @@ namespace McsaMeetsMailerTests.BusinessLogic
         .Get<GoogleSheet>(url)
         .Returns(new GoogleSheet());
 
+      var testObject = new MeetsGoogleSheet(
+        url,
+        requestMaker,
+        logger);
+
       // Act & Assert.
       try
       {
-        await MeetsGoogleSheet.Retrieve(
-          url,
-          requestMaker,
-          logger);
+        await testObject.Retrieve();
       }
       catch (MeetsGoogleSheetFormatException)
       {
@@ -94,12 +98,14 @@ namespace McsaMeetsMailerTests.BusinessLogic
           }
         });
 
-      // Act.
-      await MeetsGoogleSheet.Retrieve(
+      var testObject = new MeetsGoogleSheet(
         url,
         requestMaker,
         logger);
-      
+
+      // Act.
+      await testObject.Retrieve();
+
       // Assert.
       Assert.Pass();
     }
@@ -145,21 +151,23 @@ namespace McsaMeetsMailerTests.BusinessLogic
           }
         });
 
-      // Act.
-      MeetsGoogleSheet testObject = await MeetsGoogleSheet.Retrieve(
+      var testObject = new MeetsGoogleSheet(
         url,
         requestMaker,
         logger);
-      
+
+      // Act.
+      await testObject.Retrieve();
+
       // Assert.
       Assert.AreEqual(columnNames[0], testObject.Headers.ElementAt(0));
       Assert.AreEqual(columnNames[1], testObject.Headers.ElementAt(1));
       Assert.AreEqual(columnNames[2], testObject.Headers.ElementAt(2));
-      
+
       Assert.AreEqual(rowValues1[0], testObject.DataByRow.ElementAt(0).ElementAt(0));
       Assert.AreEqual(rowValues1[1], testObject.DataByRow.ElementAt(0).ElementAt(1));
       Assert.AreEqual(rowValues1[2], testObject.DataByRow.ElementAt(0).ElementAt(2));
-      
+
       Assert.AreEqual(rowValues2[0], testObject.DataByRow.ElementAt(1).ElementAt(0));
       Assert.AreEqual(rowValues2[1], testObject.DataByRow.ElementAt(1).ElementAt(1));
       Assert.AreEqual(rowValues2[2], testObject.DataByRow.ElementAt(1).ElementAt(2));
@@ -227,28 +235,30 @@ namespace McsaMeetsMailerTests.BusinessLogic
           }
         });
 
-      // Act.
-      MeetsGoogleSheet testObject = await MeetsGoogleSheet.Retrieve(
+      var testObject = new MeetsGoogleSheet(
         url,
         requestMaker,
         logger);
-      
+
+      // Act.
+      await testObject.Retrieve();
+
       // Assert.
       Assert.AreEqual(columnNames[1], testObject.Headers.ElementAt(0));
       Assert.AreEqual(columnNames[2], testObject.Headers.ElementAt(1));
       Assert.AreEqual(columnNames[3], testObject.Headers.ElementAt(2));
-      
+
       Assert.AreEqual(rowValues1[1], testObject.DataByRow.ElementAt(0).ElementAt(0));
       Assert.AreEqual(rowValues1[2], testObject.DataByRow.ElementAt(0).ElementAt(1));
       Assert.AreEqual(rowValues1[3], testObject.DataByRow.ElementAt(0).ElementAt(2));
-      
+
       Assert.AreEqual(rowValues4[1], testObject.DataByRow.ElementAt(1).ElementAt(0));
       Assert.AreEqual(rowValues4[2], testObject.DataByRow.ElementAt(1).ElementAt(1));
       Assert.AreEqual(rowValues4[3], testObject.DataByRow.ElementAt(1).ElementAt(2));
     }
 
     [Test]
-    public async Task Retrieve_GivenUnsuccessfulRetrieval_ShouldReturnNull()
+    public async Task Retrieve_GivenUnsuccessfulRetrieval_ShouldReturnFalse()
     {
       // Arrange.
       var url = new Uri("https://somegooglesheet");
@@ -259,14 +269,16 @@ namespace McsaMeetsMailerTests.BusinessLogic
         .Get<GoogleSheet>(url)
         .Throws(new RestRequestException(string.Empty, null));
 
-      // Act.
-      MeetsGoogleSheet result = await MeetsGoogleSheet.Retrieve(
+      var testObject = new MeetsGoogleSheet(
         url,
         requestMaker,
         logger);
 
+      // Act.
+      bool result = await testObject.Retrieve();
+
       // Assert.
-      Assert.IsNull(result);
+      Assert.IsFalse(result);
     }
 
     [Test]
@@ -285,20 +297,21 @@ namespace McsaMeetsMailerTests.BusinessLogic
         .Get<GoogleSheet>(url)
         .Returns(testData);
 
-      // Act.
-      MeetsGoogleSheet result = await MeetsGoogleSheet.Retrieve(
+      var testObject = new MeetsGoogleSheet(
         url,
         requestMaker,
         logger);
 
+      // Act.
+      await testObject.Retrieve();
+
       // Assert.
-      Assert.IsNotNull(result);
-      Assert.AreEqual(DateColumnText, result.Headers.ElementAt(0));
-      Assert.AreEqual("Notes", result.Headers.ElementAt(12));
-      Assert.AreEqual("2019-7-1", result.DataByRow.ElementAt(0).ElementAt(0));
-      Assert.AreEqual("Meet 1", result.DataByRow.ElementAt(0).ElementAt(4));
-      Assert.AreEqual("2019-7-10", result.DataByRow.ElementAt(1).ElementAt(0));
-      Assert.AreEqual("Meet 2", result.DataByRow.ElementAt(1).ElementAt(4));
+      Assert.AreEqual(DateColumnText, testObject.Headers.ElementAt(0));
+      Assert.AreEqual("Notes", testObject.Headers.ElementAt(12));
+      Assert.AreEqual("2019-7-1", testObject.DataByRow.ElementAt(0).ElementAt(0));
+      Assert.AreEqual("Meet 1", testObject.DataByRow.ElementAt(0).ElementAt(4));
+      Assert.AreEqual("2019-7-10", testObject.DataByRow.ElementAt(1).ElementAt(0));
+      Assert.AreEqual("Meet 2", testObject.DataByRow.ElementAt(1).ElementAt(4));
     }
 
     [TestCase(DateColumnText, 0)]
@@ -344,10 +357,12 @@ namespace McsaMeetsMailerTests.BusinessLogic
           }
         });
 
-      MeetsGoogleSheet testObject = await MeetsGoogleSheet.Retrieve(
+      var testObject = new MeetsGoogleSheet(
         url,
         requestMaker,
         logger);
+
+      await testObject.Retrieve();
 
       // Act.
       int result = testObject.FindHeaderIndex(headerText);
@@ -357,7 +372,7 @@ namespace McsaMeetsMailerTests.BusinessLogic
     }
 
     [Test]
-    public async Task FindHeaderIndex_GivenMissingValueAndRequiredToRaiseException_ShouldRaiseException()
+    public void FindHeaderIndex_GivenMissingValueAndRequiredToRaiseException_ShouldRaiseException()
     {
       // Arrange.
       string[] columnNames =
@@ -397,7 +412,7 @@ namespace McsaMeetsMailerTests.BusinessLogic
           }
         });
 
-      MeetsGoogleSheet testObject = await MeetsGoogleSheet.Retrieve(
+      var testObject = new MeetsGoogleSheet(
         url,
         requestMaker,
         logger);
@@ -408,7 +423,7 @@ namespace McsaMeetsMailerTests.BusinessLogic
     }
 
     [Test]
-    public async Task FindHeaderIndex_GivenMissingValueAndNotRequiredToRaiseException_ShouldReturnNegativeOne()
+    public void FindHeaderIndex_GivenMissingValueAndNotRequiredToRaiseException_ShouldReturnNegativeOne()
     {
       // Arrange.
       string[] columnNames =
@@ -448,11 +463,11 @@ namespace McsaMeetsMailerTests.BusinessLogic
           }
         });
 
-      MeetsGoogleSheet testObject = await MeetsGoogleSheet.Retrieve(
+      var testObject = new MeetsGoogleSheet(
         url,
         requestMaker,
         logger);
-      
+
       // Act.
       int result = testObject.FindHeaderIndex("missing header");
 
