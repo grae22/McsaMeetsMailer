@@ -12,7 +12,8 @@ namespace McsaMeetsMailer.Services
 {
   public class MeetsService : IMeetsService
   {
-    private const string LoggingClassName = "[MeetsService]";
+    private static readonly string LoggingClassName = $"[{typeof(MeetsService).Name}]";
+
     private const string SettingName_MeetsGoogleSheetId = "MCSA-KZN_Meets_MeetsGoogleSheetId";
     private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";
     private const string GoogleSheetsBaseUrl = "https://sheets.googleapis.com/v4/spreadsheets/";

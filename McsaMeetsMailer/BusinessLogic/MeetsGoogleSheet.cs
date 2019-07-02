@@ -17,7 +17,8 @@ namespace McsaMeetsMailer.BusinessLogic
     public IEnumerable<string> Headers => _headers;
     public IEnumerable<IEnumerable<string>> DataByRow => _dataByRow;
 
-    private const string LoggingClassName = "[MeetsGoogleSheet]";
+    private static readonly string LoggingClassName = $"[{typeof(MeetsGoogleSheet).Name}]";
+
     private const string FirstCellText = HeaderText_Date;
 
     private readonly Uri _googleSheetUri;
