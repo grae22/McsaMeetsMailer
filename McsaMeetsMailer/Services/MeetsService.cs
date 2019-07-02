@@ -12,7 +12,7 @@ namespace McsaMeetsMailer.Services
 {
   public class MeetsService : IMeetsService
   {
-    private static readonly string LoggingClassName = $"[{typeof(MeetsService).Name}]";
+    private static readonly string ClassName = typeof(MeetsService).Name;
 
     private const string SettingName_MeetsGoogleSheetId = "MCSA-KZN_Meets_MeetsGoogleSheetId";
     private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";
@@ -55,11 +55,11 @@ namespace McsaMeetsMailer.Services
       }
       catch (UriFormatException ex)
       {
-        _logger.LogError($"{LoggingClassName} Failed to build URI from URL \"{url}\".", ex);
+        _logger.LogError($"Failed to build URI from URL \"{url}\".", ClassName, ex);
         return null;
       }
 
-      _logger.LogDebug($"{LoggingClassName} Retrieving meets from \"{url}\"...");
+      _logger.LogDebug($"Retrieving meets from \"{url}\"...", ClassName);
 
       IMeetsGoogleSheet sheet = _googleSheetFactory.CreateSheet(
         uri,
@@ -70,11 +70,11 @@ namespace McsaMeetsMailer.Services
 
       if (result == false)
       {
-        _logger.LogError($"{LoggingClassName} Failed to retrieve meets.");
+        _logger.LogError($"Failed to retrieve meets.", ClassName);
         return null;
       }
 
-      _logger.LogDebug($"{LoggingClassName} Retrieved meets, transforming into models...");
+      _logger.LogDebug($"Retrieved meets, transforming into models...", ClassName);
 
       GoogleSheetToMeetDetailsTransformer.Process(
         sheet,

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
@@ -17,7 +18,7 @@ namespace McsaMeetsMailer.BusinessLogic
     public IEnumerable<string> Headers => _headers;
     public IEnumerable<IEnumerable<string>> DataByRow => _dataByRow;
 
-    private static readonly string LoggingClassName = $"[{typeof(MeetsGoogleSheet).Name}]";
+    private static readonly string ClassName = typeof(MeetsGoogleSheet).Name;
 
     private const string FirstCellText = HeaderText_Date;
 
@@ -41,13 +42,13 @@ namespace McsaMeetsMailer.BusinessLogic
     {
       try
       {
-        _logger.LogDebug($"{LoggingClassName} Retrieving google-sheet \"{_googleSheetUri.AbsolutePath}\"...");
+        _logger.LogDebug($"Retrieving google-sheet \"{_googleSheetUri.AbsolutePath}\"...", ClassName);
 
         GoogleSheet sheet = await _requestMaker.Get<GoogleSheet>(_googleSheetUri);
 
         if (sheet == null)
         {
-          _logger.LogError($"{LoggingClassName} Null sheet returned.");
+          _logger.LogError($"Null sheet returned.", ClassName);
           return false;
         }
 
@@ -84,7 +85,8 @@ namespace McsaMeetsMailer.BusinessLogic
       catch (RestRequestException ex)
       {
         _logger.LogError(
-          $"{LoggingClassName} Failed to retrieve google-sheet \"{_googleSheetUri.AbsolutePath}\", an exception occurred.",
+          $"Failed to retrieve google-sheet \"{_googleSheetUri.AbsolutePath}\", an exception occurred.",
+          ClassName,
           ex);
 
         return false;
