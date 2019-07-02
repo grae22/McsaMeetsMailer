@@ -10,11 +10,19 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
 {
   public class EmailAddressGoogleSheet
   {
-    public const string ColumnHeader_FullSchedule = "Full Schedule";
-
     public IEnumerable<IEnumerable<string>> DataByRow => _dataByRow;
 
     private static readonly string ClassName = typeof(EmailAddressGoogleSheet).Name;
+
+    private enum ColumnIndices
+    {
+      FullSchedule
+    }
+
+    private static string[] ColumnHeaders =
+    {
+      "Full Schedule"
+    };
 
     private readonly Uri _googleSheetUri;
     private readonly IRestRequestMaker _requestMaker;
@@ -45,6 +53,7 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
           return false;
         }
 
+        ValidateColumnHeaders(sheet);
       }
       catch (RestRequestException ex)
       {
@@ -57,6 +66,36 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
       }
 
       return true;
+    }
+
+    private static void ValidateColumnHeaders(in GoogleSheet sheet)
+    {
+      if (sheet.values.Length == 0)
+      {
+        throw new EmailAddressGoogleSheetFormatException("Sheet has no rows.");
+      }
+
+      int expectedColumnCount = Enum.GetValues(typeof(ColumnIndices)).Length;
+      int actualColumnCount = sheet.values[0].Length;
+
+      if (actualColumnCount < expectedColumnCount)
+      {
+        throw new EmailAddressGoogleSheetFormatException($"Sheet has too few columns - expected {expectedColumnCount}, found {actualColumnCount}.");
+      }
+
+      foreach (int index in Enum.GetValues(typeof(ColumnIndices)))
+      {
+        string expectedText = ColumnHeaders[index];
+        string text = sheet.values[0][index];
+
+        if (text.Equals(expectedText, StringComparison.OrdinalIgnoreCase))
+        {
+          continue;
+        }
+
+        throw new EmailAddressGoogleSheetFormatException(
+          $"Column header \"{expectedText}\" not found in column {index}, found \"{text}\" instead.");
+      }
     }
   }
 }
