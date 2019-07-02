@@ -42,13 +42,13 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     {
       try
       {
-        _logger.LogDebug($"Retrieving google-sheet \"{_googleSheetUri.AbsolutePath}\"...", ClassName);
+        _logger.LogDebug($"Retrieving meets google-sheet \"{_googleSheetUri.AbsolutePath}\"...", ClassName);
 
         GoogleSheet sheet = await _requestMaker.Get<GoogleSheet>(_googleSheetUri);
 
         if (sheet == null)
         {
-          _logger.LogError($"Null sheet returned.", ClassName);
+          _logger.LogError("Null meets google-sheet returned.", ClassName);
           return false;
         }
 
@@ -85,7 +85,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       catch (RestRequestException ex)
       {
         _logger.LogError(
-          $"Failed to retrieve google-sheet \"{_googleSheetUri.AbsolutePath}\", an exception occurred.",
+          $"Failed to retrieve meets google-sheet \"{_googleSheetUri.AbsolutePath}\", an exception occurred.",
           ClassName,
           ex);
 
