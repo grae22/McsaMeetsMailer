@@ -3,7 +3,7 @@
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
 
-namespace McsaMeetsMailer.BusinessLogic
+namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public class MeetsGoogleSheetFactory : IMeetsGoogleSheetFactory
   {

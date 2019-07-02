@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using McsaMeetsMailer.BusinessLogic;
+
+using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
+
 using NSubstitute;
+
 using NUnit.Framework;
 
-namespace McsaMeetsMailerTests.BusinessLogic
+namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
 {
   [TestFixture]
   public class GoogleSheetToMeetDetailsTransformerTests

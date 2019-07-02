@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace McsaMeetsMailer.BusinessLogic
+namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public class MeetsGoogleSheetFormatException : Exception
   {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using McsaMeetsMailer.BusinessLogic;
+using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;

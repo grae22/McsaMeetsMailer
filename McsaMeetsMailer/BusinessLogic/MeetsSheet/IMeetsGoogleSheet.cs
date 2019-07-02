@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace McsaMeetsMailer.BusinessLogic
+namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public interface IMeetsGoogleSheet
   {

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Validation;
 
-namespace McsaMeetsMailer.BusinessLogic
+namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public class GoogleSheetToMeetDetailsTransformer
   {

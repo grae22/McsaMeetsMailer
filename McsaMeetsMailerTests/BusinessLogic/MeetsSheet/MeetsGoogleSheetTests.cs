@@ -2,16 +2,20 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using McsaMeetsMailer.BusinessLogic;
+
+using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
+
 using Newtonsoft.Json;
+
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+
 using NUnit.Framework;
 
-namespace McsaMeetsMailerTests.BusinessLogic
+namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
 {
   [TestFixture]
   public class MeetsGoogleSheetTests
