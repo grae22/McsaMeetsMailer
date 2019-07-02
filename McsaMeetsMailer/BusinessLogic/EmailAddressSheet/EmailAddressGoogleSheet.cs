@@ -8,18 +8,18 @@ using McsaMeetsMailer.Utils.RestRequest;
 
 namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
 {
-  public class EmailAddressGoogleSheet
+  public class EmailAddressGoogleSheet : IEmailAddressGoogleSheet, IEmailAddresses
   {
-    public IEnumerable<IEnumerable<string>> DataByRow => _dataByRow;
-
-    private static readonly string ClassName = typeof(EmailAddressGoogleSheet).Name;
-
-    private enum ColumnIndices
+    public enum ColumnIndices
     {
       FullSchedule
     }
 
-    private static string[] ColumnHeaders =
+    public IEnumerable<string> FullScheduleEmailAddresses => GetColumnData(ColumnIndices.FullSchedule);
+
+    private static readonly string ClassName = typeof(EmailAddressGoogleSheet).Name;
+
+    private static readonly string[] ColumnHeaders =
     {
       "Full Schedule"
     };
@@ -27,7 +27,9 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
     private readonly Uri _googleSheetUri;
     private readonly IRestRequestMaker _requestMaker;
     private readonly ILogger _logger;
-    private List<List<string>> _dataByRow = new List<List<string>>();
+    private readonly Dictionary<ColumnIndices, List<string>> _dataByColumnIndex = new Dictionary<ColumnIndices, List<string>>();
+
+    private bool _dataExtractedOk;
 
     public EmailAddressGoogleSheet(
       Uri googleSheetUri,
@@ -54,6 +56,7 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
         }
 
         ValidateColumnHeaders(sheet);
+        ExtractData(sheet);
       }
       catch (RestRequestException ex)
       {
@@ -83,7 +86,7 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
         throw new EmailAddressGoogleSheetFormatException($"Sheet has too few columns - expected {expectedColumnCount}, found {actualColumnCount}.");
       }
 
-      foreach (int index in Enum.GetValues(typeof(ColumnIndices)))
+      for (var index = 0; index < expectedColumnCount; index++)
       {
         string expectedText = ColumnHeaders[index];
         string text = sheet.values[0][index];
@@ -96,6 +99,53 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
         throw new EmailAddressGoogleSheetFormatException(
           $"Column header \"{expectedText}\" not found in column {index}, found \"{text}\" instead.");
       }
+    }
+
+    private void ExtractData(in GoogleSheet sheet)
+    {
+      int columnCount = Enum.GetValues(typeof(ColumnIndices)).Length;
+
+      for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
+      {
+        ReadColumnValues(
+          sheet,
+          columnIndex,
+          out List<string> values);
+
+        _dataByColumnIndex.Add((ColumnIndices)columnIndex, values);
+      }
+
+      _dataExtractedOk = true;
+    }
+
+    private static void ReadColumnValues(
+      in GoogleSheet sheet,
+      in int columnIndex,
+      out List<string> values)
+    {
+      values = new List<string>();
+
+      for (var row = 1; row < sheet.values.Length; row++)
+      {
+        string value = sheet.values[row][columnIndex];
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+          continue;
+        }
+
+        values.Add(value);
+      }
+    }
+
+    private IEnumerable<string> GetColumnData(in ColumnIndices index)
+    {
+      if (!_dataExtractedOk)
+      {
+        return new string[0];
+      }
+
+      return _dataByColumnIndex[index];
     }
   }
 }
