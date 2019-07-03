@@ -65,11 +65,19 @@ namespace McsaMeetsMailer.Services
         _requestMaker,
         _logger);
 
-      bool result = await sheet.Retrieve();
-
-      if (result == false)
+      try
       {
-        _logger.LogError("Failed to retrieve email addresses.", ClassName);
+        bool result = await sheet.Retrieve();
+
+        if (result == false)
+        {
+          _logger.LogError("Failed to retrieve email addresses.", ClassName);
+          return null;
+        }
+      }
+      catch (EmailAddressGoogleSheetFormatException ex)
+      {
+        _logger.LogError("Error while retrieving email addresses.", ClassName, ex);
         return null;
       }
 

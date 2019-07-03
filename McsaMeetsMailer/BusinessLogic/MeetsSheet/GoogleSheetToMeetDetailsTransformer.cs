@@ -19,14 +19,14 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       int leaderNameColumnIndex = sheet.FindHeaderIndex(MeetsGoogleSheet.HeaderText_LeaderName, true);
       int leaderEmailColumnIndex = sheet.FindHeaderIndex(MeetsGoogleSheet.HeaderText_LeaderEmail, true);
 
-      foreach (var row in sheet.DataByRow)
+      foreach (var row in sheet.ValuesByRow)
       {
         var rowAsArray = row.ToArray();
 
         var newModel = new MeetDetailsModel
         {
-          Leader = rowAsArray[leaderNameColumnIndex],
-          LeaderEmail = rowAsArray[leaderEmailColumnIndex],
+          Leader = rowAsArray[leaderNameColumnIndex].Value,
+          LeaderEmail = rowAsArray[leaderEmailColumnIndex].Value,
           AdditionalFields = new Dictionary<string, string>()
         };
 
@@ -42,13 +42,13 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
             continue;
           }
 
-          string header = sheet.Headers.ElementAt(cellIndex);
+          string header = sheet.Fields.ElementAt(cellIndex).FriendlyText;
           header = header.Replace("#", "");
           header = header.Replace("*", "");
 
           newModel
             .AdditionalFields
-            .Add(header, cellValue);
+            .Add(header, cellValue.Value);
         }
 
         models.Add(newModel);

@@ -8,6 +8,7 @@ using McsaMeetsMailer.Utils.RestRequest;
 using McsaMeetsMailer.Utils.Settings;
 
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
@@ -16,9 +17,6 @@ namespace McsaMeetsMailerTests.Services
   [TestFixture]
   public class MeetsServiceTests
   {
-    private const string SettingName_MeetsGoogleSheetId = "MCSA-KZN_Meets_MeetsGoogleSheetId";
-    private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";
-
     [Test]
     public async Task RetrieveMeets_GivenHappyPath_ShouldReturnNotNullMeetsCollection()
     {
@@ -30,11 +28,11 @@ namespace McsaMeetsMailerTests.Services
       var logger = Substitute.For<ILogger>();
 
       settings
-        .GetValidValue(SettingName_MeetsGoogleSheetId)
+        .GetValidValue(Arg.Any<string>())
         .Returns("SomeSheetId");
 
       settings
-        .GetValidValue(SettingName_GoogleAppKey)
+        .GetValidValue(Arg.Any<string>())
         .Returns("SomeAppKey");
 
       googleSheetFactory
@@ -72,11 +70,11 @@ namespace McsaMeetsMailerTests.Services
       var logger = Substitute.For<ILogger>();
 
       settings
-        .GetValidValue(SettingName_MeetsGoogleSheetId)
+        .GetValidValue(Arg.Any<string>())
         .Returns("SomeSheetId");
 
       settings
-        .GetValidValue(SettingName_GoogleAppKey)
+        .GetValidValue(Arg.Any<string>())
         .Returns("SomeAppKey");
 
       googleSheetFactory
@@ -89,6 +87,48 @@ namespace McsaMeetsMailerTests.Services
       googleSheet
         .Retrieve()
         .Returns(false);
+
+      var testObject = new MeetsService(
+        settings,
+        requestMaker,
+        googleSheetFactory,
+        logger);
+
+      // Act.
+      var result = await testObject.RetrieveMeets();
+
+      // Assert.
+      Assert.IsNull(result);
+    }
+
+    [Test]
+    public async Task RetrieveMeets_GivenMeetsSheetFormatException_ShouldReturnNullMeetsCollection()
+    {
+      // Arrange.
+      var settings = Substitute.For<ISettings>();
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
+      var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var logger = Substitute.For<ILogger>();
+
+      settings
+        .GetValidValue(Arg.Any<string>())
+        .Returns("SomeSheetId");
+
+      settings
+        .GetValidValue(Arg.Any<string>())
+        .Returns("SomeAppKey");
+
+      googleSheetFactory
+        .CreateSheet(
+          Arg.Any<Uri>(),
+          Arg.Any<IRestRequestMaker>(),
+          Arg.Any<ILogger>())
+        .Returns(googleSheet);
+
+      googleSheet
+        .Retrieve()
+        .Throws(new MeetsGoogleSheetFormatException(string.Empty));
 
       var testObject = new MeetsService(
         settings,

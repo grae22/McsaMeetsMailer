@@ -18,24 +18,38 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
     {
       // Arrange.
       var sheet = Substitute.For<IMeetsGoogleSheet>();
-      
+
       sheet
-        .Headers
+        .Fields
         .Returns(new[]
         {
-          "Column 1",
-          "Column 2",
-          MeetsGoogleSheet.HeaderText_LeaderName,
-          "Column 3",
-          MeetsGoogleSheet.HeaderText_LeaderEmail
+          new MeetField(false, false, string.Empty, "Column 1", 0),
+          new MeetField(false, false, string.Empty, "Column 2", 0),
+          new MeetField(false, false, string.Empty, MeetsGoogleSheet.HeaderText_LeaderName, 0),
+          new MeetField(false, false, string.Empty, "Column 3", 0),
+          new MeetField(false, false, string.Empty, MeetsGoogleSheet.HeaderText_LeaderEmail, 0),
         });
 
       sheet
-        .DataByRow
+        .ValuesByRow
         .Returns(new[]
         {
-          new [] { "R1C1", "R1C2", "R1C3", "R1C4", "R1C5" },
-          new [] { "R2C1", "R2C2", "R2C3", "R2C4", "R2C5" }
+          new[]
+          {
+            new MeetFieldValue(null, "R1C1"),
+            new MeetFieldValue(null, "R1C2"),
+            new MeetFieldValue(null, "R1C3"),
+            new MeetFieldValue(null, "R1C4"),
+            new MeetFieldValue(null, "R1C5")
+          },
+          new[]
+          {
+            new MeetFieldValue(null, "R2C1"),
+            new MeetFieldValue(null, "R2C2"),
+            new MeetFieldValue(null, "R2C3"),
+            new MeetFieldValue(null, "R2C4"),
+            new MeetFieldValue(null, "R2C5")
+          },
         });
 
       sheet
