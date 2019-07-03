@@ -10,12 +10,13 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
 {
   public class EmailAddressGoogleSheet : IEmailAddressGoogleSheet, IEmailAddresses
   {
-    public enum ColumnIndices
+    public IEmailAddresses EmailAddresses => this;
+    public IEnumerable<string> FullScheduleEmailAddresses => GetColumnData(ColumnIndices.FullSchedule);
+
+    private enum ColumnIndices
     {
       FullSchedule
     }
-
-    public IEnumerable<string> FullScheduleEmailAddresses => GetColumnData(ColumnIndices.FullSchedule);
 
     private static readonly string ClassName = typeof(EmailAddressGoogleSheet).Name;
 
