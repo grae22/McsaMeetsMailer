@@ -8,7 +8,7 @@ using McsaMeetsMailer.Utils.Settings;
 
 namespace McsaMeetsMailer.Services
 {
-  public class EmailAddressService
+  public class EmailAddressService : IEmailAddressService
   {
     private static readonly string ClassName = typeof(EmailAddressService).Name;
 
