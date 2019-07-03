@@ -40,7 +40,10 @@ namespace McsaMeetsMailer.Utils.Logging
       in string message,
       in string sourceClassName)
     {
-      Debug.WriteLine($"*** {logType} | {DateTime.Now:yy-MM-dd HH:mm:ss} | {message} | {sourceClassName}");
+      var output = $"*** {logType,7} | {DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message} | {sourceClassName}";
+
+      Console.WriteLine(output);
+      Debug.WriteLine(output);
     }
   }
 }
