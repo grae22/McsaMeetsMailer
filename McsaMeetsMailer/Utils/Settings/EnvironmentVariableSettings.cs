@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Security;
 
 namespace McsaMeetsMailer.Utils.Settings
 {
@@ -14,6 +16,18 @@ namespace McsaMeetsMailer.Utils.Settings
       }
 
       return value;
+    }
+
+    public SecureString GetValidSecureValue(in string settingName)
+    {
+      var secureValue = new SecureString();
+
+      GetValidValue(settingName)
+        .ToCharArray()
+        .ToList()
+        .ForEach(c => secureValue.AppendChar(c));
+
+      return secureValue;
     }
   }
 }
