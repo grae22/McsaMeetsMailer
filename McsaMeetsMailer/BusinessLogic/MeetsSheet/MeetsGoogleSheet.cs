@@ -12,8 +12,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
   public class MeetsGoogleSheet : IMeetsGoogleSheet
   {
     public const string HeaderText_Date = "# Date*";
-    public const string HeaderText_LeaderName = "# Leader*";
-    public const string HeaderText_LeaderEmail = "Leader Email*";
+    public const string HeaderText_MeetTitle = "# Meet Title*";
 
     public IEnumerable<MeetField> Fields => _fields;
     public IEnumerable<IEnumerable<MeetFieldValue>> ValuesByRow => _valuesByRow;
@@ -220,7 +219,8 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           IsColumnHeaderForRequiredField(value),
           value,
           StripSpecialCharactersFromColumnHeader(value),
-          fields.Count);
+          fields.Count,
+          IsColumnHeaderForMeetTitle(value));
 
         fields.Add(field);
       }
@@ -283,6 +283,11 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     {
       return columnHeaderText.Length > 0 &&
              columnHeaderText[columnHeaderText.Length - 1] == HeaderSpecialChar_Required;
+    }
+
+    private static bool IsColumnHeaderForMeetTitle(in string columnHeaderText)
+    {
+      return columnHeaderText.Equals(HeaderText_MeetTitle, StringComparison.OrdinalIgnoreCase);
     }
 
     private static string StripSpecialCharactersFromColumnHeader(in string columnHeaderText)

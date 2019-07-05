@@ -76,8 +76,23 @@ namespace McsaMeetsMailer.BusinessLogic
         htmlBuilder.AddParagraph(string.Empty);
         htmlBuilder.StartTable();
 
-        foreach (var field in meet.FieldValues.OrderBy(x => x.Field.SortOrder))
+        List<MeetFieldValue> sortedFields = meet
+          .FieldValues
+          .OrderBy(x => x.Field.SortOrder)
+          .ToList();
+
+        var meetTitleField = sortedFields.First(x => x.Field.IsMeetTitle);
+
+        sortedFields.Remove(meetTitleField);
+        sortedFields.Insert(0, meetTitleField);
+
+        foreach (var field in sortedFields)
         {
+          if (string.IsNullOrWhiteSpace(field.Value))
+          {
+            continue;
+          }
+
           htmlBuilder.AddRow(
             new[]
             {
