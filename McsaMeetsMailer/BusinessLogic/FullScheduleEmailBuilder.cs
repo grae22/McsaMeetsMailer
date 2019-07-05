@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Html;
 
@@ -7,11 +8,6 @@ namespace McsaMeetsMailer.BusinessLogic
 {
   public static class FullScheduleEmailBuilder
   {
-    private struct MeetDetailsInfo
-    {
-      public List<string> Values { get; set; }
-    }
-
     public static string Build(IEnumerable<MeetDetailsModel> meetDetails, IHtmlBuilder htmlBuilder)
     {
       List<MeetDetailsModel> meetDetailsList = meetDetails.ToList();
@@ -22,80 +18,76 @@ namespace McsaMeetsMailer.BusinessLogic
       htmlBuilder.AddParagraph("Please find the full meet schedule below.");
       htmlBuilder.AddLineBreak();
 
-      var requiredHeadings = new List<string>
-      {
-        "No.",
-        "Leader",
-        "Leader Email"
-      };
+      var requiredHeadings = new List<MeetField>();
 
-      Dictionary<string, string>.KeyCollection allHeadings = meetDetailsList.FirstOrDefault()?.AdditionalFields.Keys;
-      requiredHeadings.AddRange(allHeadings?.Where(x => x.Contains("#")));
+      IEnumerable<MeetField> allHeadings = meetDetailsList.FirstOrDefault()?.AllFields.ToList();
+      requiredHeadings.AddRange(allHeadings?.Where(x => x.DisplayInHeader));
 
-      var optionalHeadings = new List<string>
-      {
-        "No."
-      };
+      var optionalHeadings = new List<MeetField>();
 
-      optionalHeadings.AddRange(allHeadings?.Where(x => !x.Contains("#")));
+      optionalHeadings.AddRange(allHeadings?.Where(x => !x.DisplayInHeader));
 
-      var requiredMeetDetailsInfos = new List<MeetDetailsInfo>();
-      var optionalMeetDetailsInfos = new List<MeetDetailsInfo>();
-      
+      BuildHeaderTable(
+        htmlBuilder,
+        requiredHeadings,
+        meetDetails);
 
-      for (var i = 0; i < meetDetailsList.Count(); ++i)
-      {
-        var meetDetail = meetDetailsList[i];
-
-        var requiredMeetDetailsInfo = new MeetDetailsInfo
-        {
-          Values = new List<string> {(i + 1).ToString(), meetDetail.Leader, meetDetail.LeaderEmail}
-        };
-        var optionalMeetDetailsInfo = new MeetDetailsInfo {Values = new List<string> { (i + 1).ToString() } };
-
-        foreach (var field in meetDetail.AdditionalFields)
-        {
-          if (field.Key.Contains("#"))
-          {
-            requiredMeetDetailsInfo.Values.Add(field.Value);
-          }
-          else
-          {
-            optionalMeetDetailsInfo.Values.Add(field.Value);
-          }
-        }
-
-        requiredMeetDetailsInfos.Add(requiredMeetDetailsInfo);
-        optionalMeetDetailsInfos.Add(optionalMeetDetailsInfo);
-      }
-
-      BuildTable(htmlBuilder, requiredHeadings, requiredMeetDetailsInfos);
       htmlBuilder.AddLineBreak();
       htmlBuilder.AddParagraph("Additional meet details:");
       htmlBuilder.AddLineBreak();
-      BuildTable(htmlBuilder, optionalHeadings, optionalMeetDetailsInfos);
+
+      BuildDetailsTable(htmlBuilder, meetDetails);
 
       return htmlBuilder.GetHtml();
     }
 
-    private static void BuildTable(IHtmlBuilder htmlBuilder, List<string> headings, List<MeetDetailsInfo> meetDetailsInfos)
+    private static void BuildHeaderTable(
+      IHtmlBuilder htmlBuilder,
+      IEnumerable<MeetField> headings,
+      IEnumerable<MeetDetailsModel> meets)
     {
       htmlBuilder.StartTable();
 
-      for (var i = 0; i < headings.Count; ++i)
-      {
-        headings[i] = headings[i].Replace("*", "");
-        headings[i] = headings[i].Replace("#", "");
-      }
+      htmlBuilder.AddHeadingRow(
+        headings
+          .OrderBy(x => x.SortOrder)
+          .Where(x => x.DisplayInHeader)
+          .Select(x => x.FriendlyText));
 
-      htmlBuilder.AddHeadingRow(headings);
-
-      foreach(var meetDetailsInfo in meetDetailsInfos)
+      foreach(var meet in meets)
       {
-        htmlBuilder.AddRow(meetDetailsInfo.Values);
+        htmlBuilder.AddRow(
+          meet
+            .FieldValues
+            .OrderBy(x => x.Field.SortOrder)
+            .Where(x => x.Field.DisplayInHeader)
+            .Select(x => x.Value));
       }
 
       htmlBuilder.EndTable();
+    }
+
+    private static void BuildDetailsTable(
+      IHtmlBuilder htmlBuilder,
+      IEnumerable<MeetDetailsModel> meets)
+    {
+      foreach (var meet in meets)
+      {
+        htmlBuilder.AddParagraph(string.Empty);
+        htmlBuilder.StartTable();
+
+        foreach (var field in meet.FieldValues.OrderBy(x => x.Field.SortOrder))
+        {
+          htmlBuilder.AddRow(
+            new[]
+            {
+              field.Field.FriendlyText,
+              field.Value
+            });
+        }
+
+        htmlBuilder.EndTable();
+      }
     }
   }
 }

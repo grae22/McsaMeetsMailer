@@ -4,8 +4,7 @@ namespace McsaMeetsMailer.Models
 {
   public class MeetDetailsModel
   {
-    public string Leader { get; set; }
-    public string LeaderEmail { get; set; }
-    public Dictionary<string, string> AdditionalFields { get; set; }
+    public IEnumerable<MeetField> AllFields { get; set; }
+    public IEnumerable<MeetFieldValue> FieldValues { get; set; }
   }
 }

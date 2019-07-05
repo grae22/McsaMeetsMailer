@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace McsaMeetsMailerTests.BusinessLogic
 {
   public class FullScheduleEmailBuilderTests
-  {
+  {/*
     [Test]
     public void Test_Build()
     {
@@ -48,6 +48,6 @@ namespace McsaMeetsMailerTests.BusinessLogic
       // Assert
       var expected = htmlBuilder.GetHtml();
       Assert.AreEqual(expected, actual);
-    }
+    }*/
   }
 }
