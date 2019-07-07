@@ -70,5 +70,21 @@ namespace McsaMeetsMailerTests.Validation.Validators
       Assert.IsFalse(testObject.IsValid);
       Assert.AreEqual($"Date or time \"{input}\" is invalid.", testObject.ErrorMessage);
     }
+
+    [Test]
+    public void Validate_GivenEmptyValue_ShouldReturnTrue()
+    {
+      // Arrange.
+      var testObject = new DateValidator();
+      var input = string.Empty;
+
+      // Act.
+      bool result = testObject.Validate(in input);
+
+      // Assert.
+      Assert.IsTrue(result);
+      Assert.IsTrue(testObject.IsValid);
+      Assert.AreEqual(string.Empty, testObject.ErrorMessage);
+    }
   }
 }

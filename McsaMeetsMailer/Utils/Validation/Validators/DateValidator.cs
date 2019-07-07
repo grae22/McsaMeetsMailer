@@ -9,14 +9,36 @@ namespace McsaMeetsMailer.Utils.Validation.Validators
 
     public bool Validate(in string input)
     {
-      IsValid = DateTime.TryParse(input, out DateTime result);
-
-      if (!IsValid)
+      if (string.IsNullOrWhiteSpace(input))
       {
-        ErrorMessage = $"Date or time \"{input}\" is invalid.";
+        SetValid();
+        return true;
       }
 
-      return IsValid;
+      bool isValid = DateTime.TryParse(input, out DateTime result);
+
+      if (!isValid)
+      {
+        SetInvalid($"Date or time \"{input}\" is invalid.");
+
+        return false;
+      }
+
+      SetValid();
+
+      return true;
+    }
+
+    private void SetValid()
+    {
+      IsValid = true;
+      ErrorMessage = string.Empty;
+    }
+
+    private void SetInvalid(in string errorMessage)
+    {
+      IsValid = false;
+      ErrorMessage = errorMessage;
     }
   }
 }
