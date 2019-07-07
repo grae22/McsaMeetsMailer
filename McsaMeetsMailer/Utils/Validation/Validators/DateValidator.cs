@@ -13,7 +13,7 @@ namespace McsaMeetsMailer.Utils.Validation.Validators
 
       if (!IsValid)
       {
-        ErrorMessage = $"Date \"{input}\" is invalid.";
+        ErrorMessage = $"Date or time \"{input}\" is invalid.";
       }
 
       return IsValid;
