@@ -13,6 +13,11 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         return new DateValidator();
       }
 
+      if (columnHeaderText.Contains("email", StringComparison.OrdinalIgnoreCase))
+      {
+        return new EmailValidator();
+      }
+
       return new NullValidator();
     }
   }
