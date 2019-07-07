@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace McsaMeetsMailer.Utils.Validation.Validators
 {
-  public class ValidatorChain : IValidationResults
+  public class ValidatorChain : IValidatorChain
   {
     public bool IsValid { get; private set; }
     public string ErrorMessage { get; private set; } = string.Empty;
 
     private readonly List<IValidator> _validators = new List<IValidator>();
 
-    public void AddValidator(IValidator validator)
+    public void AddValidator(in IValidator validator)
     {
       if (validator == null)
       {

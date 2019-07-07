@@ -255,14 +255,14 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
               $"Attempted to access invalid field index {fieldIndex}, max index is {_fields.Count - 1}.");
           }
 
-          string columnHeaderText = _fields[fieldIndex].RawText;
+          MeetField field = _fields[fieldIndex];
 
-          IValidator validator = MeetSheetValueValidatorFactory.CreateValidator(columnHeaderText);
+          IValidatorChain validatorChain = MeetSheetValueValidatorFactory.CreateValidator(field);
 
           var newFieldValue = new MeetFieldValue(
             _fields[fieldIndex],
             cellValue,
-            validator);
+            validatorChain);
 
           LogFieldValueValidationErrors(newFieldValue);
 

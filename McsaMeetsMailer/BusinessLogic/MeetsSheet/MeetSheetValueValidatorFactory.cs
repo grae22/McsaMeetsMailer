@@ -6,19 +6,25 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public static class MeetSheetValueValidatorFactory
   {
-    public static IValidator CreateValidator(in string columnHeaderText)
+    public static IValidatorChain CreateValidator(in MeetField meetField)
     {
-      if (columnHeaderText.Contains("date", StringComparison.OrdinalIgnoreCase))
+      var validatorChain = new ValidatorChain();
+
+      if (meetField.IsRequired)
       {
-        return new DateValidator();
+        validatorChain.AddValidator(new ValueRequiredValidator());
       }
 
-      if (columnHeaderText.Contains("email", StringComparison.OrdinalIgnoreCase))
+      if (meetField.RawText.Contains("date", StringComparison.OrdinalIgnoreCase))
       {
-        return new EmailValidator();
+        validatorChain.AddValidator(new DateValidator());
+      }
+      else if (meetField.RawText.Contains("email", StringComparison.OrdinalIgnoreCase))
+      {
+        validatorChain.AddValidator(new EmailValidator());
       }
 
-      return new NullValidator();
+      return validatorChain;
     }
   }
 }

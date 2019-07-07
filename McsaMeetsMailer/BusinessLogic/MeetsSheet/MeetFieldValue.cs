@@ -8,20 +8,20 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
   {
     public MeetField Field { get; }
     public string Value { get; }
-    public IValidationResults ValidationResults => _validator;
+    public IValidationResults ValidationResults => _validatorChain;
 
-    private readonly IValidator _validator;
+    private readonly IValidatorChain _validatorChain;
 
     public MeetFieldValue(
       in MeetField field,
       in string value,
-      in IValidator validator)
+      in IValidatorChain validatorChain)
     {
       Field = field;
       Value = value;
 
-      _validator = validator ?? throw new ArgumentNullException(nameof(validator));
-      _validator.Validate(value);
+      _validatorChain = validatorChain ?? throw new ArgumentNullException(nameof(validatorChain));
+      _validatorChain.Validate(value);
     }
   }
 }

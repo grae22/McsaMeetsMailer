@@ -19,7 +19,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
     {
       // Arrange.
       var sheet = Substitute.For<IMeetsGoogleSheet>();
-      var validator = new NullValidator();
+      var validatorChain = new ValidatorChain();
 
       sheet
         .Fields
@@ -38,19 +38,19 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         {
           new[]
           {
-            new MeetFieldValue(null, "R1C1", validator),
-            new MeetFieldValue(null, "R1C2", validator),
-            new MeetFieldValue(null, "R1C3", validator),
-            new MeetFieldValue(null, "R1C4", validator),
-            new MeetFieldValue(null, "R1C5", validator)
+            new MeetFieldValue(null, "R1C1", validatorChain),
+            new MeetFieldValue(null, "R1C2", validatorChain),
+            new MeetFieldValue(null, "R1C3", validatorChain),
+            new MeetFieldValue(null, "R1C4", validatorChain),
+            new MeetFieldValue(null, "R1C5", validatorChain)
           },
           new[]
           {
-            new MeetFieldValue(null, "R2C1", validator),
-            new MeetFieldValue(null, "R2C2", validator),
-            new MeetFieldValue(null, "R2C3", validator),
-            new MeetFieldValue(null, "R2C4", validator),
-            new MeetFieldValue(null, "R2C5", validator)
+            new MeetFieldValue(null, "R2C1", validatorChain),
+            new MeetFieldValue(null, "R2C2", validatorChain),
+            new MeetFieldValue(null, "R2C3", validatorChain),
+            new MeetFieldValue(null, "R2C4", validatorChain),
+            new MeetFieldValue(null, "R2C5", validatorChain)
           },
         });
 
