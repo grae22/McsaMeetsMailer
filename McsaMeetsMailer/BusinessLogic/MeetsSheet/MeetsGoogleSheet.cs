@@ -259,11 +259,14 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 
           IValidator validator = MeetSheetValueValidatorFactory.CreateValidator(columnHeaderText);
 
-          rowData.Add(
-            new MeetFieldValue(
-              _fields[fieldIndex],
-              cellValue,
-              validator));
+          var newFieldValue = new MeetFieldValue(
+            _fields[fieldIndex],
+            cellValue,
+            validator);
+
+          LogFieldValueValidationErrors(newFieldValue);
+
+          rowData.Add(newFieldValue);
 
           if (!rowHasData &&
               !string.IsNullOrWhiteSpace(cellValue))
@@ -277,6 +280,18 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           dataByRow.Add(rowData);
         }
       }
+    }
+
+    private void LogFieldValueValidationErrors(in MeetFieldValue fieldValue)
+    {
+      if (fieldValue.ValidationResults.IsValid)
+      {
+        return;
+      }
+
+      _logger.LogDebug(
+        $"Validation error on field \"{fieldValue.Field.FriendlyText}\" : \"{fieldValue.ValidationResults.ErrorMessage}\".",
+        ClassName);
     }
 
     private static bool IsColumnHeaderForHeaderDisplayField(in string columnHeaderText)
