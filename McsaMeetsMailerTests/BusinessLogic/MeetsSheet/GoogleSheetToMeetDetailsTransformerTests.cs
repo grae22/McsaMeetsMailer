@@ -12,7 +12,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
 {
   [TestFixture]
   public class GoogleSheetToMeetDetailsTransformerTests
-  {/*
+  {
     [Test]
     public void Process_GivenGoogleSheet_ShouldOutputMeetDetails()
     {
@@ -23,11 +23,11 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         .Fields
         .Returns(new[]
         {
-          new MeetField(false, false, string.Empty, "Column 1", 0),
-          new MeetField(false, false, string.Empty, "Column 2", 0),
-          new MeetField(false, false, string.Empty, MeetsGoogleSheet.HeaderText_LeaderName, 0),
-          new MeetField(false, false, string.Empty, "Column 3", 0),
-          new MeetField(false, false, string.Empty, MeetsGoogleSheet.HeaderText_LeaderEmail, 0),
+          new MeetField(false, false, string.Empty, "Column 1", 0, false),
+          new MeetField(false, false, string.Empty, "Column 2", 0, false),
+          new MeetField(false, false, string.Empty, "Column 3", 0, true),
+          new MeetField(true, false, string.Empty, "Column 4", 0, false),
+          new MeetField(false, true, string.Empty, "Column 5", 0, false),
         });
 
       sheet
@@ -53,11 +53,11 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         });
 
       sheet
-        .FindHeaderIndex(MeetsGoogleSheet.HeaderText_LeaderName, Arg.Any<bool>())
+        .FindHeaderIndex("Column 3", Arg.Any<bool>())
         .Returns(2);
 
       sheet
-        .FindHeaderIndex(MeetsGoogleSheet.HeaderText_LeaderEmail, Arg.Any<bool>())
+        .FindHeaderIndex("Column 5", Arg.Any<bool>())
         .Returns(4);
 
       // Act.
@@ -67,15 +67,20 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
 
       // Assert.
       Assert.IsNotNull(models);
+
       Assert.AreEqual(2, models.Count());
-      Assert.AreEqual("R1C3", models.ElementAt(0).Leader);
-      Assert.AreEqual("R2C3", models.ElementAt(1).Leader);
-      Assert.AreEqual("R1C5", models.ElementAt(0).LeaderEmail);
-      Assert.AreEqual("R2C5", models.ElementAt(1).LeaderEmail);
-      Assert.AreEqual("R1C1", models.ElementAt(0).AdditionalFields["Column 1"]);
-      Assert.AreEqual("R2C1", models.ElementAt(1).AdditionalFields["Column 1"]);
-      Assert.AreEqual("R1C4", models.ElementAt(0).AdditionalFields["Column 3"]);
-      Assert.AreEqual("R2C4", models.ElementAt(1).AdditionalFields["Column 3"]);
-    }*/
+
+      Assert.AreEqual("R1C1", models.ElementAt(0).FieldValues.ElementAt(0).Value);
+      Assert.AreEqual("R2C5", models.ElementAt(1).FieldValues.ElementAt(4).Value);
+
+      Assert.AreEqual(5, models.ElementAt(0).AllFields.Count());
+
+      Assert.AreEqual("Column 1", models.ElementAt(0).AllFields.ElementAt(0).FriendlyText);
+      Assert.AreEqual("Column 5", models.ElementAt(0).AllFields.ElementAt(4).FriendlyText);
+
+      Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(3).DisplayInHeader);
+      Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(4).IsRequired);
+      Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(2).IsMeetTitle);
+    }
   }
 }
