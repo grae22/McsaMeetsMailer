@@ -3,6 +3,7 @@ using System.Linq;
 
 using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
+using McsaMeetsMailer.Utils.Validation.Validators;
 
 using NSubstitute;
 
@@ -18,32 +19,47 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
     {
       // Arrange.
       var sheet = Substitute.For<IMeetsGoogleSheet>();
-      
+      var validator = new NullValidator();
+
       sheet
-        .Headers
+        .Fields
         .Returns(new[]
         {
-          "Column 1",
-          "Column 2",
-          MeetsGoogleSheet.HeaderText_LeaderName,
-          "Column 3",
-          MeetsGoogleSheet.HeaderText_LeaderEmail
+          new MeetField(false, false, string.Empty, "Column 1", 0, false),
+          new MeetField(false, false, string.Empty, "Column 2", 0, false),
+          new MeetField(false, false, string.Empty, "Column 3", 0, true),
+          new MeetField(true, false, string.Empty, "Column 4", 0, false),
+          new MeetField(false, true, string.Empty, "Column 5", 0, false),
         });
 
       sheet
-        .DataByRow
+        .ValuesByRow
         .Returns(new[]
         {
-          new [] { "R1C1", "R1C2", "R1C3", "R1C4", "R1C5" },
-          new [] { "R2C1", "R2C2", "R2C3", "R2C4", "R2C5" }
+          new[]
+          {
+            new MeetFieldValue(null, "R1C1", validator),
+            new MeetFieldValue(null, "R1C2", validator),
+            new MeetFieldValue(null, "R1C3", validator),
+            new MeetFieldValue(null, "R1C4", validator),
+            new MeetFieldValue(null, "R1C5", validator)
+          },
+          new[]
+          {
+            new MeetFieldValue(null, "R2C1", validator),
+            new MeetFieldValue(null, "R2C2", validator),
+            new MeetFieldValue(null, "R2C3", validator),
+            new MeetFieldValue(null, "R2C4", validator),
+            new MeetFieldValue(null, "R2C5", validator)
+          },
         });
 
       sheet
-        .FindHeaderIndex(MeetsGoogleSheet.HeaderText_LeaderName, Arg.Any<bool>())
+        .FindHeaderIndex("Column 3", Arg.Any<bool>())
         .Returns(2);
 
       sheet
-        .FindHeaderIndex(MeetsGoogleSheet.HeaderText_LeaderEmail, Arg.Any<bool>())
+        .FindHeaderIndex("Column 5", Arg.Any<bool>())
         .Returns(4);
 
       // Act.
@@ -53,15 +69,20 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
 
       // Assert.
       Assert.IsNotNull(models);
+
       Assert.AreEqual(2, models.Count());
-      Assert.AreEqual("R1C3", models.ElementAt(0).Leader);
-      Assert.AreEqual("R2C3", models.ElementAt(1).Leader);
-      Assert.AreEqual("R1C5", models.ElementAt(0).LeaderEmail);
-      Assert.AreEqual("R2C5", models.ElementAt(1).LeaderEmail);
-      Assert.AreEqual("R1C1", models.ElementAt(0).AdditionalFields["Column 1"]);
-      Assert.AreEqual("R2C1", models.ElementAt(1).AdditionalFields["Column 1"]);
-      Assert.AreEqual("R1C4", models.ElementAt(0).AdditionalFields["Column 3"]);
-      Assert.AreEqual("R2C4", models.ElementAt(1).AdditionalFields["Column 3"]);
+
+      Assert.AreEqual("R1C1", models.ElementAt(0).FieldValues.ElementAt(0).Value);
+      Assert.AreEqual("R2C5", models.ElementAt(1).FieldValues.ElementAt(4).Value);
+
+      Assert.AreEqual(5, models.ElementAt(0).AllFields.Count());
+
+      Assert.AreEqual("Column 1", models.ElementAt(0).AllFields.ElementAt(0).FriendlyText);
+      Assert.AreEqual("Column 5", models.ElementAt(0).AllFields.ElementAt(4).FriendlyText);
+
+      Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(3).DisplayInHeader);
+      Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(4).IsRequired);
+      Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(2).IsMeetTitle);
     }
   }
 }

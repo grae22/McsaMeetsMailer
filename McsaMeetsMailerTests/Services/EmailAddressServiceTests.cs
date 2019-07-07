@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using McsaMeetsMailer.BusinessLogic.MeetsSheet;
+using McsaMeetsMailer.BusinessLogic.EmailAddressSheet;
 using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace McsaMeetsMailerTests.Services
 {
   [TestFixture]
-  public class MeetsServiceTests
+  public class EmailAddressServiceTests
   {
     [Test]
     public async Task RetrieveMeets_GivenHappyPath_ShouldReturnNotNullMeetsCollection()
@@ -23,8 +23,8 @@ namespace McsaMeetsMailerTests.Services
       // Arrange.
       var settings = Substitute.For<ISettings>();
       var requestMaker = Substitute.For<IRestRequestMaker>();
-      var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
-      var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var googleSheetFactory = Substitute.For<IEmailAddressGoogleSheetFactory>();
+      var googleSheet = Substitute.For<IEmailAddressGoogleSheet>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -46,14 +46,14 @@ namespace McsaMeetsMailerTests.Services
         .Retrieve()
         .Returns(true);
 
-      var testObject = new MeetsService(
+      var testObject = new EmailAddressService(
         settings,
         requestMaker,
         googleSheetFactory,
         logger);
 
       // Act.
-      var result = await testObject.RetrieveMeets();
+      var result = await testObject.RetrieveEmailAddresses();
 
       // Assert.
       Assert.IsNotNull(result);
@@ -65,8 +65,8 @@ namespace McsaMeetsMailerTests.Services
       // Arrange.
       var settings = Substitute.For<ISettings>();
       var requestMaker = Substitute.For<IRestRequestMaker>();
-      var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
-      var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var googleSheetFactory = Substitute.For<IEmailAddressGoogleSheetFactory>();
+      var googleSheet = Substitute.For<IEmailAddressGoogleSheet>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -88,27 +88,27 @@ namespace McsaMeetsMailerTests.Services
         .Retrieve()
         .Returns(false);
 
-      var testObject = new MeetsService(
+      var testObject = new EmailAddressService(
         settings,
         requestMaker,
         googleSheetFactory,
         logger);
 
       // Act.
-      var result = await testObject.RetrieveMeets();
+      var result = await testObject.RetrieveEmailAddresses();
 
       // Assert.
       Assert.IsNull(result);
     }
 
     [Test]
-    public async Task RetrieveMeets_GivenMeetsSheetFormatException_ShouldReturnNullMeetsCollection()
+    public async Task RetrieveMeets_GivenFormatException_ShouldReturnNullMeetsCollection()
     {
       // Arrange.
       var settings = Substitute.For<ISettings>();
       var requestMaker = Substitute.For<IRestRequestMaker>();
-      var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
-      var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var googleSheetFactory = Substitute.For<IEmailAddressGoogleSheetFactory>();
+      var googleSheet = Substitute.For<IEmailAddressGoogleSheet>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -128,16 +128,16 @@ namespace McsaMeetsMailerTests.Services
 
       googleSheet
         .Retrieve()
-        .Throws(new MeetsGoogleSheetFormatException(string.Empty));
+        .Throws(new EmailAddressGoogleSheetFormatException(string.Empty));
 
-      var testObject = new MeetsService(
+      var testObject = new EmailAddressService(
         settings,
         requestMaker,
         googleSheetFactory,
         logger);
 
       // Act.
-      var result = await testObject.RetrieveMeets();
+      var result = await testObject.RetrieveEmailAddresses();
 
       // Assert.
       Assert.IsNull(result);

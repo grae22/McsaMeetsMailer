@@ -206,10 +206,17 @@ namespace McsaMeetsMailerTests.BusinessLogic.EmailAddressSheet
       // Act.
       await testObject.Retrieve();
 
+      IEmailAddresses emailAddresses = testObject.EmailAddresses;
+
       // Assert.
       Assert.AreEqual(2, testObject.FullScheduleEmailAddresses.Count());
       Assert.AreEqual(address1, testObject.FullScheduleEmailAddresses.ElementAt(0));
       Assert.AreEqual(address2, testObject.FullScheduleEmailAddresses.ElementAt(1));
+
+      Assert.IsNotNull(emailAddresses);
+      Assert.AreEqual(2, emailAddresses.FullScheduleEmailAddresses.Count());
+      Assert.AreEqual(address1, emailAddresses.FullScheduleEmailAddresses.ElementAt(0));
+      Assert.AreEqual(address2, emailAddresses.FullScheduleEmailAddresses.ElementAt(1));
     }
 
     [Test]

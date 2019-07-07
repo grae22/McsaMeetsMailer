@@ -1,34 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using McsaMeetsMailer.BusinessLogic.MeetsSheet;
-using McsaMeetsMailer.Models;
+using McsaMeetsMailer.BusinessLogic.EmailAddressSheet;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
 using McsaMeetsMailer.Utils.Settings;
 
 namespace McsaMeetsMailer.Services
 {
-  public class MeetsService : IMeetsService
+  public class EmailAddressService : IEmailAddressService
   {
-    private static readonly string ClassName = typeof(MeetsService).Name;
+    private static readonly string ClassName = typeof(EmailAddressService).Name;
 
-    private const string SettingName_MeetsGoogleSheetId = "MCSA-KZN_Meets_MeetsGoogleSheetId";
+    private const string SettingName_EmailAddressGoogleSheetId = "MCSA-KZN_Meets_EmailAddressGoogleSheetId";
     private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";
     private const string GoogleSheetsBaseUrl = "https://sheets.googleapis.com/v4/spreadsheets/";
-    private const string SheetRange = "A1:Z500";
+    private const string SheetRange = "A1:A1000";
 
     private readonly string _meetsGoogleSheetId;
     private readonly string _googleAppKey;
     private readonly IRestRequestMaker _requestMaker;
-    private readonly IMeetsGoogleSheetFactory _googleSheetFactory;
+    private readonly IEmailAddressGoogleSheetFactory _googleSheetFactory;
     private readonly ILogger _logger;
 
-    public MeetsService(
+    public EmailAddressService(
       in ISettings settings,
       in IRestRequestMaker requestMaker,
-      in IMeetsGoogleSheetFactory googleSheetFactory,
+      in IEmailAddressGoogleSheetFactory googleSheetFactory,
       in ILogger logger)
     {
       if (settings == null)
@@ -40,11 +38,11 @@ namespace McsaMeetsMailer.Services
       _googleSheetFactory = googleSheetFactory ?? throw new ArgumentNullException(nameof(googleSheetFactory));
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-      _meetsGoogleSheetId = settings.GetValidValue(SettingName_MeetsGoogleSheetId);
+      _meetsGoogleSheetId = settings.GetValidValue(SettingName_EmailAddressGoogleSheetId);
       _googleAppKey = settings.GetValidValue(SettingName_GoogleAppKey);
     }
 
-    public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets()
+    public async Task<IEmailAddresses> RetrieveEmailAddresses()
     {
       var url = $"{GoogleSheetsBaseUrl}{_meetsGoogleSheetId}/values/Sheet1!{SheetRange}?key={_googleAppKey}";
 
@@ -60,9 +58,9 @@ namespace McsaMeetsMailer.Services
         return null;
       }
 
-      _logger.LogDebug($"Retrieving meets from \"{url}\"...", ClassName);
+      _logger.LogDebug($"Retrieving email addresses from \"{url}\"...", ClassName);
 
-      IMeetsGoogleSheet sheet = _googleSheetFactory.CreateSheet(
+      IEmailAddressGoogleSheet sheet = _googleSheetFactory.CreateSheet(
         uri,
         _requestMaker,
         _logger);
@@ -73,23 +71,17 @@ namespace McsaMeetsMailer.Services
 
         if (result == false)
         {
-          _logger.LogError("Failed to retrieve meets.", ClassName);
+          _logger.LogError("Failed to retrieve email addresses.", ClassName);
           return null;
         }
       }
-      catch (MeetsGoogleSheetFormatException ex)
+      catch (EmailAddressGoogleSheetFormatException ex)
       {
-        _logger.LogError("Error while retrieving meets.", ClassName, ex);
+        _logger.LogError("Error while retrieving email addresses.", ClassName, ex);
         return null;
       }
 
-      _logger.LogDebug("Retrieved meets, transforming into models...", ClassName);
-
-      GoogleSheetToMeetDetailsTransformer.Process(
-        sheet,
-        out IEnumerable<MeetDetailsModel> meetDetailsModels);
-
-      return meetDetailsModels;
+      return sheet.EmailAddresses;
     }
   }
 }

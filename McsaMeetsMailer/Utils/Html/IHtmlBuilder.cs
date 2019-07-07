@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace McsaMeetsMailer.Utils.Html
 {
@@ -11,6 +12,12 @@ namespace McsaMeetsMailer.Utils.Html
     void AddHeadingRow(IEnumerable<string> headings);
 
     void AddRow(IEnumerable<string> values);
+
+    void AddParagraph(string text);
+
+    void AddLineBreak();
+
+    void AddStyleSheet(string path);
 
     string GetHtml();
   }

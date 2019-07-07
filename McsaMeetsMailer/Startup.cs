@@ -1,3 +1,4 @@
+using McsaMeetsMailer.BusinessLogic.EmailAddressSheet;
 using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Logging;
@@ -38,6 +39,7 @@ namespace McsaMeetsMailer
       var requestMaker = new WebRestRequestMaker();
       var settings = new EnvironmentVariableSettings();
       var meetSheetFactory = new MeetsGoogleSheetFactory();
+      var emailAddressSheetFactory = new EmailAddressGoogleSheetFactory();
 
       var meetsService = new MeetsService(
         settings,
@@ -45,9 +47,19 @@ namespace McsaMeetsMailer
         meetSheetFactory,
         logger);
 
+      var emailAddressService = new EmailAddressService(
+        settings,
+        requestMaker,
+        emailAddressSheetFactory,
+        logger);
+
+      var emailSenderService = new EmailSenderService(settings);
+
       services.AddSingleton<ILogger>(logger);
       services.AddSingleton<ISettings>(settings);
       services.AddSingleton<IMeetsService>(meetsService);
+      services.AddSingleton<IEmailAddressService>(emailAddressService);
+      services.AddSingleton<IEmailSenderService>(emailSenderService);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

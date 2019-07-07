@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.BusinessLogic;
@@ -29,7 +32,7 @@ namespace McsaMeetsMailer.Pages
         return;
       }
 
-      html = FullScheduleEmailBuilder.Build(meets, new HtmlBuilder());
+      html = FullScheduleEmailBuilder.Build( meets, new HtmlBuilder() );
     }
   }
 }

@@ -10,12 +10,13 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
 {
   public class EmailAddressGoogleSheet : IEmailAddressGoogleSheet, IEmailAddresses
   {
-    public enum ColumnIndices
+    public IEmailAddresses EmailAddresses => this;
+    public IEnumerable<string> FullScheduleEmailAddresses => GetColumnData(ColumnIndices.FullSchedule);
+
+    private enum ColumnIndices
     {
       FullSchedule
     }
-
-    public IEnumerable<string> FullScheduleEmailAddresses => GetColumnData(ColumnIndices.FullSchedule);
 
     private static readonly string ClassName = typeof(EmailAddressGoogleSheet).Name;
 
@@ -71,7 +72,7 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
       return true;
     }
 
-    private static void ValidateColumnHeaders(in GoogleSheet sheet)
+    private void ValidateColumnHeaders(in GoogleSheet sheet)
     {
       if (sheet.values.Length == 0)
       {
@@ -99,6 +100,8 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
         throw new EmailAddressGoogleSheetFormatException(
           $"Column header \"{expectedText}\" not found in column {index}, found \"{text}\" instead.");
       }
+
+      _logger.LogInfo("Email address sheet column headers validated ok.", ClassName);
     }
 
     private void ExtractData(in GoogleSheet sheet)
@@ -116,13 +119,17 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
       }
 
       _dataExtractedOk = true;
+
+      _logger.LogInfo("Email address sheet data extracted ok.", ClassName);
     }
 
-    private static void ReadColumnValues(
+    private void ReadColumnValues(
       in GoogleSheet sheet,
       in int columnIndex,
       out List<string> values)
     {
+      _logger.LogDebug($"Reading \"{ColumnHeaders[columnIndex]}\" column values...", ClassName);
+
       values = new List<string>();
 
       for (var row = 1; row < sheet.values.Length; row++)
@@ -135,6 +142,8 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
         }
 
         values.Add(value);
+
+        _logger.LogDebug(value, ClassName);
       }
     }
 

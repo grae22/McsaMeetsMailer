@@ -6,27 +6,29 @@ using System.Threading.Tasks;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
+using McsaMeetsMailer.Utils.Validation.Validators;
 
 namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public class MeetsGoogleSheet : IMeetsGoogleSheet
   {
     public const string HeaderText_Date = "# Date*";
-    public const string HeaderText_LeaderName = "# Leader*";
-    public const string HeaderText_LeaderEmail = "Leader Email*";
+    public const string HeaderText_MeetTitle = "# Meet Title*";
 
-    public IEnumerable<string> Headers => _headers;
-    public IEnumerable<IEnumerable<string>> DataByRow => _dataByRow;
+    public IEnumerable<MeetField> Fields => _fields;
+    public IEnumerable<IEnumerable<MeetFieldValue>> ValuesByRow => _valuesByRow;
 
     private static readonly string ClassName = typeof(MeetsGoogleSheet).Name;
 
     private const string FirstCellText = HeaderText_Date;
+    private const char HeaderSpecialChar_DisplayInHeader = '#';
+    private const char HeaderSpecialChar_Required = '*';
 
     private readonly Uri _googleSheetUri;
     private readonly IRestRequestMaker _requestMaker;
     private readonly ILogger _logger;
-    private List<string> _headers = new List<string>();
-    private List<List<string>> _dataByRow = new List<List<string>>();
+    private List<MeetField> _fields = new List<MeetField>();
+    private List<List<MeetFieldValue>> _valuesByRow = new List<List<MeetFieldValue>>();
 
     public MeetsGoogleSheet(
       Uri googleSheetUri,
@@ -72,7 +74,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           headerRowIndex,
           headerColumnIndex,
           headerColumnCount,
-          out _headers);
+          ref _fields);
 
         ReadData(
           sheet,
@@ -80,7 +82,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           headerColumnIndex,
           headerColumnCount,
           lastRow,
-          out _dataByRow);
+          ref _valuesByRow);
       }
       catch (RestRequestException ex)
       {
@@ -95,11 +97,16 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       return true;
     }
 
-    public int FindHeaderIndex(in string headerText, in bool raiseExceptionIfNotFound = false)
+    public int FindHeaderIndex(
+      in string rawHeaderText,
+      in bool raiseExceptionIfNotFound = false)
     {
-      for (var i = 0; i < Headers.Count(); i++)
+      for (var i = 0; i < Fields.Count(); i++)
       {
-        bool isMatch = Headers.ElementAt(i).Equals(headerText, StringComparison.OrdinalIgnoreCase);
+        bool isMatch = Fields
+          .ElementAt(i)
+          .RawText
+          .Equals(rawHeaderText, StringComparison.OrdinalIgnoreCase);
 
         if (isMatch)
         {
@@ -109,7 +116,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 
       if (raiseExceptionIfNotFound)
       {
-        throw new MeetsGoogleSheetFormatException($"No header found with text \"{headerText}\".");
+        throw new MeetsGoogleSheetFormatException($"No header found with text \"{rawHeaderText}\".");
       }
 
       return -1;
@@ -200,37 +207,63 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       in int headerRow,
       in int headerColumn,
       in int headerColumnCount,
-      out List<string> headers)
+      ref List<MeetField> fields)
     {
-      headers = new List<string>();
+      fields.Clear();
 
-      for (var column = headerColumn; headers.Count < headerColumnCount; column++)
+      for (var column = headerColumn; fields.Count < headerColumnCount; column++)
       {
-        headers.Add(sheet.values[headerRow][column]);
+        string value = sheet.values[headerRow][column].Trim();
+
+        var field = new MeetField(
+          IsColumnHeaderForHeaderDisplayField(value),
+          IsColumnHeaderForRequiredField(value),
+          value,
+          StripSpecialCharactersFromColumnHeader(value),
+          fields.Count,
+          IsColumnHeaderForMeetTitle(value));
+
+        fields.Add(field);
       }
     }
 
-    private static void ReadData(
+    private void ReadData(
       in GoogleSheet sheet,
       in int headerRow,
       in int headerColumn,
       in int headerColumnCount,
       in int lastRow,
-      out List<List<string>> dataByRow)
+      ref List<List<MeetFieldValue>> dataByRow)
     {
-      dataByRow = new List<List<string>>();
+      dataByRow.Clear();
 
       for (var row = headerRow + 1; row <= lastRow; row++)
       {
         bool rowHasData = false;
 
-        var rowData = new List<string>();
+        var rowData = new List<MeetFieldValue>();
 
         for (var column = headerColumn; column < headerColumn + headerColumnCount; column++)
         {
-          string cellValue = sheet.values[row][column];
+          string cellValue = sheet.values[row][column].Trim();
 
-          rowData.Add(cellValue);
+          int fieldIndex = column - headerColumn;
+
+          if (fieldIndex < 0 || fieldIndex >= _fields.Count)
+          {
+            throw new MeetsGoogleSheetFormatException(
+              $"Attempted to access invalid field index {fieldIndex}, max index is {_fields.Count - 1}.");
+          }
+
+          string columnHeaderText = _fields[fieldIndex].RawText;
+
+          IValidator validator = MeetSheetValueValidatorFactory.CreateValidator(columnHeaderText);
+
+          rowData.Add(
+            new MeetFieldValue(
+              _fields[fieldIndex],
+              cellValue,
+              validator));
 
           if (!rowHasData &&
               !string.IsNullOrWhiteSpace(cellValue))
@@ -244,6 +277,31 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           dataByRow.Add(rowData);
         }
       }
+    }
+
+    private static bool IsColumnHeaderForHeaderDisplayField(in string columnHeaderText)
+    {
+      return columnHeaderText.Length > 0 &&
+             columnHeaderText[0] == HeaderSpecialChar_DisplayInHeader;
+    }
+
+    private static bool IsColumnHeaderForRequiredField(in string columnHeaderText)
+    {
+      return columnHeaderText.Length > 0 &&
+             columnHeaderText[columnHeaderText.Length - 1] == HeaderSpecialChar_Required;
+    }
+
+    private static bool IsColumnHeaderForMeetTitle(in string columnHeaderText)
+    {
+      return columnHeaderText.Equals(HeaderText_MeetTitle, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string StripSpecialCharactersFromColumnHeader(in string columnHeaderText)
+    {
+      return columnHeaderText
+        .Replace($"{HeaderSpecialChar_DisplayInHeader}", "")
+        .Replace($"{HeaderSpecialChar_Required}", "")
+        .Trim();
     }
   }
 }

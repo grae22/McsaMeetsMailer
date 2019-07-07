@@ -164,17 +164,17 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       await testObject.Retrieve();
 
       // Assert.
-      Assert.AreEqual(columnNames[0], testObject.Headers.ElementAt(0));
-      Assert.AreEqual(columnNames[1], testObject.Headers.ElementAt(1));
-      Assert.AreEqual(columnNames[2], testObject.Headers.ElementAt(2));
+      Assert.AreEqual(columnNames[0], testObject.Fields.ElementAt(0).RawText);
+      Assert.AreEqual(columnNames[1], testObject.Fields.ElementAt(1).RawText);
+      Assert.AreEqual(columnNames[2], testObject.Fields.ElementAt(2).RawText);
 
-      Assert.AreEqual(rowValues1[0], testObject.DataByRow.ElementAt(0).ElementAt(0));
-      Assert.AreEqual(rowValues1[1], testObject.DataByRow.ElementAt(0).ElementAt(1));
-      Assert.AreEqual(rowValues1[2], testObject.DataByRow.ElementAt(0).ElementAt(2));
+      Assert.AreEqual(rowValues1[0], testObject.ValuesByRow.ElementAt(0).ElementAt(0).Value);
+      Assert.AreEqual(rowValues1[1], testObject.ValuesByRow.ElementAt(0).ElementAt(1).Value);
+      Assert.AreEqual(rowValues1[2], testObject.ValuesByRow.ElementAt(0).ElementAt(2).Value);
 
-      Assert.AreEqual(rowValues2[0], testObject.DataByRow.ElementAt(1).ElementAt(0));
-      Assert.AreEqual(rowValues2[1], testObject.DataByRow.ElementAt(1).ElementAt(1));
-      Assert.AreEqual(rowValues2[2], testObject.DataByRow.ElementAt(1).ElementAt(2));
+      Assert.AreEqual(rowValues2[0], testObject.ValuesByRow.ElementAt(1).ElementAt(0).Value);
+      Assert.AreEqual(rowValues2[1], testObject.ValuesByRow.ElementAt(1).ElementAt(1).Value);
+      Assert.AreEqual(rowValues2[2], testObject.ValuesByRow.ElementAt(1).ElementAt(2).Value);
     }
 
     [Test]
@@ -248,17 +248,60 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       await testObject.Retrieve();
 
       // Assert.
-      Assert.AreEqual(columnNames[1], testObject.Headers.ElementAt(0));
-      Assert.AreEqual(columnNames[2], testObject.Headers.ElementAt(1));
-      Assert.AreEqual(columnNames[3], testObject.Headers.ElementAt(2));
+      Assert.AreEqual(rowValues1[1], testObject.ValuesByRow.ElementAt(0).ElementAt(0).Value);
+      Assert.AreEqual(rowValues1[2], testObject.ValuesByRow.ElementAt(0).ElementAt(1).Value);
+      Assert.AreEqual(rowValues1[3], testObject.ValuesByRow.ElementAt(0).ElementAt(2).Value);
 
-      Assert.AreEqual(rowValues1[1], testObject.DataByRow.ElementAt(0).ElementAt(0));
-      Assert.AreEqual(rowValues1[2], testObject.DataByRow.ElementAt(0).ElementAt(1));
-      Assert.AreEqual(rowValues1[3], testObject.DataByRow.ElementAt(0).ElementAt(2));
+      Assert.AreEqual(rowValues4[1], testObject.ValuesByRow.ElementAt(1).ElementAt(0).Value);
+      Assert.AreEqual(rowValues4[2], testObject.ValuesByRow.ElementAt(1).ElementAt(1).Value);
+      Assert.AreEqual(rowValues4[3], testObject.ValuesByRow.ElementAt(1).ElementAt(2).Value);
+    }
 
-      Assert.AreEqual(rowValues4[1], testObject.DataByRow.ElementAt(1).ElementAt(0));
-      Assert.AreEqual(rowValues4[2], testObject.DataByRow.ElementAt(1).ElementAt(1));
-      Assert.AreEqual(rowValues4[3], testObject.DataByRow.ElementAt(1).ElementAt(2));
+    [Test]
+    public async Task Retrieve_GivenSheetSpecialFields_ShouldReturnObjectsWithPropertiesCorrectlySet()
+    {
+      // Arrange.
+      string[] columnNames =
+      {
+        DateColumnText,
+        "# Title",
+        "Leader Name*"
+      };
+
+      var url = new Uri("https://somegooglesheet");
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var logger = Substitute.For<ILogger>();
+
+      requestMaker
+        .Get<GoogleSheet>(url)
+        .Returns(new GoogleSheet
+        {
+          values = new[]
+          {
+            columnNames
+          }
+        });
+
+      var testObject = new MeetsGoogleSheet(
+        url,
+        requestMaker,
+        logger);
+
+      // Act.
+      await testObject.Retrieve();
+
+      // Assert.
+      Assert.IsTrue(testObject.Fields.ElementAt(0).DisplayInHeader);
+      Assert.IsTrue(testObject.Fields.ElementAt(0).IsRequired);
+      Assert.AreEqual(0, testObject.Fields.ElementAt(0).SortOrder);
+
+      Assert.IsTrue(testObject.Fields.ElementAt(1).DisplayInHeader);
+      Assert.IsFalse(testObject.Fields.ElementAt(1).IsRequired);
+      Assert.AreEqual(1, testObject.Fields.ElementAt(1).SortOrder);
+
+      Assert.IsFalse(testObject.Fields.ElementAt(2).DisplayInHeader);
+      Assert.IsTrue(testObject.Fields.ElementAt(2).IsRequired);
+      Assert.AreEqual(2, testObject.Fields.ElementAt(2).SortOrder);
     }
 
     [Test]
@@ -310,12 +353,12 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       await testObject.Retrieve();
 
       // Assert.
-      Assert.AreEqual(DateColumnText, testObject.Headers.ElementAt(0));
-      Assert.AreEqual("Notes", testObject.Headers.ElementAt(12));
-      Assert.AreEqual("2019-7-1", testObject.DataByRow.ElementAt(0).ElementAt(0));
-      Assert.AreEqual("Meet 1", testObject.DataByRow.ElementAt(0).ElementAt(4));
-      Assert.AreEqual("2019-7-10", testObject.DataByRow.ElementAt(1).ElementAt(0));
-      Assert.AreEqual("Meet 2", testObject.DataByRow.ElementAt(1).ElementAt(4));
+      Assert.AreEqual(DateColumnText, testObject.Fields.ElementAt(0).RawText);
+      Assert.AreEqual("Notes", testObject.Fields.ElementAt(12).RawText);
+      Assert.AreEqual("2019-7-1", testObject.ValuesByRow.ElementAt(0).ElementAt(0).Value);
+      Assert.AreEqual("Meet 1", testObject.ValuesByRow.ElementAt(0).ElementAt(4).Value);
+      Assert.AreEqual("2019-7-10", testObject.ValuesByRow.ElementAt(1).ElementAt(0).Value);
+      Assert.AreEqual("Meet 2", testObject.ValuesByRow.ElementAt(1).ElementAt(4).Value);
     }
 
     [TestCase(DateColumnText, 0)]
