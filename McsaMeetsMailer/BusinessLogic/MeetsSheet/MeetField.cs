@@ -1,4 +1,4 @@
-﻿namespace McsaMeetsMailer.Models
+﻿namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public class MeetField
   {

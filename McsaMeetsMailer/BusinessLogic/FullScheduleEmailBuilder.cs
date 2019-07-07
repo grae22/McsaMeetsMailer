@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Html;
 
@@ -93,11 +94,18 @@ namespace McsaMeetsMailer.BusinessLogic
             continue;
           }
 
+          string value = field.Value;
+
+          if (!field.ValidationResults.IsValid)
+          {
+            value = $"INVALID : {value}";
+          }
+
           htmlBuilder.AddRow(
             new[]
             {
               field.Field.FriendlyText,
-              field.Value
+              value
             });
         }
 

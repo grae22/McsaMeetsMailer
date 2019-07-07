@@ -3,6 +3,7 @@ using System.Linq;
 
 using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
+using McsaMeetsMailer.Utils.Validation.Validators;
 
 using NSubstitute;
 
@@ -18,6 +19,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
     {
       // Arrange.
       var sheet = Substitute.For<IMeetsGoogleSheet>();
+      var validator = new NullValidator();
 
       sheet
         .Fields
@@ -36,19 +38,19 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         {
           new[]
           {
-            new MeetFieldValue(null, "R1C1"),
-            new MeetFieldValue(null, "R1C2"),
-            new MeetFieldValue(null, "R1C3"),
-            new MeetFieldValue(null, "R1C4"),
-            new MeetFieldValue(null, "R1C5")
+            new MeetFieldValue(null, "R1C1", validator),
+            new MeetFieldValue(null, "R1C2", validator),
+            new MeetFieldValue(null, "R1C3", validator),
+            new MeetFieldValue(null, "R1C4", validator),
+            new MeetFieldValue(null, "R1C5", validator)
           },
           new[]
           {
-            new MeetFieldValue(null, "R2C1"),
-            new MeetFieldValue(null, "R2C2"),
-            new MeetFieldValue(null, "R2C3"),
-            new MeetFieldValue(null, "R2C4"),
-            new MeetFieldValue(null, "R2C5")
+            new MeetFieldValue(null, "R2C1", validator),
+            new MeetFieldValue(null, "R2C2", validator),
+            new MeetFieldValue(null, "R2C3", validator),
+            new MeetFieldValue(null, "R2C4", validator),
+            new MeetFieldValue(null, "R2C5", validator)
           },
         });
 

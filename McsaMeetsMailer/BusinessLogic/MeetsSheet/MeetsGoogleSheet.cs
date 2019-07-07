@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
+using McsaMeetsMailer.Utils.Validation.Validators;
 
 namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
@@ -254,10 +255,15 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
               $"Attempted to access invalid field index {fieldIndex}, max index is {_fields.Count - 1}.");
           }
 
+          string columnHeaderText = _fields[fieldIndex].RawText;
+
+          IValidator validator = MeetSheetValueValidatorFactory.CreateValidator(columnHeaderText);
+
           rowData.Add(
             new MeetFieldValue(
               _fields[fieldIndex],
-              cellValue));
+              cellValue,
+              validator));
 
           if (!rowHasData &&
               !string.IsNullOrWhiteSpace(cellValue))
