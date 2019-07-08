@@ -25,7 +25,7 @@ namespace McsaMeetsMailer.Pages
 
     public async Task OnGet()
     {
-      IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets();
+      IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveAllMeets();
 
       if (meets == null)
       {

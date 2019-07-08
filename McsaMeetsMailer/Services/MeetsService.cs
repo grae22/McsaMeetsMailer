@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
+using McsaMeetsMailer.Services.Exceptions;
+using McsaMeetsMailer.Utils.Extensions;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
 using McsaMeetsMailer.Utils.Settings;
@@ -44,7 +47,7 @@ namespace McsaMeetsMailer.Services
       _googleAppKey = settings.GetValidValue(SettingName_GoogleAppKey);
     }
 
-    public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets()
+    public async Task<IEnumerable<MeetDetailsModel>> RetrieveAllMeets()
     {
       var url = $"{GoogleSheetsBaseUrl}{_meetsGoogleSheetId}/values/Sheet1!{SheetRange}?key={_googleAppKey}";
 
@@ -57,10 +60,13 @@ namespace McsaMeetsMailer.Services
       catch (UriFormatException ex)
       {
         _logger.LogError($"Failed to build URI from URL \"{url}\".", ClassName, ex);
-        return null;
+
+        throw new MeetsServiceException(
+          "Exception while building URI.",
+          ex);
       }
 
-      _logger.LogDebug($"Retrieving meets from \"{url}\"...", ClassName);
+      _logger.LogDebug($"Retrieving all meets from \"{url}\"...", ClassName);
 
       IMeetsGoogleSheet sheet = _googleSheetFactory.CreateSheet(
         uri,
@@ -73,23 +79,58 @@ namespace McsaMeetsMailer.Services
 
         if (result == false)
         {
-          _logger.LogError("Failed to retrieve meets.", ClassName);
-          return null;
+          _logger.LogError("Failed to retrieve all meets.", ClassName);
+
+          throw new MeetsServiceException("Unknown error while retrieving all meets.");
         }
       }
       catch (MeetsGoogleSheetFormatException ex)
       {
-        _logger.LogError("Error while retrieving meets.", ClassName, ex);
-        return null;
+        _logger.LogError("Exception while retrieving all meets.", ClassName, ex);
+
+        throw new MeetsServiceException(
+          "Exception while retrieving all meets.",
+          ex);
       }
 
-      _logger.LogDebug("Retrieved meets, transforming into models...", ClassName);
+      _logger.LogDebug("Retrieved all meets, transforming into models...", ClassName);
 
       GoogleSheetToMeetDetailsTransformer.Process(
         sheet,
         out IEnumerable<MeetDetailsModel> meetDetailsModels);
 
       return meetDetailsModels;
+    }
+
+    public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets(string leaderName)
+    {
+      var allMeets = await RetrieveAllMeets();
+
+      if (allMeets == null)
+      {
+        return null;
+      }
+
+      try
+      {
+        return allMeets
+          .Where(m =>
+            m
+              .LeaderField()
+              .Value
+              .Equals(leaderName, StringComparison.OrdinalIgnoreCase));
+      }
+      catch (MissingFieldException ex)
+      {
+        _logger.LogError(
+          $"Exception while retrieving meets for leader \"{leaderName}\".",
+          ClassName,
+          ex);
+
+        throw new MeetsServiceException(
+          "Exception while retrieving meets for leader.",
+          ex);
+      }
     }
   }
 }
