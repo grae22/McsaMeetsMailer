@@ -16,20 +16,24 @@ namespace McsaMeetsMailer.Pages
 
     private readonly IMeetsService _meetsService;
     private readonly List<string> _leaderNames = new List<string>();
-    private readonly IEnumerable<MeetDetailsModel> _meets;
+
+    private IEnumerable<MeetDetailsModel> _meets;
 
     public MeetSheetModel(IMeetsService meetsService)
     {
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
-
-      _meets = _meetsService.RetrieveAllMeets().Result;
     }
 
     public void OnGet()
     {
       if (_meets == null)
       {
-        return;
+        _meets = _meetsService.RetrieveAllMeets().Result;
+
+        if (_meets == null)
+        {
+          return;
+        }
       }
 
       _meets
@@ -42,8 +46,6 @@ namespace McsaMeetsMailer.Pages
             _leaderNames.Add(l);
           }
         });
-
-      //html = FullScheduleEmailBuilder.Build(meets, new HtmlBuilder());
     }
   }
 }
