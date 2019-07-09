@@ -149,7 +149,8 @@ namespace McsaMeetsMailer.Services
             m
               .Date()
               .ValueAsDate
-              .Value >= earliestDate);
+              .Value
+              .Date >= earliestDate);
       }
       catch (MissingFieldException ex)
       {
@@ -160,6 +161,52 @@ namespace McsaMeetsMailer.Services
 
         throw new MeetsServiceException(
           "Exception while retrieving meets for earliest date.",
+          ex);
+      }
+    }
+
+    public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets(
+      DateTime earliestDate,
+      DateTime latestDate)
+    {
+      var allMeets = await RetrieveAllMeets();
+
+      if (allMeets == null)
+      {
+        return null;
+      }
+
+      try
+      {
+        return allMeets
+          .Where(m =>
+          {
+            bool dateIsOnOrAfterEarliestDate =
+              m
+                .Date()
+                .ValueAsDate
+                .Value
+                .Date >= earliestDate;
+
+            bool dateIsOnOrBeforeLatestDate =
+              m
+                .Date()
+                .ValueAsDate
+                .Value
+                .Date <= latestDate;
+
+            return dateIsOnOrAfterEarliestDate && dateIsOnOrBeforeLatestDate;
+          });
+      }
+      catch (MissingFieldException ex)
+      {
+        _logger.LogError(
+          $"Exception while retrieving meets in date range \"{earliestDate:f}\" to \"{latestDate:f}\".",
+          ClassName,
+          ex);
+
+        throw new MeetsServiceException(
+          "Exception while retrieving meets in date range.",
           ex);
       }
     }
