@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
+
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.BusinessLogic;
 using McsaMeetsMailer.Services;
+using McsaMeetsMailer.Utils.Extensions;
 using McsaMeetsMailer.Utils.Html;
+
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace McsaMeetsMailer.Pages
@@ -32,7 +33,22 @@ namespace McsaMeetsMailer.Pages
         return;
       }
 
-      html = FullScheduleEmailBuilder.Build( meets, new HtmlBuilder() );
+      if (Request.Query.ContainsKey("leader"))
+      {
+        html = FullScheduleEmailBuilder
+          .Build(
+            meets
+              .Where(m =>
+                m
+                  .LeaderField()
+                  .Value
+                  .Equals(Request.Query["leader"], StringComparison.OrdinalIgnoreCase)),
+            new HtmlBuilder());
+      }
+      else
+      {
+        html = FullScheduleEmailBuilder.Build(meets, new HtmlBuilder());
+      }
     }
   }
 }

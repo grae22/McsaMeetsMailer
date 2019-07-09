@@ -1,0 +1,30 @@
+﻿@page
+@model McsaMeetsMailer.Pages.MeetSheetModel
+@{
+  ViewData["Title"] = "Meet Sheet";
+}
+
+<p>
+  <select id="leaders" onchange="refreshContentFrame()">
+    @{
+      foreach (var leaderName in Model.LeaderNames)
+      {
+        <option value="@leaderName">@leaderName</option>
+      }
+    }
+  </select>
+</p>
+
+<iframe id="contentFrame" style="width: 90%; height: 800px;" src="@Url.Content("FullSchedulePreview")">Sorry, your browser does not support i-frames.</iframe>
+
+<script language="javascript">
+  function refreshContentFrame() {
+    var leadersDropDown = document.getElementById("leaders");
+
+    var selectedLeaderName = leadersDropDown.options[leadersDropDown.selectedIndex].value;
+
+    var contentFrame = document.getElementById("contentFrame");
+    contentFrame.src = "@Url.Content("FullSchedulePreview")" + "?leader=" + selectedLeaderName;
+    contentFrame.refresh();
+  }
+</script>
