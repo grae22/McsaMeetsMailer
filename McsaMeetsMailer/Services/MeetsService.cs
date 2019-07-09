@@ -147,7 +147,7 @@ namespace McsaMeetsMailer.Services
         return allMeets
           .Where(m =>
             m
-              .Date()
+              .DateField()
               .ValueAsDate
               .Value
               .Date >= earliestDate);
@@ -183,14 +183,14 @@ namespace McsaMeetsMailer.Services
           {
             bool dateIsOnOrAfterEarliestDate =
               m
-                .Date()
+                .DateField()
                 .ValueAsDate
                 .Value
                 .Date >= earliestDate;
 
             bool dateIsOnOrBeforeLatestDate =
               m
-                .Date()
+                .DateField()
                 .ValueAsDate
                 .Value
                 .Date <= latestDate;

@@ -16,7 +16,7 @@ namespace McsaMeetsMailer.Utils.Extensions
       return GetField(LeaderFieldName, details);
     }
 
-    public static MeetFieldValue Date(this MeetDetailsModel details)
+    public static MeetFieldValue DateField(this MeetDetailsModel details)
     {
       return GetField(DateFieldName, details);
     }

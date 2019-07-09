@@ -11,7 +11,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
   public class MeetDetailsModelExtensionsTests
   {
     [Test]
-    public void LeaderName_GivenLeaderNameFieldFound_ShouldReturnLeaderName()
+    public void LeaderField_GivenLeaderNameFieldFound_ShouldReturnLeaderName()
     {
       // Arrange.
       var dateField = new MeetField(
@@ -48,7 +48,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
     }
 
     [Test]
-    public void LeaderName_GivenLeaderNameFieldNotFound_ShouldRaiseException()
+    public void LeaderField_GivenLeaderNameFieldNotFound_ShouldRaiseException()
     {
       // Arrange.
       var dateField = new MeetField(
@@ -90,7 +90,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
     }
 
     [Test]
-    public void Date_GivenDateFieldFound_ShouldReturnDate()
+    public void DateField_GivenDateFieldFound_ShouldReturnDate()
     {
       // Arrange.
       var dateField = new MeetField(
@@ -119,7 +119,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
       };
 
       // Act.
-      MeetFieldValue result = testObject.Date();
+      MeetFieldValue result = testObject.DateField();
 
       // Assert.
       Assert.NotNull(result);
@@ -127,7 +127,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
     }
 
     [Test]
-    public void Date_GivenDateFieldNotFound_ShouldRaiseException()
+    public void DateField_GivenDateFieldNotFound_ShouldRaiseException()
     {
       // Arrange.
       var dateField = new MeetField(
@@ -158,7 +158,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
       // Act & Assert.
       try
       {
-        testObject.Date();
+        testObject.DateField();
       }
       catch (MissingMeetFieldException)
       {
