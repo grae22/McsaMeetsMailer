@@ -225,5 +225,73 @@ namespace McsaMeetsMailerTests.Services
       Assert.IsNotNull(result);
       Assert.AreEqual(2, result.Count());
     }
+
+    [Test]
+    public async Task RetrieveMeets_GivenDate_ShouldOnlyReturnMeetsAfterSpecifiedDate()
+    {
+      // Arrange.
+      var settings = Substitute.For<ISettings>();
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
+      var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var logger = Substitute.For<ILogger>();
+
+      settings
+        .GetValidValue(Arg.Any<string>())
+        .Returns("SomeSheetId");
+
+      settings
+        .GetValidValue(Arg.Any<string>())
+        .Returns("SomeAppKey");
+
+      googleSheetFactory
+        .CreateSheet(
+          Arg.Any<Uri>(),
+          Arg.Any<IRestRequestMaker>(),
+          Arg.Any<ILogger>())
+        .Returns(googleSheet);
+
+      var dateField = new MeetField(
+        false,
+        false,
+        "Date",
+        "Date",
+        0,
+        false);
+
+      googleSheet
+        .Retrieve()
+        .Returns(true);
+
+      googleSheet
+        .Fields
+        .Returns(new[]
+        {
+          dateField
+        });
+
+      googleSheet
+        .ValuesByRow
+        .Returns(
+          new[]
+          {
+            new[] { new MeetFieldValue(dateField, "2019-7-15", new ValidatorChain()) },
+            new[] { new MeetFieldValue(dateField, "2019-7-31", new ValidatorChain()) },
+            new[] { new MeetFieldValue(dateField, "2019-7-1", new ValidatorChain()) }
+          });
+
+      var testObject = new MeetsService(
+        settings,
+        requestMaker,
+        googleSheetFactory,
+        logger);
+
+      // Act.
+      var result = await testObject.RetrieveMeets(new DateTime(2019, 7, 15));
+
+      // Assert.
+      Assert.IsNotNull(result);
+      Assert.AreEqual(2, result.Count());
+    }
   }
 }

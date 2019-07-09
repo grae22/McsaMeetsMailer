@@ -9,6 +9,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     public MeetField Field { get; }
     public string Value { get; }
     public IValidationResults ValidationResults => _validatorChain;
+    public DateTime? ValueAsDate => GetValueAsDate();
 
     private readonly IValidatorChain _validatorChain;
 
@@ -22,6 +23,16 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 
       _validatorChain = validatorChain ?? throw new ArgumentNullException(nameof(validatorChain));
       _validatorChain.Validate(value);
+    }
+
+    private DateTime? GetValueAsDate()
+    {
+      if (DateTime.TryParse(Value, out DateTime result))
+      {
+        return result;
+      }
+
+      return null;
     }
   }
 }

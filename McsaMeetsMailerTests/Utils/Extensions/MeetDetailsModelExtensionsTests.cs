@@ -88,5 +88,84 @@ namespace McsaMeetsMailerTests.Utils.Extensions
 
       Assert.Fail();
     }
+
+    [Test]
+    public void Date_GivenDateFieldFound_ShouldReturnDate()
+    {
+      // Arrange.
+      var dateField = new MeetField(
+        false,
+        false,
+        "Date",
+        "Date",
+        0,
+        false);
+
+      var leaderField = new MeetField(
+        false,
+        false,
+        "Leader",
+        "Leader",
+        0,
+        false);
+
+      var testObject = new MeetDetailsModel
+      {
+        FieldValues = new[]
+        {
+          new MeetFieldValue(dateField, "2019-7-1", new ValidatorChain()),
+          new MeetFieldValue(leaderField, "Leader Name", new ValidatorChain())
+        }
+      };
+
+      // Act.
+      MeetFieldValue result = testObject.Date();
+
+      // Assert.
+      Assert.NotNull(result);
+      Assert.AreEqual("2019-7-1", result.Value);
+    }
+
+    [Test]
+    public void Date_GivenDateFieldNotFound_ShouldRaiseException()
+    {
+      // Arrange.
+      var dateField = new MeetField(
+        false,
+        false,
+        "Leader",
+        "Leader",
+        0,
+        false);
+
+      var notesField = new MeetField(
+        false,
+        false,
+        "Notes",
+        "Notes",
+        0,
+        false);
+
+      var testObject = new MeetDetailsModel
+      {
+        FieldValues = new[]
+        {
+          new MeetFieldValue(dateField, string.Empty, new ValidatorChain()),
+          new MeetFieldValue(notesField, string.Empty, new ValidatorChain())
+        }
+      };
+
+      // Act & Assert.
+      try
+      {
+        testObject.Date();
+      }
+      catch (MissingMeetFieldException)
+      {
+        Assert.Pass();
+      }
+
+      Assert.Fail();
+    }
   }
 }

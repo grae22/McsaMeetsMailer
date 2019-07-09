@@ -132,5 +132,36 @@ namespace McsaMeetsMailer.Services
           ex);
       }
     }
+
+    public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets(DateTime earliestDate)
+    {
+      var allMeets = await RetrieveAllMeets();
+
+      if (allMeets == null)
+      {
+        return null;
+      }
+
+      try
+      {
+        return allMeets
+          .Where(m =>
+            m
+              .Date()
+              .ValueAsDate
+              .Value >= earliestDate);
+      }
+      catch (MissingFieldException ex)
+      {
+        _logger.LogError(
+          $"Exception while retrieving meets from earliest date \"{earliestDate:f}\".",
+          ClassName,
+          ex);
+
+        throw new MeetsServiceException(
+          "Exception while retrieving meets for earliest date.",
+          ex);
+      }
+    }
   }
 }
