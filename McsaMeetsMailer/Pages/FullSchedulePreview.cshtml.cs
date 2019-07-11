@@ -42,12 +42,11 @@ namespace McsaMeetsMailer.Pages
                 m
                   .LeaderField()
                   .Value
-                  .Equals(Request.Query["leader"], StringComparison.OrdinalIgnoreCase)),
-            new HtmlBuilder());
+                  .Equals(Request.Query["leader"], StringComparison.OrdinalIgnoreCase)));
       }
       else
       {
-        html = FullScheduleEmailBuilder.Build(meets, new HtmlBuilder());
+        html = FullScheduleEmailBuilder.Build(meets);
       }
     }
   }
