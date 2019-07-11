@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 
 using McsaMeetsMailer.BusinessLogic.MeetsSheet;
@@ -12,9 +13,12 @@ namespace McsaMeetsMailer.BusinessLogic
 {
   public static class FullScheduleEmailBuilder
   {
+    private const string headerHeadingStart =  "<!--HeaderHeading-->";
+    private const string headerHeadingEnd =  "</th>";
+
     public static string Build(IEnumerable<MeetDetailsModel> meetDetails)
     {
-      string html = null;
+      string html;
 
       using (var reader = new StreamReader("Pages/Templates/FullScheduleEmailTemplate.html"))
       {
@@ -23,56 +27,103 @@ namespace McsaMeetsMailer.BusinessLogic
 
       var meetDetailsList = meetDetails.ToList();
 
-      var headerHeadingStart = html.IndexOf( "<!--#HeaderHeading-->", StringComparison.Ordinal);
-      var headerHeadingEnd = html.IndexOf("</th>", headerHeadingStart, StringComparison.Ordinal) + "</th>".Length;
+      var headerHeadings = GetHeadings(html,
+                                       meetDetailsList.FirstOrDefault()?.FieldValues.Where(x => x.Field.DisplayInHeader).ToList(),
+                                       headerHeadingStart,
+                                       headerHeadingEnd);
 
-      var headerHeading = html.Substring(headerHeadingStart, headerHeadingEnd - headerHeadingStart);
-      headerHeading = headerHeading.Remove(0, "<!--#HeaderHeading-->".Length);
-      var headerHeadings = new StringBuilder("");
+      var headerValues = GetValues(html, meetDetailsList, "<!--HeaderValues-->", "</tr>", "<!--HeaderValue-->", "</td>", true);
+
+      string headings = GetHeadings(html,
+                                    meetDetailsList.FirstOrDefault()?.FieldValues.Where(x => !x.Field.DisplayInHeader).ToList(),
+                                    "<!--Heading-->",
+                                    "</th>");
+
+      var values = GetValues(html, meetDetailsList, "<!--Values-->", "</tr>", "<!--Value-->", "</td>", false);
+
+      var headerHeadingStartIndex = html.IndexOf(headerHeadingStart, StringComparison.Ordinal) + headerHeadingStart.Length;
+      var headerHeadingEndIndex = html.IndexOf(headerHeadingEnd, headerHeadingStartIndex, StringComparison.Ordinal) + headerHeadingEnd.Length;
+      html = html.Remove(headerHeadingStartIndex, headerHeadingEndIndex - headerHeadingStartIndex);
+      html = html.Insert(headerHeadingStartIndex, headerHeadings);
+
+      var headingStartIndex = html.IndexOf("<!--Heading-->", StringComparison.Ordinal) + "<!--Heading-->".Length;
+      var headingEndIndex = html.IndexOf("</th>", headingStartIndex, StringComparison.Ordinal) + "</th>".Length;
+      html = html.Remove(headingStartIndex, headingEndIndex - headingStartIndex);
+      html = html.Insert(headingStartIndex, headings);
+
+      var headerValuesStartIndex = html.IndexOf("<!--HeaderValues-->", StringComparison.Ordinal);
+      var headerValuesEndIndex = html.IndexOf("</tr>", headerValuesStartIndex, StringComparison.Ordinal) + "</tr>".Length;
+      html = html.Remove(headerValuesStartIndex, headerValuesEndIndex - headerValuesStartIndex);
+      html = html.Insert(headerValuesStartIndex, headerValues);
+
+      var valuesStartIndex = html.IndexOf("<!--Values-->", StringComparison.Ordinal);
+      var valuesEndIndex = html.IndexOf("</tr>", valuesStartIndex, StringComparison.Ordinal) + "</tr>".Length;
+      html = html.Remove(valuesStartIndex, valuesEndIndex - valuesStartIndex);
+      html = html.Insert(valuesStartIndex, values);
+
+      return html;
+    }
+
+    private static string GetHeadings(string html, List<MeetFieldValue> meetFieldValues, string start, string end)
+    {
+      var startIndex = html.IndexOf(start, StringComparison.Ordinal) + start.Length;
+      var endIndex = html.IndexOf(end, startIndex, StringComparison.Ordinal) + end.Length;
+      var headingTemplate = html.Substring(startIndex, endIndex - startIndex);
+      var headings = new StringBuilder("");
 
       // Headings
-      var meetFieldValues = meetDetailsList.FirstOrDefault()?.FieldValues;
-
       if (meetFieldValues != null)
       {
-        foreach(var field in meetFieldValues)
+        foreach (var field in meetFieldValues)
         {
-          // Header
-          if(field.Field.DisplayInHeader)
-          {
-            headerHeadings.Append(headerHeading.Replace("{Heading}", field.Field.FriendlyText));
-          }
+          headings.Append(headingTemplate.Replace("{Heading}", field.Field.FriendlyText));
         }
       }
 
-      html = html.Remove( headerHeadingStart, headerHeadingEnd - headerHeadingStart );
-      html = html.Insert( headerHeadingStart, headerHeadings.ToString() );
+      return headings.ToString();
+    }
 
-      var headerValuesStart = html.IndexOf( "<!--#HeaderValue-->", StringComparison.Ordinal );
-      var headerValuesEnd = html.IndexOf( "</td>", headerHeadingStart, StringComparison.Ordinal ) + "</td>".Length;
+    private static string GetValues(string html, 
+                                    List<MeetDetailsModel> meetDetails, 
+                                    string sectionStart,
+                                    string sectionEnd, 
+                                    string start, 
+                                    string end, 
+                                    bool isHeader)
+    {
+      var sectionStartIndex = html.IndexOf(sectionStart, StringComparison.Ordinal);
+      var sectionEndIndex = html.IndexOf(sectionEnd, sectionStartIndex, StringComparison.Ordinal) + sectionEnd.Length;
 
-      var headerValue = html.Substring( headerValuesStart, headerValuesEnd - headerValuesStart );
-      headerValue = headerValue.Remove( 0, "<!--#HeaderValue-->".Length );
-      var headerValues = new StringBuilder( "<tr>" );
+      var valuesTemplate = html.Substring(sectionStartIndex, sectionEndIndex - sectionStartIndex);
 
-      foreach (var meetDetail in meetDetailsList)
+      var valueTemplateStartIndex = valuesTemplate.IndexOf(start, StringComparison.Ordinal) + start.Length;
+      var valueTemplateEndIndex = valuesTemplate.IndexOf(end, valueTemplateStartIndex, StringComparison.Ordinal) + end.Length;
+
+      var valueTemplate = valuesTemplate.Substring(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
+      valuesTemplate = valuesTemplate.Remove(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
+
+      var values = new StringBuilder("");
+      var valueArray = new List<string>();
+
+      foreach (var meetDetail in meetDetails)
       {
         foreach (var field in meetDetail.FieldValues)
         {
-          // Header
-          if(field.Field.DisplayInHeader)
+          if (isHeader && field.Field.DisplayInHeader)
           {
-            headerValues.Append(headerValue.Replace( "{Value}", field.Value ) );
+            values.Append(valueTemplate.Replace("{Value}", field.Value));
+          }
+          else if (!isHeader && !field.Field.DisplayInHeader)
+          {
+            values.Append(valueTemplate.Replace("{Value}", field.Value));
           }
         }
+
+        valueArray.Add(valuesTemplate.Insert(valueTemplateStartIndex, values.ToString()));
+        values.Clear();
       }
 
-      headerValues = headerValues.Append("</tr>")
-
-      html = html.Remove( headerValuesStart, headerValuesEnd - headerValuesStart );
-      html = html.Insert( headerValuesStart, headerValues.ToString());
-
-      return html;
+      return string.Join("", valueArray);
     }
 
     public static string Build(IEnumerable<MeetDetailsModel> meetDetails, IHtmlBuilder htmlBuilder)
