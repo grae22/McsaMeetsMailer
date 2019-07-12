@@ -1,20 +1,25 @@
-﻿using System;
+﻿using McsaMeetsMailer.BusinessLogic.MeetsSheet;
+using McsaMeetsMailer.Models;
+using McsaMeetsMailer.Utils.Html;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
-
-using McsaMeetsMailer.BusinessLogic.MeetsSheet;
-using McsaMeetsMailer.Models;
-using McsaMeetsMailer.Utils.Html;
 
 namespace McsaMeetsMailer.BusinessLogic
 {
   public static class FullScheduleEmailBuilder
   {
     private const string headerHeadingStart =  "<!--HeaderHeading-->";
-    private const string headerHeadingEnd =  "</th>";
+    private const string headerValuesStart = "<!--HeaderValues-->";
+    private const string headerValueStart = "<!--HeaderValue-->";
+    private const string headingStart =  "<!--Heading-->";
+    private const string valuesStart = "<!--Values-->";
+    private const string valueStart = "<!--Value-->";
+    private const string endOfHeadingColumn =  "</th>";
+    private const string endOfColumn =  "</td>";
+    private const string endOfRow =  "</tr>";
 
     public static string Build(IEnumerable<MeetDetailsModel> meetDetails)
     {
@@ -30,36 +35,21 @@ namespace McsaMeetsMailer.BusinessLogic
       var headerHeadings = GetHeadings(html,
                                        meetDetailsList.FirstOrDefault()?.FieldValues.Where(x => x.Field.DisplayInHeader).ToList(),
                                        headerHeadingStart,
-                                       headerHeadingEnd);
+                                       endOfHeadingColumn);
 
-      var headerValues = GetValues(html, meetDetailsList, "<!--HeaderValues-->", "</tr>", "<!--HeaderValue-->", "</td>", true);
+      var headerValues = GetValues(html, meetDetailsList, headerValuesStart, endOfRow, headerValueStart, endOfColumn, true);
 
       string headings = GetHeadings(html,
                                     meetDetailsList.FirstOrDefault()?.FieldValues.Where(x => !x.Field.DisplayInHeader).ToList(),
-                                    "<!--Heading-->",
-                                    "</th>");
+                                    headingStart,
+                                    endOfHeadingColumn);
 
-      var values = GetValues(html, meetDetailsList, "<!--Values-->", "</tr>", "<!--Value-->", "</td>", false);
+      var values = GetValues(html, meetDetailsList, valuesStart, endOfRow, valueStart, endOfColumn, false);
 
-      var headerHeadingStartIndex = html.IndexOf(headerHeadingStart, StringComparison.Ordinal) + headerHeadingStart.Length;
-      var headerHeadingEndIndex = html.IndexOf(headerHeadingEnd, headerHeadingStartIndex, StringComparison.Ordinal) + headerHeadingEnd.Length;
-      html = html.Remove(headerHeadingStartIndex, headerHeadingEndIndex - headerHeadingStartIndex);
-      html = html.Insert(headerHeadingStartIndex, headerHeadings);
-
-      var headingStartIndex = html.IndexOf("<!--Heading-->", StringComparison.Ordinal) + "<!--Heading-->".Length;
-      var headingEndIndex = html.IndexOf("</th>", headingStartIndex, StringComparison.Ordinal) + "</th>".Length;
-      html = html.Remove(headingStartIndex, headingEndIndex - headingStartIndex);
-      html = html.Insert(headingStartIndex, headings);
-
-      var headerValuesStartIndex = html.IndexOf("<!--HeaderValues-->", StringComparison.Ordinal);
-      var headerValuesEndIndex = html.IndexOf("</tr>", headerValuesStartIndex, StringComparison.Ordinal) + "</tr>".Length;
-      html = html.Remove(headerValuesStartIndex, headerValuesEndIndex - headerValuesStartIndex);
-      html = html.Insert(headerValuesStartIndex, headerValues);
-
-      var valuesStartIndex = html.IndexOf("<!--Values-->", StringComparison.Ordinal);
-      var valuesEndIndex = html.IndexOf("</tr>", valuesStartIndex, StringComparison.Ordinal) + "</tr>".Length;
-      html = html.Remove(valuesStartIndex, valuesEndIndex - valuesStartIndex);
-      html = html.Insert(valuesStartIndex, values);
+      html = UpdateHtml(html, headerHeadingStart, endOfHeadingColumn, headerHeadings);
+      html = UpdateHtml(html, headingStart, endOfHeadingColumn, headings);
+      html = UpdateHtml(html, headerValuesStart, endOfRow, headerValues);
+      html = UpdateHtml(html, valuesStart, endOfRow, values);
 
       return html;
     }
@@ -124,6 +114,16 @@ namespace McsaMeetsMailer.BusinessLogic
       }
 
       return string.Join("", valueArray);
+    }
+
+    private static string UpdateHtml(string html, string start, string end, string htmlToInsert)
+    {
+      var startIndex = html.IndexOf(start, StringComparison.Ordinal);
+      var endIndex = html.IndexOf(end, startIndex, StringComparison.Ordinal) + end.Length;
+      html = html.Remove(startIndex, endIndex - startIndex);
+      html = html.Insert(startIndex, htmlToInsert);
+
+      return html;
     }
 
     public static string Build(IEnumerable<MeetDetailsModel> meetDetails, IHtmlBuilder htmlBuilder)
