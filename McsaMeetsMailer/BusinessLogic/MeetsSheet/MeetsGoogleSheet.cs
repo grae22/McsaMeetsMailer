@@ -245,6 +245,11 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 
         for (var column = headerColumn; column < headerColumn + headerColumnCount; column++)
         {
+          if (column >= sheet.values[row].Length)
+          {
+            continue;
+          }
+
           string cellValue = sheet.values[row][column].Trim();
 
           int fieldIndex = column - headerColumn;
