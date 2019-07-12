@@ -6,6 +6,7 @@
 
 <p>
   <select id="leaders" onchange="refreshContentFrame()">
+    <option value="All">All</option>
     @{
       foreach (var leaderName in Model.LeaderNames)
       {
@@ -24,7 +25,12 @@
     var selectedLeaderName = leadersDropDown.options[leadersDropDown.selectedIndex].value;
 
     var contentFrame = document.getElementById("contentFrame");
-    contentFrame.src = "@Url.Content("FullSchedulePreview")" + "?leader=" + selectedLeaderName;
+    contentFrame.src = "@Url.Content("FullSchedulePreview")";
+
+    if (!(selectedLeaderName === "All")) {
+      contentFrame.src += "?leader=" + selectedLeaderName;
+    }
+
     contentFrame.refresh();
   }
 </script>
