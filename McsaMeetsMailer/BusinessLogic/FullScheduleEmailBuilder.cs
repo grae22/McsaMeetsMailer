@@ -14,9 +14,7 @@ namespace McsaMeetsMailer.BusinessLogic
     private const string headerHeadingStart =  "<!--HeaderHeading-->";
     private const string headerValuesStart = "<!--HeaderValues-->";
     private const string headerValueStart = "<!--HeaderValue-->";
-    private const string headingStart =  "<!--Heading-->";
-    private const string valuesStart = "<!--Values-->";
-    private const string valueStart = "<!--Value-->";
+    private const string detailsStart = "<!--Details-->";
     private const string endOfHeadingColumn =  "</th>";
     private const string endOfColumn =  "</td>";
     private const string endOfRow =  "</tr>";
@@ -32,57 +30,57 @@ namespace McsaMeetsMailer.BusinessLogic
 
       var meetDetailsList = meetDetails.ToList();
 
-      var headerHeadings = GetHeadings(html,
-                                       meetDetailsList.FirstOrDefault()?.FieldValues.Where(x => x.Field.DisplayInHeader).ToList(),
-                                       headerHeadingStart,
-                                       endOfHeadingColumn);
+      var sortedHeaderHeadings = meetDetailsList.FirstOrDefault()?
+                                                .FieldValues
+                                                .OrderBy(x => x.Field.SortOrder)
+                                                .Where(x => x.Field.DisplayInHeader)
+                                                .Select(x => x.Field.FriendlyText);
 
-      var headerValues = GetValues(html, meetDetailsList, headerValuesStart, endOfRow, headerValueStart, endOfColumn, true);
+      IEnumerable<string> sortedHeadings = meetDetailsList.FirstOrDefault()?
+                                                          .FieldValues
+                                                          .OrderBy(x => x.Field.SortOrder)
+                                                          .Where(x => !x.Field.DisplayInHeader)
+                                                          .Select(x => x.Field.FriendlyText);
 
-      string headings = GetHeadings(html,
-                                    meetDetailsList.FirstOrDefault()?.FieldValues.Where(x => !x.Field.DisplayInHeader).ToList(),
-                                    headingStart,
-                                    endOfHeadingColumn);
-
-      var values = GetValues(html, meetDetailsList, valuesStart, endOfRow, valueStart, endOfColumn, false);
+      var headerHeadings = GetHeaderHeadings(html, sortedHeaderHeadings, headerHeadingStart, endOfHeadingColumn);
+      var headerValues = GetHeaderValues(html, meetDetailsList, headerValuesStart, endOfRow, headerValueStart, endOfColumn);
+      var details = GetDetails(html, meetDetailsList, detailsStart, endOfRow);
 
       html = UpdateHtml(html, headerHeadingStart, endOfHeadingColumn, headerHeadings);
-      html = UpdateHtml(html, headingStart, endOfHeadingColumn, headings);
       html = UpdateHtml(html, headerValuesStart, endOfRow, headerValues);
-      html = UpdateHtml(html, valuesStart, endOfRow, values);
+      html = UpdateHtml(html, detailsStart, endOfRow, details);
 
       return html;
     }
 
-    private static string GetHeadings(string html, List<MeetFieldValue> meetFieldValues, string start, string end)
+    private static string GetHeaderHeadings(string html, IEnumerable<string> headings, string start, string end)
     {
       var startIndex = html.IndexOf(start, StringComparison.Ordinal) + start.Length;
       var endIndex = html.IndexOf(end, startIndex, StringComparison.Ordinal) + end.Length;
       var headingTemplate = html.Substring(startIndex, endIndex - startIndex);
-      var headings = new StringBuilder("");
+      var headingsHtml = new StringBuilder("");
 
       // Headings
-      if (meetFieldValues != null)
+      if (headings != null)
       {
-        foreach (var field in meetFieldValues)
+        foreach (var heading in headings)
         {
-          headings.Append(headingTemplate.Replace("{Heading}", field.Field.FriendlyText));
+          headingsHtml.Append(headingTemplate.Replace("{Heading}", heading));
         }
       }
 
-      return headings.ToString();
+      return headingsHtml.ToString();
     }
 
-    private static string GetValues(string html, 
-                                    List<MeetDetailsModel> meetDetails, 
-                                    string sectionStart,
-                                    string sectionEnd, 
-                                    string start, 
-                                    string end, 
-                                    bool isHeader)
+    private static string GetHeaderValues(string html,
+                                          List<MeetDetailsModel> meetDetails,
+                                          string sectionStart,
+                                          string sectionEnd,
+                                          string start,
+                                          string end)
     {
-      var sectionStartIndex = html.IndexOf(sectionStart, StringComparison.Ordinal);
-      var sectionEndIndex = html.IndexOf(sectionEnd, sectionStartIndex, StringComparison.Ordinal) + sectionEnd.Length;
+      int sectionStartIndex = html.IndexOf(sectionStart, StringComparison.Ordinal);
+      int sectionEndIndex = html.IndexOf(sectionEnd, sectionStartIndex, StringComparison.Ordinal) + sectionEnd.Length;
 
       var valuesTemplate = html.Substring(sectionStartIndex, sectionEndIndex - sectionStartIndex);
 
@@ -95,17 +93,24 @@ namespace McsaMeetsMailer.BusinessLogic
       var values = new StringBuilder("");
       var valueArray = new List<string>();
 
-      foreach (var meetDetail in meetDetails)
+      foreach (MeetDetailsModel meetDetail in meetDetails)
       {
-        foreach (var field in meetDetail.FieldValues)
+        List<MeetFieldValue> sortedFields = meetDetail.FieldValues
+                                                      .OrderBy(x => x.Field.SortOrder)
+                                                      .ToList();
+
+        foreach (MeetFieldValue field in sortedFields)
         {
-          if (isHeader && field.Field.DisplayInHeader)
+          string value = field.Value;
+
+          if (!field.ValidationResults.IsValid)
           {
-            values.Append(valueTemplate.Replace("{Value}", field.Value));
+            value = $"INVALID : {value}";
           }
-          else if (!isHeader && !field.Field.DisplayInHeader)
+
+          if (field.Field.DisplayInHeader)
           {
-            values.Append(valueTemplate.Replace("{Value}", field.Value));
+            values.Append(valueTemplate.Replace("{Value}", value));
           }
         }
 
@@ -114,6 +119,47 @@ namespace McsaMeetsMailer.BusinessLogic
       }
 
       return string.Join("", valueArray);
+    }
+
+    private static string GetDetails(string html,
+                                    List<MeetDetailsModel> meetDetails,
+                                    string start,
+                                    string end)
+    {
+      var valueTemplateStartIndex = html.IndexOf(start, StringComparison.Ordinal) + start.Length;
+      var valueTemplateEndIndex = html.IndexOf(end, valueTemplateStartIndex, StringComparison.Ordinal) + end.Length;
+
+      var valueTemplate = html.Substring(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
+
+      var values = new StringBuilder("");
+
+      foreach (MeetDetailsModel meetDetail in meetDetails)
+      {
+        List<MeetFieldValue> sortedFields = meetDetail.FieldValues
+                                                      .OrderBy(x => x.Field.SortOrder)
+                                                      .ToList();
+
+        var meetTitleField = sortedFields.First(x => x.Field.IsMeetTitle);
+
+        sortedFields.Remove(meetTitleField);
+        sortedFields.Insert(0, meetTitleField);
+
+        foreach (MeetFieldValue field in sortedFields)
+        {
+          string value = field.Value;
+
+          if (!field.ValidationResults.IsValid)
+          {
+            value = $"INVALID : {value}";
+          }
+
+          var htmlBlob = valueTemplate.Replace("{Title}", field.Field.FriendlyText);
+          htmlBlob = htmlBlob.Replace("{Value}", value);
+          values.Append(htmlBlob);
+        }
+      }
+
+      return values.ToString();
     }
 
     private static string UpdateHtml(string html, string start, string end, string htmlToInsert)
