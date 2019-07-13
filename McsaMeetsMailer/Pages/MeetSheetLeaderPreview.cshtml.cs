@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace McsaMeetsMailer.Pages
 {
-  public class MeetSheetModel : PageModel
+  public class MeetSheetLeaderPreview : PageModel
   {
     public IEnumerable<string> LeaderNames => _leaderNames;
 
@@ -19,7 +19,7 @@ namespace McsaMeetsMailer.Pages
 
     private IEnumerable<MeetDetailsModel> _meets;
 
-    public MeetSheetModel(IMeetsService meetsService)
+    public MeetSheetLeaderPreview(IMeetsService meetsService)
     {
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
     }
