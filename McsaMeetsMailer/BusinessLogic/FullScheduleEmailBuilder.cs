@@ -16,6 +16,7 @@ namespace McsaMeetsMailer.BusinessLogic
     private const string summaryValueStart = "<!--HeaderValue-->";
     private const string summaryLinkValueStart = "<!--HeaderLinkValue-->";
     private const string detailsStart = "<!--Details-->";
+    private const string detailHeaderStart = "<!--DetailHeader-->";
     private const string detailStart = "<!--Detail-->";
     private const string endOfHeadingColumn = "</th>";
     private const string endOfColumn = "</td>";
@@ -101,16 +102,20 @@ namespace McsaMeetsMailer.BusinessLogic
 
         foreach (MeetFieldValue field in sortedFields)
         {
-          string value = field.Value;
+          string value = field.ValidationResults.IsValid ? field.Value : $"INVALID : {field.Value}";
 
-          if (!field.ValidationResults.IsValid) value = $"INVALID : {value}";
-
-          if (field.Field.DisplayInHeader)
+          if (!field.Field.DisplayInHeader)
           {
-            if (field.Field.IsMeetTitle)
-              meetValues.Append(anchorTemplate.Replace("{Value}", value));
-            else
-              meetValues.Append(valueTemplate.Replace("{Value}", value));
+            continue;
+          }
+
+          if (field.Field.IsMeetTitle)
+          {
+            meetValues.Append(anchorTemplate.Replace( "{Value}", value));
+          }
+          else
+          {
+            meetValues.Append(valueTemplate.Replace("{Value}", value));
           }
         }
 
@@ -128,12 +133,17 @@ namespace McsaMeetsMailer.BusinessLogic
       int detailsTableTemplateEndIndex = html.IndexOf(endOfAnchor, detailsTableTemplateStartIndex, StringComparison.Ordinal) + endOfAnchor.Length;
       string detailsTableTemplate = html.Substring(detailsTableTemplateStartIndex, detailsTableTemplateEndIndex - detailsTableTemplateStartIndex);
 
+      // Header template
+      int valueHeaderTemplateStartIndex = detailsTableTemplate.IndexOf(detailHeaderStart, StringComparison.Ordinal) + detailHeaderStart.Length;
+      int valueHeaderTemplateEndIndex = detailsTableTemplate.IndexOf(endOfRow, valueHeaderTemplateStartIndex, StringComparison.Ordinal) + endOfRow.Length;
+      string valueHeaderTemplate = detailsTableTemplate.Substring(valueHeaderTemplateStartIndex, valueHeaderTemplateEndIndex - valueHeaderTemplateStartIndex);
+
       // Value template
       int valueTemplateStartIndex = detailsTableTemplate.IndexOf( detailStart, StringComparison.Ordinal) + detailStart.Length;
       int valueTemplateEndIndex = detailsTableTemplate.IndexOf(endOfRow, valueTemplateStartIndex, StringComparison.Ordinal) + endOfRow.Length;
       string valueTemplate = detailsTableTemplate.Substring(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
 
-      detailsTableTemplate = detailsTableTemplate.Remove(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
+      detailsTableTemplate = detailsTableTemplate.Remove(valueHeaderTemplateStartIndex, valueTemplateEndIndex - valueHeaderTemplateStartIndex);
 
       var values = new StringBuilder("");
       var detailsHtml = new StringBuilder();
@@ -154,16 +164,23 @@ namespace McsaMeetsMailer.BusinessLogic
 
         foreach (MeetFieldValue field in sortedFields)
         {
-          string value = field.Value;
+          string value = field.ValidationResults.IsValid ? field.Value : $"INVALID : {field.Value}";
+          string htmlBlob;
 
-          if (!field.ValidationResults.IsValid) value = $"INVALID : {value}";
+          if (field.Field.IsMeetTitle)
+          {
+            htmlBlob = valueHeaderTemplate.Replace( "{Title}", field.Field.FriendlyText );
+          }
+          else
+          {
+            htmlBlob = valueTemplate.Replace( "{Title}", field.Field.FriendlyText );
+          }
 
-          string htmlBlob = valueTemplate.Replace("{Title}", field.Field.FriendlyText);
           htmlBlob = htmlBlob.Replace("{Value}", value);
           values.Append(htmlBlob);
         }
 
-        var index = currentTableTemplate.IndexOf(detailStart, StringComparison.Ordinal);
+        var index = currentTableTemplate.IndexOf(detailHeaderStart, StringComparison.Ordinal);
         detailsHtml = detailsHtml.Append(currentTableTemplate.Insert(index, values.ToString()));
         values = values.Clear();
       }

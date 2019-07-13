@@ -4,17 +4,26 @@
 
 <br>
 
-<table>
+<table style="border-collapse: collapse; border-spacing: 0; border: 1px solid #F0F0F0; width: 100%;">
     <tr>
         <!--HeaderHeading-->
-        <th style="background: black; color: white; border: 1px solid #F0F0F0">{Heading}</th>
+        <th style="background: black; color: white; border: 2px solid white; padding: 10px;">
+            {Heading}
+        </th>
     </tr>
     <!--HeaderValues-->
     <tr>
         <!--HeaderValue-->
-        <td>{Value}</td>
+        <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
+            {Value}
+        </td>
+
         <!--HeaderLinkValue-->
-        <td><a href="https://localhost:44358/fullschedulepreview#{Value}">{Value}</a></td>
+        <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
+            <a href="#{Value}">
+                <span>{Value}</span>
+            </a>
+        </td>
     </tr>
 </table>
 
@@ -23,12 +32,27 @@
 
 <!--Details-->
 <br>
-<a id="{Anchor}" style="text-decoration: none; color: black">
-    <table style="border: 1px solid #F0F0F0">
+<a id="{Anchor}" style="text-decoration: none; color: black;">
+    <table style="border-collapse: collapse; border-spacing: 0; border: 1px solid #F0F0F0; width: 100%;">
+        <!--DetailHeader-->
+        <tr style="background-color: lightgray">
+            <td style="border: 2px solid white; padding: 10px; width: 20%;">
+                <b>{Title}</b>
+            </td>
+
+            <td style="border: 2px solid white; padding: 10px; width: 80%;">
+                <b>{Value}</b>
+            </td>
+        </tr>
         <!--Detail-->
         <tr>
-            <td style="width: 20%; border: 1px solid #F0F0F0">{Title}</td>
-            <td>{Value}</td>
+            <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3; width: 20%;">
+                {Title}
+            </td>
+
+            <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3; width: 20%;">
+                {Value}
+            </td>
         </tr>
     </table>
 </a>
