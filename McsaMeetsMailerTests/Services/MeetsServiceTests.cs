@@ -32,11 +32,11 @@ namespace McsaMeetsMailerTests.Services
       var logger = Substitute.For<ILogger>();
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeSheetId");
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeAppKey");
 
       googleSheetFactory
@@ -76,11 +76,11 @@ namespace McsaMeetsMailerTests.Services
       var logger = Substitute.For<ILogger>();
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeSheetId");
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeAppKey");
 
       googleSheetFactory
@@ -126,11 +126,11 @@ namespace McsaMeetsMailerTests.Services
       var logger = Substitute.For<ILogger>();
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeSheetId");
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeAppKey");
 
       googleSheetFactory
@@ -176,11 +176,11 @@ namespace McsaMeetsMailerTests.Services
       var logger = Substitute.For<ILogger>();
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeSheetId");
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeAppKey");
 
       googleSheetFactory
@@ -246,11 +246,11 @@ namespace McsaMeetsMailerTests.Services
       var logger = Substitute.For<ILogger>();
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeSheetId");
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeAppKey");
 
       googleSheetFactory
@@ -316,11 +316,11 @@ namespace McsaMeetsMailerTests.Services
       var logger = Substitute.For<ILogger>();
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeSheetId");
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeAppKey");
 
       googleSheetFactory
@@ -388,11 +388,11 @@ namespace McsaMeetsMailerTests.Services
       var logger = Substitute.For<ILogger>();
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeSheetId");
 
       settings
-        .GetValidValue(Arg.Any<string>())
+        .GetValidString(Arg.Any<string>())
         .Returns("SomeAppKey");
 
       googleSheetFactory

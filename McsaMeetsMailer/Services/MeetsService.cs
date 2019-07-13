@@ -47,8 +47,8 @@ namespace McsaMeetsMailer.Services
       _googleSheetFactory = googleSheetFactory ?? throw new ArgumentNullException(nameof(googleSheetFactory));
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-      _meetsGoogleSheetId = settings.GetValidValue(SettingName_MeetsGoogleSheetId);
-      _googleAppKey = settings.GetValidValue(SettingName_GoogleAppKey);
+      _meetsGoogleSheetId = settings.GetValidString(SettingName_MeetsGoogleSheetId);
+      _googleAppKey = settings.GetValidString(SettingName_GoogleAppKey);
 
       IMeetsGoogleSheet meetSheet = CreateMeetSheet();
 

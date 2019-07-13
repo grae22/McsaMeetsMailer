@@ -20,8 +20,8 @@ namespace McsaMeetsMailer.Services
     public EmailSenderService(ISettings settings)
     {
       _client = new SmtpClient("smtp.gmail.com", 587);
-      _emailAddress = settings.GetValidValue(SettingName_EmailAddress);
-      _password = settings.GetValidValue(SettingName_Password);
+      _emailAddress = settings.GetValidString(SettingName_EmailAddress);
+      _password = settings.GetValidString(SettingName_Password);
     }
 
     public void Send(string htmlContent, IEnumerable<string> toEmailAddresses)

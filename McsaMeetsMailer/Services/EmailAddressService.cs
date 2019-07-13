@@ -38,8 +38,8 @@ namespace McsaMeetsMailer.Services
       _googleSheetFactory = googleSheetFactory ?? throw new ArgumentNullException(nameof(googleSheetFactory));
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-      _meetsGoogleSheetId = settings.GetValidValue(SettingName_EmailAddressGoogleSheetId);
-      _googleAppKey = settings.GetValidValue(SettingName_GoogleAppKey);
+      _meetsGoogleSheetId = settings.GetValidString(SettingName_EmailAddressGoogleSheetId);
+      _googleAppKey = settings.GetValidString(SettingName_GoogleAppKey);
     }
 
     public async Task<IEmailAddresses> RetrieveEmailAddresses()
