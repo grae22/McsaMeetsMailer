@@ -28,10 +28,10 @@ namespace McsaMeetsMailer.Utils.Cache
 
     public async Task<T> Instance()
     {
-      return await GetValidInstance();
+      return await GetRefreshedInstance();
     }
 
-    private async Task<T> GetValidInstance()
+    private async Task<T> GetRefreshedInstance()
     {
       await PerformRefreshIfRequired();
 
