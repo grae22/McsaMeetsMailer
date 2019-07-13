@@ -20,9 +20,10 @@ namespace McsaMeetsMailer.Services
 
     private const string SettingName_MeetsGoogleSheetId = "MCSA-KZN_Meets_MeetsGoogleSheetId";
     private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";
+    private const string SettingName_CacheMeetSheetLifetimeInSeconds = "MCSA-KZN_Meets_CacheMeetSheetLifetimeInSeconds";
     private const string GoogleSheetsBaseUrl = "https://sheets.googleapis.com/v4/spreadsheets/";
     private const string SheetRange = "A1:Z500";
-    private const uint CachedMeetSheetLifetimeInSeconds = 5;
+    private const int DefaultCacheMeetSheetLifetimeInSeconds = 5;
 
     private readonly string _meetsGoogleSheetId;
     private readonly string _googleAppKey;
@@ -50,12 +51,16 @@ namespace McsaMeetsMailer.Services
       _meetsGoogleSheetId = settings.GetValidString(SettingName_MeetsGoogleSheetId);
       _googleAppKey = settings.GetValidString(SettingName_GoogleAppKey);
 
+      var cachedMeetSheetLifetimeInSeconds = (uint)settings.GetInteger(
+        SettingName_CacheMeetSheetLifetimeInSeconds,
+        DefaultCacheMeetSheetLifetimeInSeconds);
+
       IMeetsGoogleSheet meetSheet = CreateMeetSheet();
 
       _refreshedMeetSheet = new TimeBasedAutoRefresher<IMeetsGoogleSheet>(
         meetSheet,
         dateTimeService,
-        CachedMeetSheetLifetimeInSeconds,
+        cachedMeetSheetLifetimeInSeconds,
         async () => await RetrieveMeetSheet(meetSheet));
     }
 
