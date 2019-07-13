@@ -9,6 +9,8 @@ using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Extensions;
 using McsaMeetsMailer.Utils.Html;
 
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace McsaMeetsMailer.Pages
@@ -42,12 +44,11 @@ namespace McsaMeetsMailer.Pages
                 m
                   .LeaderField()
                   .Value
-                  .Equals(Request.Query["leader"], StringComparison.OrdinalIgnoreCase)),
-            new HtmlBuilder());
+                  .Equals(Request.Query["leader"], StringComparison.OrdinalIgnoreCase)));
       }
       else
       {
-        html = FullScheduleEmailBuilder.Build(meets, new HtmlBuilder());
+        html = FullScheduleEmailBuilder.Build(meets);
       }
     }
   }

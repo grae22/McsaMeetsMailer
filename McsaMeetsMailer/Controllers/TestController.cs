@@ -57,7 +57,7 @@ namespace McsaMeetsMailer.Controllers
       try
       {
         IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets();
-        string html = FullScheduleEmailBuilder.Build(meets, new HtmlBuilder());
+        string html = FullScheduleEmailBuilder.Build(meets);
         var addressBook = await _emailAddressService.RetrieveEmailAddresses();
 
         _emailSenderService.Send(html, addressBook.FullScheduleEmailAddresses);
