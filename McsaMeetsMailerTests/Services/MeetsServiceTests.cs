@@ -28,6 +28,7 @@ namespace McsaMeetsMailerTests.Services
       var requestMaker = Substitute.For<IRestRequestMaker>();
       var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
       var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var dateTimeService = Substitute.For<IDateTimeService>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -53,10 +54,11 @@ namespace McsaMeetsMailerTests.Services
         settings,
         requestMaker,
         googleSheetFactory,
+        dateTimeService,
         logger);
 
       // Act.
-      var result = await testObject.RetrieveAllMeets();
+      var result = await testObject.RetrieveMeets();
 
       // Assert.
       Assert.IsNotNull(result);
@@ -70,6 +72,7 @@ namespace McsaMeetsMailerTests.Services
       var requestMaker = Substitute.For<IRestRequestMaker>();
       var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
       var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var dateTimeService = Substitute.For<IDateTimeService>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -95,12 +98,13 @@ namespace McsaMeetsMailerTests.Services
         settings,
         requestMaker,
         googleSheetFactory,
+        dateTimeService,
         logger);
 
       // Act & Assert.
       try
       {
-        await testObject.RetrieveAllMeets();
+        await testObject.RetrieveMeets();
       }
       catch (MeetsServiceException)
       {
@@ -118,6 +122,7 @@ namespace McsaMeetsMailerTests.Services
       var requestMaker = Substitute.For<IRestRequestMaker>();
       var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
       var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var dateTimeService = Substitute.For<IDateTimeService>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -143,12 +148,13 @@ namespace McsaMeetsMailerTests.Services
         settings,
         requestMaker,
         googleSheetFactory,
+        dateTimeService,
         logger);
 
       // Act & Assert.
       try
       {
-        await testObject.RetrieveAllMeets();
+        await testObject.RetrieveMeets();
       }
       catch (MeetsServiceException)
       {
@@ -166,6 +172,7 @@ namespace McsaMeetsMailerTests.Services
       var requestMaker = Substitute.For<IRestRequestMaker>();
       var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
       var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var dateTimeService = Substitute.For<IDateTimeService>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -216,6 +223,7 @@ namespace McsaMeetsMailerTests.Services
         settings,
         requestMaker,
         googleSheetFactory,
+        dateTimeService,
         logger);
 
       // Act.
@@ -234,6 +242,7 @@ namespace McsaMeetsMailerTests.Services
       var requestMaker = Substitute.For<IRestRequestMaker>();
       var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
       var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var dateTimeService = Substitute.For<IDateTimeService>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -284,6 +293,7 @@ namespace McsaMeetsMailerTests.Services
         settings,
         requestMaker,
         googleSheetFactory,
+        dateTimeService,
         logger);
 
       // Act.
@@ -302,6 +312,7 @@ namespace McsaMeetsMailerTests.Services
       var requestMaker = Substitute.For<IRestRequestMaker>();
       var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
       var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var dateTimeService = Substitute.For<IDateTimeService>();
       var logger = Substitute.For<ILogger>();
 
       settings
@@ -352,6 +363,7 @@ namespace McsaMeetsMailerTests.Services
         settings,
         requestMaker,
         googleSheetFactory,
+        dateTimeService,
         logger);
 
       // Act.
@@ -362,6 +374,56 @@ namespace McsaMeetsMailerTests.Services
       // Assert.
       Assert.IsNotNull(result);
       Assert.AreEqual(2, result.Count());
+    }
+
+    [Test]
+    public async Task RetrieveMeets_GivenSecondRequestWithinCacheLifetime_ShouldReturnCachedData()
+    {
+      // Arrange.
+      var settings = Substitute.For<ISettings>();
+      var requestMaker = Substitute.For<IRestRequestMaker>();
+      var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
+      var googleSheet = Substitute.For<IMeetsGoogleSheet>();
+      var dateTimeService = Substitute.For<IDateTimeService>();
+      var logger = Substitute.For<ILogger>();
+
+      settings
+        .GetValidValue(Arg.Any<string>())
+        .Returns("SomeSheetId");
+
+      settings
+        .GetValidValue(Arg.Any<string>())
+        .Returns("SomeAppKey");
+
+      googleSheetFactory
+        .CreateSheet(
+          Arg.Any<Uri>(),
+          Arg.Any<IRestRequestMaker>(),
+          Arg.Any<ILogger>())
+        .Returns(googleSheet);
+
+      googleSheet
+        .Retrieve()
+        .Returns(true);
+
+      var testObject = new MeetsService(
+        settings,
+        requestMaker,
+        googleSheetFactory,
+        dateTimeService,
+        logger);
+
+      // Act.
+      await testObject.RetrieveMeets();
+      await testObject.RetrieveMeets();
+
+      // Assert.
+      googleSheetFactory
+        .Received(1)
+        .CreateSheet(
+          Arg.Any<Uri>(),
+          Arg.Any<IRestRequestMaker>(),
+          Arg.Any<ILogger>());
     }
   }
 }

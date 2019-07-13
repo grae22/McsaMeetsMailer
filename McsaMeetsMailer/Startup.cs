@@ -32,11 +32,13 @@ namespace McsaMeetsMailer
       var settings = new EnvironmentVariableSettings();
       var meetSheetFactory = new MeetsGoogleSheetFactory();
       var emailAddressSheetFactory = new EmailAddressGoogleSheetFactory();
+      var dateTimeService = new DateTimeService();
 
       var meetsService = new MeetsService(
         settings,
         requestMaker,
         meetSheetFactory,
+        dateTimeService,
         logger);
 
       var emailAddressService = new EmailAddressService(

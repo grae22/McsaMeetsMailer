@@ -7,7 +7,7 @@ namespace McsaMeetsMailer.Services
 {
   public interface IMeetsService
   {
-    Task<IEnumerable<MeetDetailsModel>> RetrieveAllMeets();
+    Task<IEnumerable<MeetDetailsModel>> RetrieveMeets();
     Task<IEnumerable<MeetDetailsModel>> RetrieveMeets(string leaderName);
   }
 }
