@@ -1,19 +1,34 @@
-﻿<table>
+﻿<p>
+    Hi, <br><br>Please find the full meet schedule below.
+</p>
+
+<br>
+
+<table>
     <tr>
         <!--HeaderHeading-->
-        <th style="background: black; color: white">{Heading}</th>
+        <th style="background: black; color: white; border: 1px solid #F0F0F0">{Heading}</th>
     </tr>
     <!--HeaderValues-->
     <tr>
         <!--HeaderValue-->
         <td>{Value}</td>
+        <!--Link Value-->
+        <td><a href="#{Value}">{Value}</a></td>
     </tr>
 </table>
 
-<table>
-    <!--Details-->
-    <tr>
-        <td>{Title}</td>
-        <td>{Value}</td>
-    </tr>
-</table>
+<br>
+<h3>Additional Details:</h3>
+
+<!--Details-->
+<br>
+<a id="{Anchor}" style="text-decoration: none; color: black">
+    <table style="border: 1px solid #F0F0F0">
+        <!--Detail-->
+        <tr>
+            <td style="width: 20%; border: 1px solid #F0F0F0">{Title}</td>
+            <td>{Value}</td>
+        </tr>
+    </table>
+</a>

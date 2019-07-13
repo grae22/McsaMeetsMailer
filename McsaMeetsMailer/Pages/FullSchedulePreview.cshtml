@@ -7,4 +7,4 @@
 <link href="@Url.Content("~/css/fullSchedulePreview.css")" rel="stylesheet" type="text/css" />
 <h1>Full Schedule Preview</h1>
 <br>
-@Html.Raw( Model.html )
+<iframe srcdoc="@Model.html" width="100%" height="1000px"></iframe>

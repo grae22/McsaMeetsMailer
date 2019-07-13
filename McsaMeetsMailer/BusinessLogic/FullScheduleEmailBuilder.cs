@@ -44,11 +44,11 @@ namespace McsaMeetsMailer.BusinessLogic
 
       var headerHeadings = GetHeaderHeadings(html, sortedHeaderHeadings, headerHeadingStart, endOfHeadingColumn);
       var headerValues = GetHeaderValues(html, meetDetailsList, headerValuesStart, endOfRow, headerValueStart, endOfColumn);
-      var details = GetDetails(html, meetDetailsList, detailsStart, endOfRow);
+      var details = GetDetails(html, meetDetailsList, detailsStart, "</table>");
 
       html = UpdateHtml(html, headerHeadingStart, endOfHeadingColumn, headerHeadings);
       html = UpdateHtml(html, headerValuesStart, endOfRow, headerValues);
-      html = UpdateHtml(html, detailsStart, endOfRow, details);
+      html = UpdateHtml(html, detailsStart, "</a>", details);
 
       return html;
     }
@@ -88,7 +88,13 @@ namespace McsaMeetsMailer.BusinessLogic
       var valueTemplateEndIndex = valuesTemplate.IndexOf(end, valueTemplateStartIndex, StringComparison.Ordinal) + end.Length;
 
       var valueTemplate = valuesTemplate.Substring(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
-      valuesTemplate = valuesTemplate.Remove(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
+
+      var anchorTemplateStartIndex = valuesTemplate.IndexOf( "<!--Link Value-->", StringComparison.Ordinal ) + "<!--Link Value-->".Length;
+      var anchorTemplateEndIndex = valuesTemplate.IndexOf( "</td>", anchorTemplateStartIndex, StringComparison.Ordinal ) + "</td>".Length;
+
+      var anchorTemplate = valuesTemplate.Substring( anchorTemplateStartIndex, anchorTemplateEndIndex - anchorTemplateStartIndex );
+
+      valuesTemplate = valuesTemplate.Remove(valueTemplateStartIndex, anchorTemplateEndIndex - valueTemplateStartIndex);
 
       var values = new StringBuilder("");
       var valueArray = new List<string>();
@@ -110,7 +116,14 @@ namespace McsaMeetsMailer.BusinessLogic
 
           if (field.Field.DisplayInHeader)
           {
-            values.Append(valueTemplate.Replace("{Value}", value));
+            if (field.Field.IsMeetTitle)
+            {
+              values.Append(anchorTemplate.Replace("{Value}", value));
+            }
+            else
+            {
+              values.Append( valueTemplate.Replace( "{Value}", value ) );
+            }
           }
         }
 
@@ -126,12 +139,19 @@ namespace McsaMeetsMailer.BusinessLogic
                                     string start,
                                     string end)
     {
-      var valueTemplateStartIndex = html.IndexOf(start, StringComparison.Ordinal) + start.Length;
-      var valueTemplateEndIndex = html.IndexOf(end, valueTemplateStartIndex, StringComparison.Ordinal) + end.Length;
+      var detailsTableTemplateStartIndex = html.IndexOf( start, StringComparison.Ordinal ) + start.Length;
+      var detailsTableTemplateEndIndex = html.IndexOf( "</a>", detailsTableTemplateStartIndex, StringComparison.Ordinal ) + "</a>".Length;
 
-      var valueTemplate = html.Substring(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
+      var detailsTableTemplate = html.Substring( detailsTableTemplateStartIndex, detailsTableTemplateEndIndex - detailsTableTemplateStartIndex );
 
+      var valueTemplateStartIndex = detailsTableTemplate.IndexOf("<!--Detail-->", StringComparison.Ordinal) + "<!--Detail-->".Length;
+      var valueTemplateEndIndex = detailsTableTemplate.IndexOf(endOfRow, valueTemplateStartIndex, StringComparison.Ordinal) + endOfRow.Length;
+
+      var valueTemplate = detailsTableTemplate.Substring(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
+      detailsTableTemplate =
+        detailsTableTemplate.Remove(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
       var values = new StringBuilder("");
+      var detailsHtml = new StringBuilder();
 
       foreach (MeetDetailsModel meetDetail in meetDetails)
       {
@@ -143,6 +163,8 @@ namespace McsaMeetsMailer.BusinessLogic
 
         sortedFields.Remove(meetTitleField);
         sortedFields.Insert(0, meetTitleField);
+
+        var currentTableTemplate = detailsTableTemplate.Replace("{Anchor}", sortedFields.FirstOrDefault()?.Value);
 
         foreach (MeetFieldValue field in sortedFields)
         {
@@ -157,9 +179,12 @@ namespace McsaMeetsMailer.BusinessLogic
           htmlBlob = htmlBlob.Replace("{Value}", value);
           values.Append(htmlBlob);
         }
+
+        detailsHtml = detailsHtml.Append( currentTableTemplate.Insert(currentTableTemplate.IndexOf( "<!--Detail-->", StringComparison.Ordinal ), values.ToString()));
+        values = values.Clear();
       }
 
-      return values.ToString();
+      return detailsHtml.ToString();
     }
 
     private static string UpdateHtml(string html, string start, string end, string htmlToInsert)
