@@ -17,8 +17,6 @@ namespace McsaMeetsMailer.Pages
     private readonly IMeetsService _meetsService;
     private readonly List<string> _leaderNames = new List<string>();
 
-    private IEnumerable<MeetDetailsModel> _meets;
-
     public MeetSheetLeaderPreview(IMeetsService meetsService)
     {
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
@@ -26,17 +24,21 @@ namespace McsaMeetsMailer.Pages
 
     public void OnGet()
     {
-      if (_meets == null)
-      {
-        _meets = _meetsService.RetrieveAllMeets().Result;
+      IEnumerable<MeetDetailsModel> meets = _meetsService.RetrieveAllMeets().Result;
 
-        if (_meets == null)
-        {
-          return;
-        }
+      PopulateLeaderNames(meets);
+    }
+
+    private void PopulateLeaderNames(in IEnumerable<MeetDetailsModel> meets)
+    {
+      _leaderNames.Clear();
+
+      if (meets == null)
+      {
+        return;
       }
 
-      _meets
+      meets
         .Select(l => l.LeaderField().Value)
         .ToList()
         .ForEach(l =>
