@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Pages\MeetSheetOnly.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="wwwroot\css\FullSchedulePreview.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

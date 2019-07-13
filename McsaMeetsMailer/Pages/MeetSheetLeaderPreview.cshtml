@@ -17,7 +17,7 @@
   </select>
 </p>
 
-<iframe id="contentFrame" style="width: 90%; height: 800px;" src="@Url.Content("FullSchedulePreview")">Sorry, your browser does not support i-frames.</iframe>
+<iframe id="contentFrame" style="width: 100%; height: 800px;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
 
 <script language="javascript">
   function refreshContentFrame() {
@@ -26,7 +26,7 @@
     var selectedLeaderName = leadersDropDown.options[leadersDropDown.selectedIndex].value;
 
     var contentFrame = document.getElementById("contentFrame");
-    contentFrame.src = "@Url.Content("FullSchedulePreview")";
+    contentFrame.src = "@Url.Content("MeetSheetOnly")";
 
     if (!(selectedLeaderName === "All")) {
       contentFrame.src += "?leader=" + selectedLeaderName;
