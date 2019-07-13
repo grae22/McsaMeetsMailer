@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Services;
@@ -22,9 +23,9 @@ namespace McsaMeetsMailer.Pages
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
     }
 
-    public void OnGet()
+    public async Task OnGet()
     {
-      IEnumerable<MeetDetailsModel> meets = _meetsService.RetrieveAllMeets().Result;
+      IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveAllMeets();
 
       PopulateLeaderNames(meets);
     }
