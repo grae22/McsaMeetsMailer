@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using McsaMeetsMailer.BusinessLogic;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Services;
-using McsaMeetsMailer.Utils.Html;
 using McsaMeetsMailer.Utils.Logging;
 
 using Microsoft.AspNetCore.Mvc;

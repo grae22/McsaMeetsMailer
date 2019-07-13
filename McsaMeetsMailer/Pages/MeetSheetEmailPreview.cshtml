@@ -1,0 +1,40 @@
+﻿@page
+@model McsaMeetsMailer.Pages.MeetSheetEmailPreviewModel
+@{
+    ViewData["Title"] = "Email Preview";
+}
+
+<iframe id="contentFrame" style="width: 100%; height: 70vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
+
+<div class="container">
+  <input type="button" value="Send to Address" onclick="sendEmailToAddress()" /><input id="emailAddress" type="text" />
+  <br /><br />
+  <input type="button" value="Send to Members"/>
+</div>
+
+<script language="javascript">
+  function sendEmailToAddress() {
+    var emailAddress = document.getElementById("emailAddress").value;
+
+    if (emailAddress === "") {
+      alert("Please enter an email address first.");
+      return;
+    }
+
+    $.ajax({
+      url: 'api/email/sendFullScheduleToAddress',
+      data: emailAddress,
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (result) {
+        alert(result);
+      },
+      complete: function() {
+      },  
+      failure: function (err) {                  
+        alert(err);
+      }
+    });
+  }
+</script>
