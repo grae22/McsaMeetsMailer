@@ -332,6 +332,11 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         return new DateFormatter("d MMM (ddd)");
       }
 
+      if (columnHeaderText.Contains("time", StringComparison.OrdinalIgnoreCase))
+      {
+        return new DateFormatter("HH:mm");
+      }
+
       return NullFormatter.Instance();
     }
   }
