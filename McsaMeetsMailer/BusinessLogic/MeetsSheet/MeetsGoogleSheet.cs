@@ -198,7 +198,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         }
       }
 
-      throw new MeetsGoogleSheetFormatException($"Last row not found (\"{FirstCellText}\").");
+      throw new MeetsGoogleSheetFormatException("Last row not found.");
     }
 
     private static void ReadHeaders(

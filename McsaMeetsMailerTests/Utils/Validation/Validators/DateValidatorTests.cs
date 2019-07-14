@@ -2,7 +2,7 @@
 
 using NUnit.Framework;
 
-namespace McsaMeetsMailerTests.Validation.Validators
+namespace McsaMeetsMailerTests.Utils.Validation.Validators
 {
   [TestFixture]
   public class DateValidatorTests
