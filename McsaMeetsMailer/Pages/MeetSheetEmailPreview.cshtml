@@ -3,16 +3,18 @@
 @{
     ViewData["Title"] = "Email Preview";
 }
-
-<iframe id="contentFrame" style="width: 100%; height: 70vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
+<div class="container">
+  <iframe id="contentFrame" style="width: 100%; height: 70vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
+</div>
 
 <div class="container">
-  <input id="sendToAddress" type="button" value="Send to Address" onclick="sendEmailToAddress()" />
-  <input id="sendToAddressDummy" type="button" value="Send to Address" disabled="disabled" style="visibility: hidden;" />
+  <input id="sendToAddress" type="button" class="btn btn-success" value="Send to Address" onclick="sendEmailToAddress()" />
+  <input id="sendToAddressDummy" type="button" class="btn btn-default" value="Send to Address" disabled="disabled" style="display: none;" />
   <input id="emailAddress" type="text" />
-  <input id="sendToAddressStatus" type="text" readonly />
-  <br /><br />
-  <input type="button" value="Send to Members"/>
+  <input id="sendToAll" type="button" class="btn btn-danger pull-right" value="Send to all Members" onclick="sendEmailToAll()" />
+  <input id="sendToAllDummy" type="button" class="btn btn-default pull-right" value="Send to all Members" disabled="disabled" style="display: none;" />
+  <br />
+  <input id="sendStatus" type="text" class="text-center" style="border: none; width: 100%; font-weight: bold;" readonly />
 </div>
 
 <script language="javascript">
@@ -20,17 +22,17 @@
     var sendToAddressButton = document.getElementById("sendToAddress");
     var sendToAddressButtonDummy = document.getElementById("sendToAddressDummy");
     var emailAddress = document.getElementById("emailAddress").value;
-    var sendToAddressStatus = document.getElementById("sendToAddressStatus");
-
-    sendToAddressButton.style.visibility = 'hidden';
-    sendToAddressButtonDummy.style.visibility = 'visible';
-
-    sendToAddressStatus.value = 'Sending...';
+    var sendStatus = document.getElementById("sendStatus");
 
     if (emailAddress === "") {
       alert("Please enter an email address first.");
       return;
     }
+
+    sendToAddressButton.style.display = 'none';
+    sendToAddressButtonDummy.style.display = 'inline';
+
+    sendStatus.value = 'Sending...';
 
     $.ajax({
       url: 'api/email/sendFullScheduleToAddress',
@@ -39,14 +41,44 @@
       contentType: 'application/text',
       dataType: 'text',
       success: function (result) {
-        sendToAddressStatus.value = 'Sent successfully.';
+        sendStatus.value = 'Sent successfully.';
       },
       complete: function () {
-        sendToAddressButton.style.visibility = 'visible';
-        sendToAddressButtonDummy.style.visibility = 'hidden';
+        sendToAddressButton.style.display = 'inline';
+        sendToAddressButtonDummy.style.display = 'none';
       },
       error: function (xhr, exception) {
-        sendToAddressStatus.value = 'Send failed.';
+        sendStatus.value = 'Send failed.';
+        alert('Failed to send email, the following message may be helpful: (' + xhr.status + ') ' + xhr.responseText);
+      }
+    });
+  }
+
+  function sendEmailToAll() {
+    var sendToAllButton = document.getElementById("sendToAll");
+    var sendToAllButtonDummy = document.getElementById("sendToAllDummy");
+    var sendStatus = document.getElementById("sendStatus");
+
+    sendToAllButton.style.display = 'none';
+    sendToAllButtonDummy.style.display = 'inline';
+
+    sendStatus.value = 'Sending...';
+
+    $.ajax({
+      url: 'api/email/sendFullScheduleToAll',
+      data: null,
+      type: 'POST',
+      contentType: 'application/text',
+      dataType: 'text',
+      success: function (result) {
+        sendStatus.value = 'Sent successfully.';
+      },
+      complete: function () {
+        sendToAllButton.style.display = 'inline';
+        sendToAllButtonDummy.style.display = 'none';
+      },
+      error: function (xhr, exception) {
+        sendStatus.value = 'Send failed.';
         alert('Failed to send email, the following message may be helpful: (' + xhr.status + ') ' + xhr.responseText);
       }
     });

@@ -9,6 +9,7 @@ using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Logging;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace McsaMeetsMailer.Controllers
 {
@@ -47,12 +48,14 @@ namespace McsaMeetsMailer.Controllers
           emailAddress = reader.ReadToEnd();
         }
 
+        string[] emailAddresses = emailAddress.Split(';');
+
         IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets();
         string html = FullScheduleEmailBuilder.Build(meets);
 
-        _logger.LogInfo($"Sending full schedule email to address \"{emailAddress}\"...", ClassName);
+        _logger.LogInfo($"Sending full schedule email to address \"{emailAddresses.Join(";")}\"...", ClassName);
 
-        _emailSenderService.Send(html, new[] { emailAddress });
+        _emailSenderService.Send(html, emailAddresses);
       }
       catch (Exception ex)
       {
