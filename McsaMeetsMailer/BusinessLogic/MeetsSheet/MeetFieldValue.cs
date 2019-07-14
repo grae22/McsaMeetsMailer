@@ -8,6 +8,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
   {
     public MeetField Field { get; }
     public string Value { get; }
+    public string FormattedValue { get; }
     public IValidationResults ValidationResults => _validatorChain;
     public DateTime? ValueAsDate => GetValueAsDate();
 
@@ -20,6 +21,8 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     {
       Field = field;
       Value = value;
+
+      FormattedValue = Field.ValueFormatter.Format(Value);
 
       _validatorChain = validatorChain ?? throw new ArgumentNullException(nameof(validatorChain));
       _validatorChain.Validate(value);

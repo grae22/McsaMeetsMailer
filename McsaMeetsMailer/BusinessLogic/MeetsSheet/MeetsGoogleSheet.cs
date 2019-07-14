@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using McsaMeetsMailer.Models;
+using McsaMeetsMailer.Utils.Formatting;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
 using McsaMeetsMailer.Utils.Validation.Validators;
@@ -220,7 +221,8 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           value,
           StripSpecialCharactersFromColumnHeader(value),
           fields.Count,
-          IsColumnHeaderForMeetTitle(value));
+          IsColumnHeaderForMeetTitle(value),
+          GetFormatterForColumnHeader(value));
 
         fields.Add(field);
       }
@@ -321,6 +323,16 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         .Replace($"{HeaderSpecialChar_DisplayInHeader}", "")
         .Replace($"{HeaderSpecialChar_Required}", "")
         .Trim();
+    }
+
+    private static IFormatter GetFormatterForColumnHeader(in string columnHeaderText)
+    {
+      if (columnHeaderText.Contains("date", StringComparison.OrdinalIgnoreCase))
+      {
+        return new DateFormatter("d MMM (ddd)");
+      }
+
+      return NullFormatter.Instance();
     }
   }
 }

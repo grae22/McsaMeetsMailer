@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Services.Exceptions;
+using McsaMeetsMailer.Utils.Formatting;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
 using McsaMeetsMailer.Utils.Settings;
@@ -174,6 +175,7 @@ namespace McsaMeetsMailerTests.Services
       var googleSheet = Substitute.For<IMeetsGoogleSheet>();
       var dateTimeService = Substitute.For<IDateTimeService>();
       var logger = Substitute.For<ILogger>();
+      var formatter = NullFormatter.Instance();
 
       settings
         .GetValidString(Arg.Any<string>())
@@ -196,7 +198,8 @@ namespace McsaMeetsMailerTests.Services
         "Leader",
         "Leader",
         0,
-        false);
+        false,
+        formatter);
 
       googleSheet
         .Retrieve()
@@ -244,6 +247,7 @@ namespace McsaMeetsMailerTests.Services
       var googleSheet = Substitute.For<IMeetsGoogleSheet>();
       var dateTimeService = Substitute.For<IDateTimeService>();
       var logger = Substitute.For<ILogger>();
+      var formatter = NullFormatter.Instance();
 
       settings
         .GetValidString(Arg.Any<string>())
@@ -266,7 +270,8 @@ namespace McsaMeetsMailerTests.Services
         "Date",
         "Date",
         0,
-        false);
+        false,
+        formatter);
 
       googleSheet
         .Retrieve()
@@ -314,6 +319,7 @@ namespace McsaMeetsMailerTests.Services
       var googleSheet = Substitute.For<IMeetsGoogleSheet>();
       var dateTimeService = Substitute.For<IDateTimeService>();
       var logger = Substitute.For<ILogger>();
+      var formatter = NullFormatter.Instance();
 
       settings
         .GetValidString(Arg.Any<string>())
@@ -336,7 +342,8 @@ namespace McsaMeetsMailerTests.Services
         "Date",
         "Date",
         0,
-        false);
+        false,
+        formatter);
 
       googleSheet
         .Retrieve()

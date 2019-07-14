@@ -1,7 +1,10 @@
 ﻿using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Utils.Extensions;
+using McsaMeetsMailer.Utils.Formatting;
 using McsaMeetsMailer.Utils.Validation.Validators;
+
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -14,13 +17,16 @@ namespace McsaMeetsMailerTests.Utils.Extensions
     public void LeaderField_GivenLeaderNameFieldFound_ShouldReturnLeaderName()
     {
       // Arrange.
+      var formatter = Substitute.For<IFormatter>();
+
       var dateField = new MeetField(
         false,
         false,
         "Date",
         "Date",
         0,
-        false);
+        false,
+        formatter);
 
       var leaderField = new MeetField(
         false,
@@ -28,7 +34,8 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Leader",
         "Leader",
         0,
-        false);
+        false,
+        formatter);
 
       var testObject = new MeetDetailsModel
       {
@@ -51,13 +58,16 @@ namespace McsaMeetsMailerTests.Utils.Extensions
     public void LeaderField_GivenLeaderNameFieldNotFound_ShouldRaiseException()
     {
       // Arrange.
+      var formatter = Substitute.For<IFormatter>();
+
       var dateField = new MeetField(
         false,
         false,
         "Date",
         "Date",
         0,
-        false);
+        false,
+        formatter);
 
       var notesField = new MeetField(
         false,
@@ -65,7 +75,8 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Notes",
         "Notes",
         0,
-        false);
+        false,
+        formatter);
 
       var testObject = new MeetDetailsModel
       {
@@ -93,13 +104,16 @@ namespace McsaMeetsMailerTests.Utils.Extensions
     public void DateField_GivenDateFieldFound_ShouldReturnDate()
     {
       // Arrange.
+      var formatter = Substitute.For<IFormatter>();
+
       var dateField = new MeetField(
         false,
         false,
         "Date",
         "Date",
         0,
-        false);
+        false,
+        formatter);
 
       var leaderField = new MeetField(
         false,
@@ -107,7 +121,8 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Leader",
         "Leader",
         0,
-        false);
+        false,
+        formatter);
 
       var testObject = new MeetDetailsModel
       {
@@ -130,13 +145,16 @@ namespace McsaMeetsMailerTests.Utils.Extensions
     public void DateField_GivenDateFieldNotFound_ShouldRaiseException()
     {
       // Arrange.
+      var formatter = Substitute.For<IFormatter>();
+
       var dateField = new MeetField(
         false,
         false,
         "Leader",
         "Leader",
         0,
-        false);
+        false,
+        formatter);
 
       var notesField = new MeetField(
         false,
@@ -144,7 +162,8 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Notes",
         "Notes",
         0,
-        false);
+        false,
+        formatter);
 
       var testObject = new MeetDetailsModel
       {

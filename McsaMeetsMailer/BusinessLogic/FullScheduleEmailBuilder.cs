@@ -102,7 +102,7 @@ namespace McsaMeetsMailer.BusinessLogic
 
         foreach (MeetFieldValue field in sortedFields)
         {
-          string value = field.ValidationResults.IsValid ? field.Value : $"INVALID : {field.Value}";
+          string value = field.ValidationResults.IsValid ? field.FormattedValue : $"INVALID : {field.Value}";
 
           if (!field.Field.DisplayInHeader)
           {
@@ -164,7 +164,7 @@ namespace McsaMeetsMailer.BusinessLogic
 
         foreach (MeetFieldValue field in sortedFields)
         {
-          string value = field.ValidationResults.IsValid ? field.Value : $"INVALID : {field.Value}";
+          string value = field.ValidationResults.IsValid ? field.FormattedValue : $"INVALID : {field.Value}";
           string htmlBlob;
 
           if (field.Field.IsMeetTitle)

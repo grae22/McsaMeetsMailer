@@ -1,4 +1,8 @@
-﻿namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
+﻿using System;
+
+using McsaMeetsMailer.Utils.Formatting;
+
+namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public class MeetField
   {
@@ -8,6 +12,7 @@
     public string FriendlyText { get; }
     public int SortOrder { get; }
     public bool IsMeetTitle { get; }
+    public IFormatter ValueFormatter { get; }
 
     public MeetField(
       in bool displayInHeader,
@@ -15,7 +20,8 @@
       in string rawText,
       in string friendlyText,
       in int sortOrder,
-      in bool isMeetTitle)
+      in bool isMeetTitle,
+      in IFormatter valueFormatter)
     {
       DisplayInHeader = displayInHeader;
       IsRequired = isRequired;
@@ -23,6 +29,7 @@
       FriendlyText = friendlyText;
       SortOrder = sortOrder;
       IsMeetTitle = isMeetTitle;
+      ValueFormatter = valueFormatter ?? throw new ArgumentNullException(nameof(valueFormatter));
     }
   }
 }

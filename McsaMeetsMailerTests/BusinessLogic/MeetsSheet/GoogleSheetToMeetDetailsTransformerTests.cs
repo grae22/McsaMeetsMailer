@@ -3,6 +3,7 @@ using System.Linq;
 
 using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
+using McsaMeetsMailer.Utils.Formatting;
 using McsaMeetsMailer.Utils.Validation.Validators;
 
 using NSubstitute;
@@ -20,16 +21,18 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       // Arrange.
       var sheet = Substitute.For<IMeetsGoogleSheet>();
       var validatorChain = new ValidatorChain();
+      var formatter = NullFormatter.Instance();
+      var field = new MeetField(false, false, string.Empty, string.Empty, 0, false, formatter);
 
       sheet
         .Fields
         .Returns(new[]
         {
-          new MeetField(false, false, string.Empty, "Column 1", 0, false),
-          new MeetField(false, false, string.Empty, "Column 2", 0, false),
-          new MeetField(false, false, string.Empty, "Column 3", 0, true),
-          new MeetField(true, false, string.Empty, "Column 4", 0, false),
-          new MeetField(false, true, string.Empty, "Column 5", 0, false),
+          new MeetField(false, false, string.Empty, "Column 1", 0, false, formatter),
+          new MeetField(false, false, string.Empty, "Column 2", 0, false, formatter),
+          new MeetField(false, false, string.Empty, "Column 3", 0, true, formatter),
+          new MeetField(true, false, string.Empty, "Column 4", 0, false, formatter),
+          new MeetField(false, true, string.Empty, "Column 5", 0, false, formatter),
         });
 
       sheet
@@ -38,19 +41,19 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         {
           new[]
           {
-            new MeetFieldValue(null, "R1C1", validatorChain),
-            new MeetFieldValue(null, "R1C2", validatorChain),
-            new MeetFieldValue(null, "R1C3", validatorChain),
-            new MeetFieldValue(null, "R1C4", validatorChain),
-            new MeetFieldValue(null, "R1C5", validatorChain)
+            new MeetFieldValue(field, "R1C1", validatorChain),
+            new MeetFieldValue(field, "R1C2", validatorChain),
+            new MeetFieldValue(field, "R1C3", validatorChain),
+            new MeetFieldValue(field, "R1C4", validatorChain),
+            new MeetFieldValue(field, "R1C5", validatorChain)
           },
           new[]
           {
-            new MeetFieldValue(null, "R2C1", validatorChain),
-            new MeetFieldValue(null, "R2C2", validatorChain),
-            new MeetFieldValue(null, "R2C3", validatorChain),
-            new MeetFieldValue(null, "R2C4", validatorChain),
-            new MeetFieldValue(null, "R2C5", validatorChain)
+            new MeetFieldValue(field, "R2C1", validatorChain),
+            new MeetFieldValue(field, "R2C2", validatorChain),
+            new MeetFieldValue(field, "R2C3", validatorChain),
+            new MeetFieldValue(field, "R2C4", validatorChain),
+            new MeetFieldValue(field, "R2C5", validatorChain)
           },
         });
 
