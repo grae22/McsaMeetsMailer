@@ -7,14 +7,25 @@
 <iframe id="contentFrame" style="width: 100%; height: 70vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
 
 <div class="container">
-  <input type="button" value="Send to Address" onclick="sendEmailToAddress()" /><input id="emailAddress" type="text" />
+  <input id="sendToAddress" type="button" value="Send to Address" onclick="sendEmailToAddress()" />
+  <input id="sendToAddressDummy" type="button" value="Send to Address" disabled="disabled" style="visibility: hidden;" />
+  <input id="emailAddress" type="text" />
+  <input id="sendToAddressStatus" type="text" readonly />
   <br /><br />
   <input type="button" value="Send to Members"/>
 </div>
 
 <script language="javascript">
   function sendEmailToAddress() {
+    var sendToAddressButton = document.getElementById("sendToAddress");
+    var sendToAddressButtonDummy = document.getElementById("sendToAddressDummy");
     var emailAddress = document.getElementById("emailAddress").value;
+    var sendToAddressStatus = document.getElementById("sendToAddressStatus");
+
+    sendToAddressButton.style.visibility = 'hidden';
+    sendToAddressButtonDummy.style.visibility = 'visible';
+
+    sendToAddressStatus.value = 'Sending...';
 
     if (emailAddress === "") {
       alert("Please enter an email address first.");
@@ -25,15 +36,18 @@
       url: 'api/email/sendFullScheduleToAddress',
       data: emailAddress,
       type: 'POST',
-      contentType: 'application/json',
-      dataType: 'json',
+      contentType: 'application/text',
+      dataType: 'text',
       success: function (result) {
-        alert(result);
+        sendToAddressStatus.value = 'Sent successfully.';
       },
-      complete: function() {
-      },  
-      failure: function (err) {                  
-        alert(err);
+      complete: function () {
+        sendToAddressButton.style.visibility = 'visible';
+        sendToAddressButtonDummy.style.visibility = 'hidden';
+      },
+      error: function (xhr, exception) {
+        sendToAddressStatus.value = 'Send failed.';
+        alert('Failed to send email, the following message may be helpful: (' + xhr.status + ') ' + xhr.responseText);
       }
     });
   }

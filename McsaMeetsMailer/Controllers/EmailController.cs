@@ -10,8 +10,6 @@ using McsaMeetsMailer.Utils.Logging;
 
 using Microsoft.AspNetCore.Mvc;
 
-using Newtonsoft.Json;
-
 namespace McsaMeetsMailer.Controllers
 {
   [Route("api/[controller]")]
@@ -59,7 +57,7 @@ namespace McsaMeetsMailer.Controllers
       catch (Exception ex)
       {
         _logger.LogError("Exception while sending full schedule email to address.", ClassName, ex);
-        return StatusCode(500);
+        return StatusCode(500, ex.Message);
       }
 
       return Ok();
