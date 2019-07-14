@@ -13,17 +13,26 @@ namespace McsaMeetsMailer.Utils.Extensions
 
     public static MeetFieldValue LeaderField(this MeetDetailsModel details)
     {
-      return GetField(LeaderFieldName, details);
+      return GetField(
+        LeaderFieldName,
+        details,
+        true);
     }
 
-    public static MeetFieldValue DateField(this MeetDetailsModel details)
+    public static MeetFieldValue DateField(
+      this MeetDetailsModel details,
+      in bool raiseExceptionIfNotFound = true)
     {
-      return GetField(DateFieldName, details);
+      return GetField(
+        DateFieldName,
+        details,
+        raiseExceptionIfNotFound);
     }
 
     private static MeetFieldValue GetField(
       in string fieldName,
-      in MeetDetailsModel details)
+      in MeetDetailsModel details,
+      in bool raiseExceptionIfNotFound)
     {
       if (details == null)
       {
@@ -44,12 +53,19 @@ namespace McsaMeetsMailer.Utils.Extensions
       }
       catch (NullReferenceException)
       {
-        throw new MissingMeetFieldException(fieldName);
+        // Handled below.
       }
       catch (InvalidOperationException)
       {
+        // Handled below.
+      }
+
+      if (raiseExceptionIfNotFound)
+      {
         throw new MissingMeetFieldException(fieldName);
       }
+
+      return null;
     }
   }
 }

@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using McsaMeetsMailer.Models;
+using McsaMeetsMailer.Utils.Extensions;
 using McsaMeetsMailer.Utils.Validation;
 
 namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
@@ -26,7 +29,11 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         models.Add(newModel);
       }
 
-      meetDetailsModels = models;
+      meetDetailsModels = models
+        .OrderBy(m =>
+          m
+            .DateField(false)
+            ?.ValueAsDate ?? DateTime.MinValue);
     }
   }
 }
