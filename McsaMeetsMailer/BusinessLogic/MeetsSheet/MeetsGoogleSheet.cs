@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,14 +12,13 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public class MeetsGoogleSheet : IMeetsGoogleSheet
   {
-    public const string HeaderText_Date = "# Date*";
-    public const string HeaderText_MeetTitle = "# Meet Title*";
-
     public IEnumerable<MeetField> Fields => _fields;
     public IEnumerable<IEnumerable<MeetFieldValue>> ValuesByRow => _valuesByRow;
 
     private static readonly string ClassName = typeof(MeetsGoogleSheet).Name;
 
+    private const string HeaderText_Date = "# Date*";
+    private const string HeaderText_MeetTitle = "# Meet Title*";
     private const string FirstCellText = HeaderText_Date;
     private const char HeaderSpecialChar_DisplayInHeader = '#';
     private const char HeaderSpecialChar_Required = '*';

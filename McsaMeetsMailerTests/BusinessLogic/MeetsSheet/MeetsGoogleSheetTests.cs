@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +20,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
   [TestFixture]
   public class MeetsGoogleSheetTests
   {
-    private const string DateColumnText = MeetsGoogleSheet.HeaderText_Date;
+    private const string DateColumnText = "# Date*";
 
     [Test]
     public async Task Retrieve_GivenSuccessfulRetrieval_ShouldReturnTrue()
