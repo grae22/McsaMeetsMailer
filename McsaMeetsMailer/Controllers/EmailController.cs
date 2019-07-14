@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 
 using McsaMeetsMailer.BusinessLogic;
+using McsaMeetsMailer.BusinessLogic.EmailAddressSheet;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Logging;
@@ -60,6 +61,29 @@ namespace McsaMeetsMailer.Controllers
       catch (Exception ex)
       {
         _logger.LogError("Exception while sending full schedule email to address.", ClassName, ex);
+        return StatusCode(500, ex.Message);
+      }
+
+      return Ok();
+    }
+    
+    [Route("sendFullScheduleToAll")]
+    public async Task<ActionResult> SendFullScheduleToAll()
+    {
+      try
+      {
+        IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets();
+        string html = FullScheduleEmailBuilder.Build(meets);
+
+        IEmailAddresses addresses = await _emailAddressService.RetrieveEmailAddresses();
+
+        _logger.LogInfo("Sending full schedule email to all...", ClassName);
+
+        _emailSenderService.Send(html, addresses.FullScheduleEmailAddresses);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError("Exception while sending full schedule email to all.", ClassName, ex);
         return StatusCode(500, ex.Message);
       }
 

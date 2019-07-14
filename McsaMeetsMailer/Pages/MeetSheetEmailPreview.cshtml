@@ -55,6 +55,10 @@
   }
 
   function sendEmailToAll() {
+    if (!confirm("This will send the Meet Sheet to all members, are you sure?")) {
+      return;
+    }
+
     var sendToAllButton = document.getElementById("sendToAll");
     var sendToAllButtonDummy = document.getElementById("sendToAllDummy");
     var sendStatus = document.getElementById("sendStatus");
