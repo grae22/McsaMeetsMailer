@@ -4,20 +4,24 @@
   ViewData["Title"] = "Leader Preview";
 }
 
-<p>
-  Filter by leader
-  <select id="leaders" onchange="refreshContentFrame()">
-    <option value="All">ALL</option>
-    @{
-      foreach (var leaderName in Model.LeaderNames)
-      {
-        <option value="@leaderName">@leaderName</option>
+<div class="container" style="padding-top: 10px;">
+  <p>
+    Filter by leader
+    <select id="leaders" onchange="refreshContentFrame()">
+      <option value="All">ALL</option>
+      @{
+        foreach (var leaderName in Model.LeaderNames)
+        {
+          <option value="@leaderName">@leaderName</option>
+        }
       }
-    }
-  </select>
-</p>
+    </select>
+  </p>
+</div>
 
-<iframe id="contentFrame" style="width: 100%; height: 800px;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
+<div class="container">
+  <iframe id="contentFrame" style="width: 100%; height: 80vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
+</div>
 
 <script language="javascript">
   function refreshContentFrame() {
