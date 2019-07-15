@@ -19,9 +19,50 @@
 </div>
 
 <script language="javascript">
-  function sendEmailToAddress() {
+
+  function disableSendToAddressButton() {
     var sendToAddressButton = document.getElementById("sendToAddress");
     var sendToAddressButtonDummy = document.getElementById("sendToAddressDummy");
+
+    sendToAddressButton.style.display = 'none';
+    sendToAddressButtonDummy.style.display = 'inline';
+  }
+
+  function enableSendToAddressButton() {
+    var sendToAddressButton = document.getElementById("sendToAddress");
+    var sendToAddressButtonDummy = document.getElementById("sendToAddressDummy");
+
+    sendToAddressButton.style.display = 'inline';
+    sendToAddressButtonDummy.style.display = 'none';
+  }
+
+  function disableSendToAllButton() {
+    var sendToAllButton = document.getElementById("sendToAll");
+    var sendToAllButtonDummy = document.getElementById("sendToAllDummy");
+
+    sendToAllButton.style.display = 'none';
+    sendToAllButtonDummy.style.display = 'inline';
+  }
+
+  function enableSendToAllButton() {
+    var sendToAllButton = document.getElementById("sendToAll");
+    var sendToAllButtonDummy = document.getElementById("sendToAllDummy");
+
+    sendToAllButton.style.display = 'inline';
+    sendToAllButtonDummy.style.display = 'none';
+  }
+
+  function disableSendButtons() {
+    disableSendToAddressButton();
+    disableSendToAllButton();
+  }
+
+  function enableSendButtons() {
+    enableSendToAddressButton();
+    enableSendToAllButton();
+  }
+
+  function sendEmailToAddress() {
     var emailAddress = document.getElementById("emailAddress").value;
     var sendStatus = document.getElementById("sendStatus");
 
@@ -30,8 +71,7 @@
       return;
     }
 
-    sendToAddressButton.style.display = 'none';
-    sendToAddressButtonDummy.style.display = 'inline';
+    disableSendButtons();
 
     sendStatus.value = 'Sending...';
 
@@ -45,8 +85,7 @@
         sendStatus.value = 'Sent successfully.';
       },
       complete: function () {
-        sendToAddressButton.style.display = 'inline';
-        sendToAddressButtonDummy.style.display = 'none';
+        enableSendButtons();
       },
       error: function (xhr, exception) {
         sendStatus.value = 'Send failed.';
@@ -60,12 +99,9 @@
       return;
     }
 
-    var sendToAllButton = document.getElementById("sendToAll");
-    var sendToAllButtonDummy = document.getElementById("sendToAllDummy");
     var sendStatus = document.getElementById("sendStatus");
 
-    sendToAllButton.style.display = 'none';
-    sendToAllButtonDummy.style.display = 'inline';
+    disableSendButtons();
 
     sendStatus.value = 'Sending...';
 
@@ -79,8 +115,7 @@
         sendStatus.value = 'Sent successfully.';
       },
       complete: function () {
-        sendToAllButton.style.display = 'inline';
-        sendToAllButtonDummy.style.display = 'none';
+        enableSendButtons();
       },
       error: function (xhr, exception) {
         sendStatus.value = 'Send failed.';
