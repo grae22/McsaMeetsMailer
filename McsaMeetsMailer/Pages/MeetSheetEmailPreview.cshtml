@@ -3,11 +3,12 @@
 @{
     ViewData["Title"] = "Email Preview";
 }
-<div class="container">
+
+<div class="container" style="padding-top: 20px;">
   <iframe id="contentFrame" style="width: 100%; height: 70vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
 </div>
 
-<div class="container">
+<div class="container" style="padding-top: 10px;">
   <input id="sendToAddress" type="button" class="btn btn-success" value="Send to Address" onclick="sendEmailToAddress()" />
   <input id="sendToAddressDummy" type="button" class="btn btn-default" value="Send to Address" disabled="disabled" style="display: none;" />
   <input id="emailAddress" type="text" />
