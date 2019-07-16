@@ -31,7 +31,7 @@ namespace McsaMeetsMailer.Pages
       }
       else
       {
-        meets = await _meetsService.RetrieveMeets();
+        meets = await _meetsService.RetrieveMeets(DateTime.Now);
       }
 
       if (meets == null)

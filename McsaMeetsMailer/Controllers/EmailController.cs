@@ -36,7 +36,7 @@ namespace McsaMeetsMailer.Controllers
       _emailSenderService = emailSenderService ?? throw new ArgumentNullException(nameof(emailSenderService));
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
     }
-    
+
     [Route("sendFullScheduleToAddress")]
     public async Task<ActionResult> SendFullScheduleToAddress()
     {
@@ -66,9 +66,9 @@ namespace McsaMeetsMailer.Controllers
 
       return Ok();
     }
-    
+
     [Route("sendFullScheduleToAll")]
-    public async Task<ActionResult> SendFullScheduleToAll()
+    public async Task<ActionResult> SendFullScheduleToAll(EmailContent emailContent)
     {
       try
       {

@@ -2,20 +2,30 @@
 @model McsaMeetsMailer.Pages.MeetSheetEmailPreviewModel
 @{
   ViewData["Title"] = "Email Preview";
+
+  var monthName = $"{DateTime.Now:MMMM}";
 }
 
 <div class="container" style="padding-top: 20px;">
-  <iframe id="contentFrame" style="width: 100%; height: 70vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
+  <label class="label label-default">Email Subject</label>
+  <input id="emailSubject" type="text" class="form-control input-sm" maxlength="64" value="MCSA-KZN Meet Sheet : @monthName" />
+  <label class="label label-default">Email Body</label>
+  <textarea id="emailBody" class="form-control input-sm" rows="3" maxlength="512">Hi&#10;&#13;Please find the latest Meet Sheet below.</textarea>
+</div>
+
+<div class="container">
+  <label class="label label-default">Meet Sheet</label>
+  <iframe id="contentFrame" class="form-control" style="width: 100%; height: 60vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
 </div>
 
 <div class="container" style="padding-top: 10px;">
-  <input id="sendToAddress" type="button" class="btn btn-success" value="Send to Address" onclick="sendEmailToAddress()" />
-  <input id="sendToAddressDisabled" type="button" class="btn btn-default" value="Send to Address" disabled="disabled" style="display: none;" />
-  <input id="emailAddress" type="text" />
-  <input id="sendToAll" type="button" class="btn btn-danger pull-right" value="Send to all Members" onclick="sendEmailToAll()" />
-  <input id="sendToAllDisabled" type="button" class="btn btn-default pull-right" value="Send to all Members" disabled="disabled" style="display: none;" />
-  <br />
-  <input id="sendStatus" type="text" class="text-center" style="border: none; width: 100%; font-weight: bold;" readonly />
+  <input id="sendToAddress" type="button" class="btn btn-success" value="Send to Address" onclick="sendEmailToAddress()"/>
+  <input id="sendToAddressDisabled" type="button" class="btn btn-default" value="Send to Address" disabled="disabled" style="display: none;"/>
+  <input id="emailAddress" type="email"/>
+  <input id="sendToAll" type="button" class="btn btn-danger pull-right" value="Send to all Members" onclick="sendEmailToAll()"/>
+  <input id="sendToAllDisabled" type="button" class="btn btn-default pull-right" value="Send to all Members" disabled="disabled" style="display: none;"/>
+  <br/>
+  <input id="sendStatus" type="text" class="text-center" style="border: none; width: 100%; font-weight: bold;" readonly/>
 </div>
 
 <script language="javascript">
@@ -105,12 +115,16 @@
 
     sendStatus.value = 'Sending...';
 
+    var emailContent = new Object();
+    emailContent.Subject = "MCSA-KZN Meet Sheet : ";
+    emailContent.Body = "Hi...";
+
     $.ajax({
       url: 'api/email/sendFullScheduleToAll',
-      data: null,
+      data: JSON.stringify(emailContent),
       type: 'POST',
-      contentType: 'application/text',
-      dataType: 'text',
+      contentType: 'application/json',
+      dataType: 'json',
       success: function (result) {
         sendStatus.value = 'Sent successfully.';
       },

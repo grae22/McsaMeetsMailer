@@ -132,13 +132,22 @@ namespace McsaMeetsMailer.Services
 
       try
       {
+        var invalidDate = DateTime.MinValue;
+
         return allMeets
           .Where(m =>
-            m
-              .DateField()
-              .ValueAsDate
-              .Value
-              .Date >= earliestDate);
+          {
+            var date = DateTime.MinValue;
+
+            if (m.DateField(false) != null)
+            {
+              date = m
+                .DateField()
+                .ValueAsDate ?? invalidDate;
+            }
+
+            return date >= earliestDate || date == invalidDate;
+          });
       }
       catch (MissingFieldException ex)
       {
