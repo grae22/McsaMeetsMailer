@@ -38,18 +38,16 @@ namespace McsaMeetsMailer.Controllers
     }
 
     [Route("sendFullScheduleToAddress")]
-    public async Task<ActionResult> SendFullScheduleToAddress()
+    public async Task<ActionResult> SendFullScheduleToAddress(EmailContent emailContent)
     {
       try
       {
-        string emailAddress;
-
-        using (var reader = new StreamReader(Request.Body))
+        if (string.IsNullOrWhiteSpace(emailContent.Address))
         {
-          emailAddress = reader.ReadToEnd();
+          return BadRequest();
         }
 
-        string[] emailAddresses = emailAddress.Split(';');
+        string[] emailAddresses = emailContent.Address.Split(';');
 
         IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets();
         string html = FullScheduleEmailBuilder.Build(meets);

@@ -72,6 +72,19 @@
     enableSendToAllButton();
   }
 
+  function getSerialisedEmailContentModel() {
+    var emailSubject = document.getElementById("emailSubject").value;
+    var emailBody = document.getElementById("emailBody").value;
+    var emailAddress = document.getElementById("emailAddress").value;
+
+    var emailContent = new Object();
+    emailContent.Address = emailAddress;
+    emailContent.Subject = emailSubject;
+    emailContent.Body = emailBody;
+
+    return JSON.stringify(emailContent);
+  }
+
   function sendEmailToAddress() {
     var emailAddress = document.getElementById("emailAddress").value;
     var sendStatus = document.getElementById("sendStatus");
@@ -87,10 +100,10 @@
 
     $.ajax({
       url: 'api/email/sendFullScheduleToAddress',
-      data: emailAddress,
+      data: getSerialisedEmailContentModel(),
       type: 'POST',
-      contentType: 'application/text',
-      dataType: 'text',
+      contentType: 'application/json',
+      dataType: 'json',
       success: function (result) {
         sendStatus.value = 'Sent successfully.';
       },
@@ -115,13 +128,9 @@
 
     sendStatus.value = 'Sending...';
 
-    var emailContent = new Object();
-    emailContent.Subject = "MCSA-KZN Meet Sheet : ";
-    emailContent.Body = "Hi...";
-
     $.ajax({
       url: 'api/email/sendFullScheduleToAll',
-      data: JSON.stringify(emailContent),
+      data: getSerialisedEmailContentModel(),
       type: 'POST',
       contentType: 'application/json',
       dataType: 'json',
