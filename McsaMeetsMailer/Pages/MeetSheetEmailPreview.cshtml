@@ -10,10 +10,10 @@
 
 <div class="container" style="padding-top: 10px;">
   <input id="sendToAddress" type="button" class="btn btn-success" value="Send to Address" onclick="sendEmailToAddress()" />
-  <input id="sendToAddressDummy" type="button" class="btn btn-default" value="Send to Address" disabled="disabled" style="display: none;" />
+  <input id="sendToAddressDisabled" type="button" class="btn btn-default" value="Send to Address" disabled="disabled" style="display: none;" />
   <input id="emailAddress" type="text" />
   <input id="sendToAll" type="button" class="btn btn-danger pull-right" value="Send to all Members" onclick="sendEmailToAll()" />
-  <input id="sendToAllDummy" type="button" class="btn btn-default pull-right" value="Send to all Members" disabled="disabled" style="display: none;" />
+  <input id="sendToAllDisabled" type="button" class="btn btn-default pull-right" value="Send to all Members" disabled="disabled" style="display: none;" />
   <br />
   <input id="sendStatus" type="text" class="text-center" style="border: none; width: 100%; font-weight: bold;" readonly />
 </div>
@@ -22,34 +22,34 @@
 
   function disableSendToAddressButton() {
     var sendToAddressButton = document.getElementById("sendToAddress");
-    var sendToAddressButtonDummy = document.getElementById("sendToAddressDummy");
+    var sendToAddressButtonDisabled = document.getElementById("sendToAddressDisabled");
 
     sendToAddressButton.style.display = 'none';
-    sendToAddressButtonDummy.style.display = 'inline';
+    sendToAddressButtonDisabled.style.display = 'inline';
   }
 
   function enableSendToAddressButton() {
     var sendToAddressButton = document.getElementById("sendToAddress");
-    var sendToAddressButtonDummy = document.getElementById("sendToAddressDummy");
+    var sendToAddressButtonDisabled = document.getElementById("sendToAddressDisabled");
 
     sendToAddressButton.style.display = 'inline';
-    sendToAddressButtonDummy.style.display = 'none';
+    sendToAddressButtonDisabled.style.display = 'none';
   }
 
   function disableSendToAllButton() {
     var sendToAllButton = document.getElementById("sendToAll");
-    var sendToAllButtonDummy = document.getElementById("sendToAllDummy");
+    var sendToAllButtonDisabled = document.getElementById("sendToAllDisabled");
 
     sendToAllButton.style.display = 'none';
-    sendToAllButtonDummy.style.display = 'inline';
+    sendToAllButtonDisabled.style.display = 'inline';
   }
 
   function enableSendToAllButton() {
     var sendToAllButton = document.getElementById("sendToAll");
-    var sendToAllButtonDummy = document.getElementById("sendToAllDummy");
+    var sendToAllButtonDisabled = document.getElementById("sendToAllDisabled");
 
     sendToAllButton.style.display = 'inline';
-    sendToAllButtonDummy.style.display = 'none';
+    sendToAllButtonDisabled.style.display = 'none';
   }
 
   function disableSendButtons() {
