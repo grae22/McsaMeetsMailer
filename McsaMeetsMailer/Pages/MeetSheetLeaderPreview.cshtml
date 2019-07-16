@@ -6,8 +6,8 @@
 
 <div class="container" style="padding-top: 10px;">
   <p>
-    Filter by leader
-    <select id="leaders" onchange="refreshContentFrame()">
+    <label class="label label-default">Filter by Leader</label>
+    <select id="leaders" class="form-control" onchange="refreshContentFrame()">
       <option value="All">ALL</option>
       @{
         foreach (var leaderName in Model.LeaderNames)
@@ -20,7 +20,7 @@
 </div>
 
 <div class="container">
-  <iframe id="contentFrame" style="width: 100%; height: 80vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
+  <iframe id="contentFrame" class="form-control iframe-resizable" style="width: 100%; height: 80vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
 </div>
 
 <script language="javascript">

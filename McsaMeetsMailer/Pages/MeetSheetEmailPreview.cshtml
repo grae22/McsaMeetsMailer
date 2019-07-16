@@ -3,6 +3,15 @@
 @{
   ViewData["Title"] = "Email Preview";
 
+  // TODO: Pull this from config.
+  const string defaultBody =
+    "Hi&#10;&#10;" +
+    "Please find the latest MCSA-KZN Meet Sheet below.&#10;&#10;" +
+    "Queries specific to a particular Meet should be directed to the Meet Leader.&#10;&#10;" +
+    "Please do not reply to this email as the address is not monitored.&#10;&#10;" +
+    "Yours in adventure,&#10;" +
+    "The Mountain Club of South Africa, KwaZulu-Natal Section.";
+
   var monthName = $"{DateTime.Now:MMMM}";
 }
 
@@ -10,12 +19,12 @@
   <label class="label label-default">Email Subject</label>
   <input id="emailSubject" type="text" class="form-control input-sm" maxlength="64" value="MCSA-KZN Meet Sheet : @monthName" />
   <label class="label label-default">Email Body</label>
-  <textarea id="emailBody" class="form-control input-sm" rows="3" maxlength="512">Hi&#10;&#13;Please find the latest MCSA-KZN Meet Sheet below.</textarea>
+  <textarea id="emailBody" class="form-control input-sm" rows="3" maxlength="512">@Html.Raw(defaultBody)</textarea>
 </div>
 
 <div class="container">
   <label class="label label-default">Meet Sheet</label>
-  <iframe id="contentFrame" class="form-control" style="width: 100%; height: 60vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
+  <iframe id="contentFrame" class="form-control iframe-resizable" style="width: 100%; height: 60vh;" src="@Url.Content("MeetSheetOnly")">Sorry, your browser does not support i-frames.</iframe>
 </div>
 
 <div class="container" style="padding-top: 10px;">
