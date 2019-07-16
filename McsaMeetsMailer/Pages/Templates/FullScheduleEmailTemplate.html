@@ -20,7 +20,21 @@
 
         <!--HeaderLinkValue-->
         <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
-            <a href="#{Value}">
+            <a href="#{Value}" style="text-decoration: none;">
+                <span>{Value}</span>
+            </a>
+        </td>
+    </tr>
+    <!--HeaderValues_Invalid-->
+    <tr style="color: white; background-color: red;">
+        <!--HeaderValue-->
+        <td style="background-color: red; border: 2px solid white; padding: 10px;">
+            {Value}
+        </td>
+
+        <!--HeaderLinkValue-->
+        <td style="background-color: red; border: 2px solid white; padding: 10px;">
+            <a href="#{Value}"  style="text-decoration: none; color: white;">
                 <span>{Value}</span>
             </a>
         </td>

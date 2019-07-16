@@ -13,6 +13,7 @@ namespace McsaMeetsMailer.BusinessLogic
   {
     private const string summaryHeadingStart = "<!--HeaderHeading-->";
     private const string summaryValuesStart = "<!--HeaderValues-->";
+    private const string summaryValuesStart_Invalid = "<!--HeaderValues_Invalid-->";
     private const string summaryValueStart = "<!--HeaderValue-->";
     private const string summaryLinkValueStart = "<!--HeaderLinkValue-->";
     private const string detailsStart = "<!--Details-->";
@@ -23,7 +24,7 @@ namespace McsaMeetsMailer.BusinessLogic
     private const string endOfRow = "</tr>";
     private const string endOfAnchor = "</a>";
 
-    public static string Build(IEnumerable<MeetDetailsModel> meetsDetails)
+    public static string Build(IEnumerable<MeetDetailsModel> meetsDetails, bool previewMode = true)
     {
       string html;
 
@@ -35,11 +36,18 @@ namespace McsaMeetsMailer.BusinessLogic
       var meets = meetsDetails.ToList();
 
       string headerHeadings = GetHeaderHeadings(html, meets);
-      string headerValues = GetHeaderValues(html, meets);
+      string headerValues = GetHeaderValues(html, meets, previewMode);
       string details = GetDetails(html, meets);
 
       html = UpdateHtml(html, summaryHeadingStart, endOfHeadingColumn, headerHeadings);
-      html = UpdateHtml(html, summaryValuesStart, endOfRow, headerValues);
+
+      // Insert summary content
+      int startIndex = html.IndexOf(summaryValueStart, StringComparison.Ordinal);
+      int startIndex_Invalid = html.IndexOf(summaryValuesStart_Invalid, StringComparison.Ordinal);
+      int endIndex = html.IndexOf(endOfRow, startIndex_Invalid, StringComparison.Ordinal) + endOfRow.Length;
+      html = html.Remove(startIndex, endIndex - startIndex);
+      html = html.Insert(startIndex, headerValues);
+
       html = UpdateHtml(html, detailsStart, endOfAnchor, details);
 
       return html;
@@ -70,25 +78,41 @@ namespace McsaMeetsMailer.BusinessLogic
       return headingsHtml.ToString();
     }
 
-    private static string GetHeaderValues(string html, IEnumerable<MeetDetailsModel> meetDetails)
+    private static string GetHeaderValues(string html, IEnumerable<MeetDetailsModel> meetDetails, bool previewMode)
     {
-      // Values template
-      int summaryValuesStartIndex = html.IndexOf(summaryValuesStart, StringComparison.Ordinal);
-      int summaryValuesEndIndex = html.IndexOf(endOfRow, summaryValuesStartIndex, StringComparison.Ordinal) + endOfRow.Length;
-      string valuesTemplate = html.Substring(summaryValuesStartIndex, summaryValuesEndIndex - summaryValuesStartIndex);
+      // Valid values template
+      int summaryValuesStartIndex_Valid = html.IndexOf(summaryValuesStart, StringComparison.Ordinal);
+      int summaryValuesEndIndex_Valid = html.IndexOf(endOfRow, summaryValuesStartIndex_Valid, StringComparison.Ordinal) + endOfRow.Length;
+      string valuesTemplate_Valid = html.Substring(summaryValuesStartIndex_Valid, summaryValuesEndIndex_Valid - summaryValuesStartIndex_Valid);
 
-      // Value template
-      int valueTemplateStartIndex = valuesTemplate.IndexOf(summaryValueStart, StringComparison.Ordinal) + summaryValueStart.Length;
-      int valueTemplateEndIndex = valuesTemplate.IndexOf(endOfColumn, valueTemplateStartIndex, StringComparison.Ordinal) + endOfColumn.Length;
-      string valueTemplate = valuesTemplate.Substring(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
+      // Valid value template
+      int valueTemplateStartIndex_Valid = valuesTemplate_Valid.IndexOf(summaryValueStart, StringComparison.Ordinal) + summaryValueStart.Length;
+      int valueTemplateEndIndex_Valid = valuesTemplate_Valid.IndexOf(endOfColumn, valueTemplateStartIndex_Valid, StringComparison.Ordinal) + endOfColumn.Length;
+      string valueTemplate_Valid = valuesTemplate_Valid.Substring(valueTemplateStartIndex_Valid, valueTemplateEndIndex_Valid - valueTemplateStartIndex_Valid);
 
-      // Anchor template
-      int anchorTemplateStartIndex = valuesTemplate.IndexOf(summaryLinkValueStart, StringComparison.Ordinal) + summaryLinkValueStart.Length;
-      int anchorTemplateEndIndex = valuesTemplate.IndexOf(endOfColumn, anchorTemplateStartIndex, StringComparison.Ordinal) + endOfColumn.Length;
-      string anchorTemplate = valuesTemplate.Substring(anchorTemplateStartIndex, anchorTemplateEndIndex - anchorTemplateStartIndex);
+      // Valid anchor template
+      int anchorTemplateStartIndex_Valid = valuesTemplate_Valid.IndexOf(summaryLinkValueStart, StringComparison.Ordinal) + summaryLinkValueStart.Length;
+      int anchorTemplateEndIndex_Valid = valuesTemplate_Valid.IndexOf(endOfColumn, anchorTemplateStartIndex_Valid, StringComparison.Ordinal) + endOfColumn.Length;
+      string anchorTemplate_Valid = valuesTemplate_Valid.Substring(anchorTemplateStartIndex_Valid, anchorTemplateEndIndex_Valid - anchorTemplateStartIndex_Valid);
+
+      // Invalid values template
+      int summaryValuesStartIndex_Invalid = html.IndexOf(summaryValuesStart_Invalid, StringComparison.Ordinal);
+      int summaryValuesEndIndex_Invalid = html.IndexOf(endOfRow, summaryValuesStartIndex_Invalid, StringComparison.Ordinal) + endOfRow.Length;
+      string valuesTemplate_Invalid = html.Substring(summaryValuesStartIndex_Invalid, summaryValuesEndIndex_Invalid - summaryValuesStartIndex_Invalid);
+
+      // Invalid value template
+      int valueTemplateStartIndex_Invalid = valuesTemplate_Invalid.IndexOf(summaryValueStart, StringComparison.Ordinal) + summaryValueStart.Length;
+      int valueTemplateEndIndex_Invalid = valuesTemplate_Invalid.IndexOf(endOfColumn, valueTemplateStartIndex_Invalid, StringComparison.Ordinal) + endOfColumn.Length;
+      string valueTemplate_Invalid = valuesTemplate_Invalid.Substring(valueTemplateStartIndex_Invalid, valueTemplateEndIndex_Invalid - valueTemplateStartIndex_Invalid);
+
+      // Invalid anchor template
+      int anchorTemplateStartIndex_Invalid = valuesTemplate_Invalid.IndexOf(summaryLinkValueStart, StringComparison.Ordinal) + summaryLinkValueStart.Length;
+      int anchorTemplateEndIndex_Invalid = valuesTemplate_Invalid.IndexOf(endOfColumn, anchorTemplateStartIndex_Invalid, StringComparison.Ordinal) + endOfColumn.Length;
+      string anchorTemplate_Invalid = valuesTemplate_Invalid.Substring(anchorTemplateStartIndex_Invalid, anchorTemplateEndIndex_Invalid - anchorTemplateStartIndex_Invalid);
 
       // Remove templates.
-      valuesTemplate = valuesTemplate.Remove(valueTemplateStartIndex, anchorTemplateEndIndex - valueTemplateStartIndex);
+      valuesTemplate_Valid = valuesTemplate_Valid.Remove(valueTemplateStartIndex_Valid, anchorTemplateEndIndex_Valid - valueTemplateStartIndex_Valid);
+      valuesTemplate_Invalid = valuesTemplate_Invalid.Remove(valueTemplateStartIndex_Invalid, anchorTemplateEndIndex_Invalid - valueTemplateStartIndex_Invalid);
 
       var meetValues = new StringBuilder("");
       var allMeetValues = new List<string>();
@@ -100,10 +124,10 @@ namespace McsaMeetsMailer.BusinessLogic
           .OrderBy(x => x.Field.SortOrder)
           .ToList();
 
+        bool invalid = previewMode && meetDetail.FieldValues.Any(x => !x.ValidationResults.IsValid);
+
         foreach (MeetFieldValue field in sortedFields)
         {
-          string value = field.ValidationResults.IsValid ? field.FormattedValue : $"INVALID : {field.Value}";
-
           if (!field.Field.DisplayInHeader)
           {
             continue;
@@ -111,15 +135,37 @@ namespace McsaMeetsMailer.BusinessLogic
 
           if (field.Field.IsMeetTitle)
           {
-            meetValues.Append(anchorTemplate.Replace( "{Value}", value));
+            if (!invalid)
+            {
+              meetValues.Append(anchorTemplate_Valid.Replace("{Value}", field.Value));
+            }
+            else
+            {
+              meetValues.Append(anchorTemplate_Invalid.Replace("{Value}", field.Value));
+            }
           }
           else
           {
-            meetValues.Append(valueTemplate.Replace("{Value}", value));
+            if (!invalid)
+            {
+              meetValues.Append(valueTemplate_Valid.Replace("{Value}", field.Value));
+            }
+            else
+            {
+              meetValues.Append(valueTemplate_Invalid.Replace("{Value}", field.Value));
+            }
           }
         }
 
-        allMeetValues.Add(valuesTemplate.Insert(valueTemplateStartIndex, meetValues.ToString()));
+        if (!invalid)
+        {
+          allMeetValues.Add(valuesTemplate_Valid.Insert(valueTemplateStartIndex_Valid, meetValues.ToString()));
+        }
+        else
+        {
+          allMeetValues.Add(valuesTemplate_Invalid.Insert(valueTemplateStartIndex_Invalid, meetValues.ToString()));
+        }
+        
         meetValues.Clear();
       }
 
