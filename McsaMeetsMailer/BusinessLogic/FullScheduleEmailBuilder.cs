@@ -18,7 +18,9 @@ namespace McsaMeetsMailer.BusinessLogic
     private const string summaryLinkValueStart = "<!--HeaderLinkValue-->";
     private const string detailsStart = "<!--Details-->";
     private const string detailHeaderStart = "<!--DetailHeader-->";
+    private const string detailHeaderStart_Invalid = "<!--DetailHeader_Invalid-->";
     private const string detailStart = "<!--Detail-->";
+    private const string detailStart_Invalid = "<!--Detail_Invalid-->";
     private const string endOfHeadingColumn = "</th>";
     private const string endOfColumn = "</td>";
     private const string endOfRow = "</tr>";
@@ -37,7 +39,7 @@ namespace McsaMeetsMailer.BusinessLogic
 
       string headerHeadings = GetHeaderHeadings(html, meets);
       string headerValues = GetHeaderValues(html, meets, previewMode);
-      string details = GetDetails(html, meets);
+      string details = GetDetails(html, meets, previewMode);
 
       html = UpdateHtml(html, summaryHeadingStart, endOfHeadingColumn, headerHeadings);
 
@@ -172,7 +174,7 @@ namespace McsaMeetsMailer.BusinessLogic
       return string.Join("", allMeetValues);
     }
 
-    private static string GetDetails(string html, List<MeetDetailsModel> meetDetails)
+    private static string GetDetails(string html, List<MeetDetailsModel> meetDetails, bool previewMode)
     {
       // Details table template
       int detailsTableTemplateStartIndex = html.IndexOf(detailsStart, StringComparison.Ordinal) + detailsStart.Length;
@@ -184,12 +186,22 @@ namespace McsaMeetsMailer.BusinessLogic
       int valueHeaderTemplateEndIndex = detailsTableTemplate.IndexOf(endOfRow, valueHeaderTemplateStartIndex, StringComparison.Ordinal) + endOfRow.Length;
       string valueHeaderTemplate = detailsTableTemplate.Substring(valueHeaderTemplateStartIndex, valueHeaderTemplateEndIndex - valueHeaderTemplateStartIndex);
 
+      // Invalid header template
+      int invalidValueHeaderTemplateStartIndex = detailsTableTemplate.IndexOf(detailHeaderStart_Invalid, StringComparison.Ordinal) + detailHeaderStart_Invalid.Length;
+      int invalidValueHeaderTemplateEndIndex = detailsTableTemplate.IndexOf(endOfRow, invalidValueHeaderTemplateStartIndex, StringComparison.Ordinal) + endOfRow.Length;
+      string invalidValueHeaderTemplate = detailsTableTemplate.Substring(invalidValueHeaderTemplateStartIndex, invalidValueHeaderTemplateEndIndex - invalidValueHeaderTemplateStartIndex);
+
       // Value template
       int valueTemplateStartIndex = detailsTableTemplate.IndexOf( detailStart, StringComparison.Ordinal) + detailStart.Length;
       int valueTemplateEndIndex = detailsTableTemplate.IndexOf(endOfRow, valueTemplateStartIndex, StringComparison.Ordinal) + endOfRow.Length;
       string valueTemplate = detailsTableTemplate.Substring(valueTemplateStartIndex, valueTemplateEndIndex - valueTemplateStartIndex);
 
-      detailsTableTemplate = detailsTableTemplate.Remove(valueHeaderTemplateStartIndex, valueTemplateEndIndex - valueHeaderTemplateStartIndex);
+      // Invalid value template
+      int invalidValueTemplateStartIndex = detailsTableTemplate.IndexOf(detailStart_Invalid, StringComparison.Ordinal) + detailStart_Invalid.Length;
+      int invalidValueTemplateEndIndex = detailsTableTemplate.IndexOf(endOfRow, invalidValueTemplateStartIndex, StringComparison.Ordinal) + endOfRow.Length;
+      string invalidValueTemplate = detailsTableTemplate.Substring(invalidValueTemplateStartIndex, invalidValueTemplateEndIndex - invalidValueTemplateStartIndex);
+
+      detailsTableTemplate = detailsTableTemplate.Remove(valueHeaderTemplateStartIndex, invalidValueTemplateEndIndex - valueHeaderTemplateStartIndex);
 
       var values = new StringBuilder("");
       var detailsHtml = new StringBuilder();
@@ -213,13 +225,19 @@ namespace McsaMeetsMailer.BusinessLogic
           string value = field.ValidationResults.IsValid ? field.FormattedValue : $"INVALID : {field.Value}";
           string htmlBlob;
 
+          bool invalid = previewMode && !field.ValidationResults.IsValid;
+
           if (field.Field.IsMeetTitle)
           {
-            htmlBlob = valueHeaderTemplate.Replace( "{Title}", field.Field.FriendlyText );
+            htmlBlob = !invalid ? 
+              valueHeaderTemplate.Replace("{Title}", field.Field.FriendlyText) : 
+              invalidValueHeaderTemplate.Replace("{Title}", field.Field.FriendlyText);
           }
           else
           {
-            htmlBlob = valueTemplate.Replace( "{Title}", field.Field.FriendlyText );
+            htmlBlob = !invalid ? 
+              valueTemplate.Replace("{Title}", field.Field.FriendlyText) : 
+              invalidValueTemplate.Replace("{Title}", field.Field.FriendlyText);
           }
 
           htmlBlob = htmlBlob.Replace("{Value}", value);
