@@ -26,7 +26,9 @@ namespace McsaMeetsMailer.BusinessLogic
     private const string endOfRow = "</tr>";
     private const string endOfAnchor = "</a>";
 
-    public static string Build(IEnumerable<MeetDetailsModel> meetsDetails, bool previewMode = true)
+    public static string Build(IEnumerable<MeetDetailsModel> meetsDetails,
+                               string customMessage = "Hi, <br><br>Please find the full meet schedule below.", 
+                               bool previewMode = true)
     {
       string html;
 
@@ -40,6 +42,8 @@ namespace McsaMeetsMailer.BusinessLogic
       string headerHeadings = GetHeaderHeadings(html, meets);
       string headerValues = GetHeaderValues(html, meets, previewMode);
       string details = GetDetails(html, meets, previewMode);
+
+      html = html.Replace("{CustomMessage}", customMessage);
 
       html = UpdateHtml(html, summaryHeadingStart, endOfHeadingColumn, headerHeadings);
 
