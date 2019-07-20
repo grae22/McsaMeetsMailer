@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -24,7 +23,10 @@ namespace McsaMeetsMailer.Services
       _password = settings.GetValidString(SettingName_Password);
     }
 
-    public void Send(string htmlContent, IEnumerable<string> toEmailAddresses)
+    public void Send(
+      in string subject,
+      in string htmlContent,
+      in IEnumerable<string> toEmailAddresses)
     {
       _client.Credentials = new NetworkCredential(_emailAddress, _password);
       _client.EnableSsl = true;
@@ -38,7 +40,7 @@ namespace McsaMeetsMailer.Services
           message.To.Add(new MailAddress(toEmailAddress));
         }
 
-        message.Subject = "MCSA Full Schedule";
+        message.Subject = subject;
         message.Body = htmlContent;
         message.BodyEncoding = Encoding.UTF8;
         message.IsBodyHtml = true;

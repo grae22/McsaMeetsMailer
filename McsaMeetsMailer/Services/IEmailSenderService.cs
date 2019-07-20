@@ -4,6 +4,9 @@ namespace McsaMeetsMailer.Services
 {
   public interface IEmailSenderService
   {
-    void Send(string htmlContent, IEnumerable<string> emailAddresses);
+    void Send(
+      in string subject,
+      in string htmlContent,
+      in IEnumerable<string> emailAddresses);
   }
 }

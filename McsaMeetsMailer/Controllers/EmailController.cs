@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 using McsaMeetsMailer.BusinessLogic;
@@ -44,17 +43,34 @@ namespace McsaMeetsMailer.Controllers
       {
         if (string.IsNullOrWhiteSpace(emailContent.Address))
         {
-          return BadRequest();
+          return new JsonResult(BadRequest("Address cannot be empty"));
+        }
+
+        if (string.IsNullOrWhiteSpace(emailContent.Subject))
+        {
+          return new JsonResult(BadRequest("Subject cannot be empty"));
+        }
+
+        if (string.IsNullOrWhiteSpace(emailContent.Body))
+        {
+          return new JsonResult(BadRequest("Email body cannot be empty"));
         }
 
         string[] emailAddresses = emailContent.Address.Split(';');
 
         IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets();
-        string html = FullScheduleEmailBuilder.Build(meets);
+
+        string emailBody = FullScheduleEmailBuilder.Build(
+          meets,
+          emailContent.Body,
+          false);
 
         _logger.LogInfo($"Sending full schedule email to address \"{emailAddresses.Join(";")}\"...", ClassName);
 
-        _emailSenderService.Send(html, emailAddresses);
+        _emailSenderService.Send(
+          emailContent.Subject,
+          emailBody,
+          emailAddresses);
       }
       catch (Exception ex)
       {
@@ -62,7 +78,7 @@ namespace McsaMeetsMailer.Controllers
         return StatusCode(500, ex.Message);
       }
 
-      return Ok();
+      return new JsonResult(Ok());
     }
 
     [Route("sendFullScheduleToAll")]
@@ -70,22 +86,21 @@ namespace McsaMeetsMailer.Controllers
     {
       try
       {
-        IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets();
-        string html = FullScheduleEmailBuilder.Build(meets);
-
         IEmailAddresses addresses = await _emailAddressService.RetrieveEmailAddresses();
 
         _logger.LogInfo("Sending full schedule email to all...", ClassName);
 
-        _emailSenderService.Send(html, addresses.FullScheduleEmailAddresses);
+        emailContent.Address = addresses
+          .FullScheduleEmailAddresses
+          .Join(";");
+
+        return await SendFullScheduleToAddress(emailContent);
       }
       catch (Exception ex)
       {
         _logger.LogError("Exception while sending full schedule email to all.", ClassName, ex);
         return StatusCode(500, ex.Message);
       }
-
-      return Ok();
     }
   }
 }

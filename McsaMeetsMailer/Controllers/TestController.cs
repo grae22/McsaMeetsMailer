@@ -59,7 +59,7 @@ namespace McsaMeetsMailer.Controllers
         string html = FullScheduleEmailBuilder.Build(meets);
         var addressBook = await _emailAddressService.RetrieveEmailAddresses();
 
-        _emailSenderService.Send(html, addressBook.FullScheduleEmailAddresses);
+        _emailSenderService.Send("MCSA Full Schedule", html, addressBook.FullScheduleEmailAddresses);
       }
       catch (Exception ex)
       {

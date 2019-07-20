@@ -5,11 +5,11 @@
 
   // TODO: Pull this from config.
   const string defaultBody =
-    "Hi&#10;&#10;" +
-    "Please find the latest MCSA-KZN Meet Sheet below.&#10;&#10;" +
-    "Queries specific to a particular Meet should be directed to the Meet Leader.&#10;&#10;" +
-    "Please do not reply to this email as the address is not monitored.&#10;&#10;" +
-    "Yours in adventure,&#10;" +
+    "Hi\n\n" +
+    "Please find the latest MCSA-KZN Meet Sheet below.\n\n" +
+    "Queries specific to a particular Meet should be directed to the Meet Leader.\n\n" +
+    "Please do not reply to this email as the address is not monitored.\n\n" +
+    "Yours in adventure,\n" +
     "The Mountain Club of South Africa, KwaZulu-Natal Section.";
 
   var monthName = $"{DateTime.Now:MMMM}";
@@ -116,12 +116,12 @@
       success: function (result) {
         sendStatus.value = 'Sent successfully.';
       },
-      complete: function () {
-        enableSendButtons();
-      },
       error: function (xhr, exception) {
         sendStatus.value = 'Send failed.';
         alert('Failed to send email, the following message may be helpful: (' + xhr.status + ') ' + xhr.responseText);
+      },
+      complete: function () {
+        enableSendButtons();
       }
     });
   }
@@ -146,12 +146,12 @@
       success: function (result) {
         sendStatus.value = 'Sent successfully.';
       },
-      complete: function () {
-        enableSendButtons();
-      },
       error: function (xhr, exception) {
         sendStatus.value = 'Send failed.';
         alert('Failed to send email, the following message may be helpful: (' + xhr.status + ') ' + xhr.responseText);
+      },
+      complete: function () {
+        enableSendButtons();
       }
     });
   }
