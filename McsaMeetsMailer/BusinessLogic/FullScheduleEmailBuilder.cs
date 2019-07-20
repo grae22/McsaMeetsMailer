@@ -144,7 +144,7 @@ namespace McsaMeetsMailer.BusinessLogic
           {
             if (!invalid)
             {
-              meetValues.Append(anchorTemplate_Valid.Replace("{Value}", field.Value));
+              meetValues.Append(anchorTemplate_Valid.Replace("{Value}", field.FormattedValue));
             }
             else
             {
@@ -155,7 +155,7 @@ namespace McsaMeetsMailer.BusinessLogic
           {
             if (!invalid)
             {
-              meetValues.Append(valueTemplate_Valid.Replace("{Value}", field.Value));
+              meetValues.Append(valueTemplate_Valid.Replace("{Value}", field.FormattedValue));
             }
             else
             {
@@ -227,7 +227,13 @@ namespace McsaMeetsMailer.BusinessLogic
 
         foreach (MeetFieldValue field in sortedFields)
         {
-          string value = field.ValidationResults.IsValid ? field.FormattedValue : $"INVALID : {field.Value}";
+          string value = field.ValidationResults.IsValid ? field.FormattedValue : field.Value;
+
+          if (string.IsNullOrWhiteSpace(value) && !field.Field.IsRequired)
+          {
+            continue;
+          }
+
           string htmlBlob;
 
           bool invalid = previewMode && !field.ValidationResults.IsValid;
