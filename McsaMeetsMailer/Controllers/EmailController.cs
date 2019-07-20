@@ -8,6 +8,7 @@ using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Logging;
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 
@@ -23,17 +24,20 @@ namespace McsaMeetsMailer.Controllers
     private readonly IEmailAddressService _emailAddressService;
     private readonly IEmailSenderService _emailSenderService;
     private readonly IMeetsService _meetsService;
+    private readonly IHostingEnvironment _hostingEnvironment;
 
     public EmailController(
       ILogger logger,
       IEmailAddressService emailAddressService,
       IEmailSenderService emailSenderService,
-      IMeetsService meetsService)
+      IMeetsService meetsService,
+      IHostingEnvironment hostingEnvironment)
     {
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
       _emailAddressService = emailAddressService ?? throw new ArgumentNullException(nameof(emailAddressService));
       _emailSenderService = emailSenderService ?? throw new ArgumentNullException(nameof(emailSenderService));
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
+      _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
     }
 
     [Route("sendFullScheduleToAddress")]
@@ -62,6 +66,7 @@ namespace McsaMeetsMailer.Controllers
 
         string emailBody = FullScheduleEmailBuilder.Build(
           meets,
+          $@"{_hostingEnvironment.WebRootPath}\templates",
           emailContent.Body,
           Url.Page("/Meets"),  // TODO: Verify this actually works live.
           false);
