@@ -1,9 +1,11 @@
 ﻿-= Use Cases =-
 
-1. Leader adds Meet to spreadsheet.
-1a. Leader can view a page which highlights any problems with her Meet(s).
+[x] = Complete
 
-2. Convenor emails out the Full Schedule.
-2a. Convenor can view a preview of what the email will look like.
-2b. Convenor can view a preview which highlights missing/invalid required fields.
-2c. Convenor can edit a message which will preceed the schedule in the email.
+[x] 1. Leader adds Meet to spreadsheet.
+[x] 1a. Leader can view a page which highlights any problems with her Meet(s).
+
+[x] 2. Convenor emails out the Full Schedule.
+[x] 2a. Convenor can view a preview of what the email will look like.
+[x] 2b. Convenor can view a preview which highlights missing/invalid required fields.
+[x] 2c. Convenor can edit a message which will preceed the schedule in the email.
