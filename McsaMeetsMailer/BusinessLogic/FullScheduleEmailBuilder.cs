@@ -243,7 +243,7 @@ namespace McsaMeetsMailer.BusinessLogic
         {
           string value = field.ValidationResults.IsValid ? field.FormattedValue : field.Value;
 
-          if (string.IsNullOrWhiteSpace(value) && !field.Field.IsRequired)
+          if (string.IsNullOrWhiteSpace(value) && field.ValidationResults.IsValid)
           {
             continue;
           }
