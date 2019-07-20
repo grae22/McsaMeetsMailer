@@ -43,17 +43,17 @@ namespace McsaMeetsMailer.Controllers
       {
         if (string.IsNullOrWhiteSpace(emailContent.Address))
         {
-          return new JsonResult(BadRequest("Address cannot be empty"));
+          return BadRequest("Address cannot be empty");
         }
 
         if (string.IsNullOrWhiteSpace(emailContent.Subject))
         {
-          return new JsonResult(BadRequest("Subject cannot be empty"));
+          return BadRequest("Subject cannot be empty");
         }
 
         if (string.IsNullOrWhiteSpace(emailContent.Body))
         {
-          return new JsonResult(BadRequest("Email body cannot be empty"));
+          return BadRequest("Email body cannot be empty");
         }
 
         string[] emailAddresses = emailContent.Address.Split(';');
