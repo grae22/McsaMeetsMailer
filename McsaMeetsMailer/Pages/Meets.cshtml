@@ -2,10 +2,15 @@
 @model McsaMeetsMailer.Pages.MeetsModel
 @{
   ViewData["Title"] = "MCSA-KZN Meets";
+  Layout = null;
 }
 
-<img src="@Url.Content("images/header.jpg")" class="img-responsive" />
+<div style="width: 80%; text-align: center;">
+  <img src="@Url.Content("images/header.jpg")" class="img-responsive" style="max-height: 200px;" />
+  
+  <div style="display: inline-block;">
+    @Html.Raw(Model.Html)
+  </div>
 
-@Html.Raw(Model.Html)
-
-<img src="@Url.Content("images/footer.jpg")" class="img-responsive" />
+  <img src="@Url.Content("images/footer.jpg")" class="img-responsive" style="max-height: 100px;" />
+</div>

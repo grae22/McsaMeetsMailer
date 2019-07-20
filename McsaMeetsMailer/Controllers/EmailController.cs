@@ -7,6 +7,7 @@ using McsaMeetsMailer.BusinessLogic.EmailAddressSheet;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Logging;
+using McsaMeetsMailer.Utils.Settings;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -20,24 +21,35 @@ namespace McsaMeetsMailer.Controllers
   {
     private static readonly string ClassName = $"[{typeof(TestController).Name}]";
 
+    private const string SettingName_MeetsPageUrl = "MCSA-KZN_Meets_MeetsPageUrl";
+
     private readonly ILogger _logger;
     private readonly IEmailAddressService _emailAddressService;
     private readonly IEmailSenderService _emailSenderService;
     private readonly IMeetsService _meetsService;
     private readonly IHostingEnvironment _hostingEnvironment;
+    private readonly string _meetsPageUrl;
 
     public EmailController(
+      ISettings settings,
       ILogger logger,
       IEmailAddressService emailAddressService,
       IEmailSenderService emailSenderService,
       IMeetsService meetsService,
       IHostingEnvironment hostingEnvironment)
     {
+      if (settings == null)
+      {
+        throw new ArgumentNullException(nameof(settings));
+      }
+
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
       _emailAddressService = emailAddressService ?? throw new ArgumentNullException(nameof(emailAddressService));
       _emailSenderService = emailSenderService ?? throw new ArgumentNullException(nameof(emailSenderService));
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
       _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
+
+      _meetsPageUrl = settings.GetValidString(SettingName_MeetsPageUrl);
     }
 
     [Route("sendFullScheduleToAddress")]
@@ -68,7 +80,7 @@ namespace McsaMeetsMailer.Controllers
           meets,
           $@"{_hostingEnvironment.WebRootPath}\templates",
           emailContent.Body,
-          Url.Page("/Meets"),  // TODO: Verify this actually works live.
+          _meetsPageUrl,
           false);
 
         _logger.LogInfo($"Sending full schedule email to address \"{emailAddresses.Join(";")}\"...", ClassName);
