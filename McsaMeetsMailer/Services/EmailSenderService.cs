@@ -11,15 +11,21 @@ namespace McsaMeetsMailer.Services
   {
     private readonly SmtpClient _client;
     private readonly string _emailAddress;
+    private readonly string _emailAddressDisplayName;
     private readonly string _password;
 
     private const string SettingName_EmailAddress = "MCSA-KZN_Meets_EmailAddress";
+    private const string SettingName_EmailAddressDisplayName = "MCSA-KZN_Meets_EmailAddressDisplayName";
     private const string SettingName_Password = "MCSA-KZN_Meets_EmailAddressPassword";
 
     public EmailSenderService(ISettings settings)
     {
-      _client = new SmtpClient("smtp.gmail.com", 587);
+      string smtpHost = settings.GetString("MCSA-KZN_Meets_SmtpHost", "smtp.gmail.com");
+      int smtpPort = settings.GetInteger("MCSA-KZN_Meets_SmtpPort", 587);
+
+      _client = new SmtpClient(smtpHost, smtpPort);
       _emailAddress = settings.GetValidString(SettingName_EmailAddress);
+      _emailAddressDisplayName = settings.GetValidString(SettingName_EmailAddressDisplayName);
       _password = settings.GetValidString(SettingName_Password);
     }
 
@@ -33,7 +39,7 @@ namespace McsaMeetsMailer.Services
 
       using (var message = new MailMessage())
       {
-        message.From = new MailAddress(_emailAddress);
+        message.From = new MailAddress(_emailAddress, _emailAddressDisplayName);
 
         foreach (string toEmailAddress in toEmailAddresses)
         {
