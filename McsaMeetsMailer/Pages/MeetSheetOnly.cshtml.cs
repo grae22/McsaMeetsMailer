@@ -39,7 +39,7 @@ namespace McsaMeetsMailer.Pages
         return;
       }
 
-      Html = FullScheduleEmailBuilder.Build(meets, string.Empty);
+      Html = FullScheduleEmailBuilder.Build(meets);
     }
   }
 }

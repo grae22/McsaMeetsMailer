@@ -63,6 +63,7 @@ namespace McsaMeetsMailer.Controllers
         string emailBody = FullScheduleEmailBuilder.Build(
           meets,
           emailContent.Body,
+          Url.Page("/Meets"),  // TODO: Verify this actually works live.
           false);
 
         _logger.LogInfo($"Sending full schedule email to address \"{emailAddresses.Join(";")}\"...", ClassName);

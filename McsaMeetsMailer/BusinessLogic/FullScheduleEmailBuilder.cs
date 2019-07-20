@@ -26,9 +26,10 @@ namespace McsaMeetsMailer.BusinessLogic
     private const string endOfRow = "</tr>";
     private const string endOfAnchor = "</a>";
 
-    public static string Build(IEnumerable<MeetDetailsModel> meetsDetails,
-                               string customMessage = "Hi, <br><br>Please find the full meet schedule below.", 
-                               bool previewMode = true)
+    public static string Build(in IEnumerable<MeetDetailsModel> meetsDetails,
+                               in string customMessage = "",
+                               in string onlineScheduleUrl = "",
+                               in bool previewMode = true)
     {
       string html;
 
@@ -43,8 +44,21 @@ namespace McsaMeetsMailer.BusinessLogic
       string headerValues = GetHeaderValues(html, meets, previewMode);
       string details = GetDetails(html, meets, previewMode);
 
-      customMessage = customMessage.Replace("\n", "<br />");
-      html = html.Replace("{CustomMessage}", customMessage);
+      string customMessageHtml = customMessage.Replace("\n", "<br />");
+
+      html = html
+        .Replace("{CustomMessage}", customMessageHtml)
+        .Replace("{OnlineScheduleUrl}", onlineScheduleUrl);
+
+      html = SetDisplayStyleVisible(
+        html,
+        "{CustomMessageDisplayStyle}",
+        !string.IsNullOrWhiteSpace(customMessageHtml));
+
+      html = SetDisplayStyleVisible(
+        html,
+        "{OnlineScheduleDisplayStyle}",
+        !string.IsNullOrWhiteSpace(onlineScheduleUrl));
 
       html = UpdateHtml(html, summaryHeadingStart, endOfHeadingColumn, headerHeadings);
 
@@ -271,6 +285,13 @@ namespace McsaMeetsMailer.BusinessLogic
       html = html.Insert(startIndex, htmlToInsert);
 
       return html;
+    }
+
+    private static string SetDisplayStyleVisible(in string html, in string tag, in bool isVisible)
+    {
+      return html.Replace(
+        tag,
+        isVisible ? "visible" : "none");
     }
   }
 }

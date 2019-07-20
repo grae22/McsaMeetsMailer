@@ -31,9 +31,8 @@ namespace McsaMeetsMailer.Pages
       }
 
       Html = FullScheduleEmailBuilder.Build(
-        meets,
-        string.Empty,
-        false);
+        meetsDetails: meets,
+        previewMode: false);
     }
   }
 }
