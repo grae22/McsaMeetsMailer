@@ -1,0 +1,94 @@
+﻿<body style="font-family: calibri;">
+  <p style="display: {CustomMessageDisplayStyle};">{CustomMessage}</p>
+
+  <br>
+
+  <p style="display: {OnlineScheduleDisplayStyle}; font-weight: bold;">View the schedule online <a href="{OnlineScheduleUrl}">here</a>.</p>
+
+  <br>
+
+  <table style="border-collapse: collapse; border-spacing: 0; border: 1px solid #F0F0F0; width: 100%;">
+      <tr>
+          <!--HeaderHeading-->
+          <th style="background: #A8B4CC; color: black; border: 2px solid white; padding: 10px;">
+              {Heading}
+          </th>
+      </tr>
+      <!--HeaderValues-->
+      <tr>
+          <!--HeaderValue-->
+          <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
+              {Value}
+          </td>
+
+          <!--HeaderLinkValue-->
+          <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
+              <a href="#{Value}" style="text-decoration: none;">
+                  <span>{Value}</span>
+              </a>
+          </td>
+      </tr>
+      <!--HeaderValues_Invalid-->
+      <tr style="color: white; background-color: red;">
+          <!--HeaderValue-->
+          <td style="background-color: red; border: 2px solid white; padding: 10px;">
+              {Value}
+          </td>
+
+          <!--HeaderLinkValue-->
+          <td style="background-color: red; border: 2px solid white; padding: 10px;">
+              <a href="#{Value}"  style="text-decoration: none; color: white;">
+                  <span>{Value}</span>
+              </a>
+          </td>
+      </tr>
+  </table>
+
+  <br>
+  <h3>Meet Details</h3>
+
+  <!--Details-->
+  <br>
+  <a id="{Anchor}" style="text-decoration: none; color: black;">
+    <table style="border-collapse: collapse; border-spacing: 0; border: 1px solid #F0F0F0; width: 100%;">
+      <!--DetailHeader-->
+      <tr style="">
+        <td style="border: 2px solid white; padding: 10px; width: 20%; background-color: #365583;">
+        </td>
+
+        <td style="border: 2px solid white; padding: 10px; width: 80%; background-color: #A8B4CC;">
+          <b>{Value}</b>
+        </td>
+      </tr>
+      <!--DetailHeader_Invalid-->
+      <tr style="background-color: lightgray">
+        <td style="border: 2px solid white; padding: 10px; width: 20%;">
+        </td>
+
+        <td style="border: 2px solid white; padding: 10px; width: 80%;">
+          <b>{Value}</b>
+        </td>
+      </tr>
+      <!--Detail-->
+      <tr>
+        <td style="border: 2px solid white; padding: 10px; background-color: #A8B4CC;">
+          {Title}
+        </td>
+
+        <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
+          {Value}
+        </td>
+      </tr>
+      <!--Detail_Invalid-->
+      <tr>
+        <td style="border: 2px solid white; padding: 10px; color: white; background-color: red;">
+          {Title}
+        </td>
+
+        <td style="border: 2px solid white; padding: 10px; color: white; background-color: red;">
+          {Value}
+        </td>
+      </tr>
+    </table>
+  </a>
+</body>

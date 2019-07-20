@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-using McsaMeetsMailer.BusinessLogic;
+using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
+using McsaMeetsMailer.Services.Exceptions;
+using McsaMeetsMailer.Utils.Cache;
+using McsaMeetsMailer.Utils.Extensions;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
 using McsaMeetsMailer.Utils.Settings;
@@ -12,21 +16,27 @@ namespace McsaMeetsMailer.Services
 {
   public class MeetsService : IMeetsService
   {
-    private const string LoggingClassName = "[MeetsService]";
+    private static readonly string ClassName = typeof(MeetsService).Name;
+
     private const string SettingName_MeetsGoogleSheetId = "MCSA-KZN_Meets_MeetsGoogleSheetId";
     private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";
+    private const string SettingName_CacheMeetSheetLifetimeInSeconds = "MCSA-KZN_Meets_CacheMeetSheetLifetimeInSeconds";
     private const string GoogleSheetsBaseUrl = "https://sheets.googleapis.com/v4/spreadsheets/";
+    private const string SheetRange = "A1:Z500";
+    private const int DefaultCacheMeetSheetLifetimeInSeconds = 5;
 
     private readonly string _meetsGoogleSheetId;
     private readonly string _googleAppKey;
     private readonly IRestRequestMaker _requestMaker;
     private readonly IMeetsGoogleSheetFactory _googleSheetFactory;
     private readonly ILogger _logger;
+    private readonly TimeBasedAutoRefresher<IMeetsGoogleSheet> _refreshedMeetSheet;
 
     public MeetsService(
       in ISettings settings,
       in IRestRequestMaker requestMaker,
       in IMeetsGoogleSheetFactory googleSheetFactory,
+      in IDateTimeService dateTimeService,
       in ILogger logger)
     {
       if (settings == null)
@@ -38,13 +48,169 @@ namespace McsaMeetsMailer.Services
       _googleSheetFactory = googleSheetFactory ?? throw new ArgumentNullException(nameof(googleSheetFactory));
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-      _meetsGoogleSheetId = settings.GetValidValue(SettingName_MeetsGoogleSheetId);
-      _googleAppKey = settings.GetValidValue(SettingName_GoogleAppKey);
+      _meetsGoogleSheetId = settings.GetValidString(SettingName_MeetsGoogleSheetId);
+      _googleAppKey = settings.GetValidString(SettingName_GoogleAppKey);
+
+      var cachedMeetSheetLifetimeInSeconds = (uint)settings.GetInteger(
+        SettingName_CacheMeetSheetLifetimeInSeconds,
+        DefaultCacheMeetSheetLifetimeInSeconds);
+
+      IMeetsGoogleSheet meetSheet = CreateMeetSheet();
+
+      _refreshedMeetSheet = new TimeBasedAutoRefresher<IMeetsGoogleSheet>(
+        meetSheet,
+        dateTimeService,
+        cachedMeetSheetLifetimeInSeconds,
+        async () => await RetrieveMeetSheet(meetSheet));
     }
 
     public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets()
     {
-      var url = $"{GoogleSheetsBaseUrl}{_meetsGoogleSheetId}/values/Sheet1!A1:Z500?key={_googleAppKey}";
+      IMeetsGoogleSheet sheet;
+
+      try
+      {
+        sheet = await _refreshedMeetSheet.Instance();
+      }
+      catch (MeetsGoogleSheetFormatException ex)
+      {
+        _logger.LogError("Exception while retrieving all meets.", ClassName, ex);
+
+        throw new MeetsServiceException(
+          "Exception while retrieving all meets.",
+          ex);
+      }
+
+      _logger.LogDebug("Retrieved all meets, transforming into models...", ClassName);
+
+      GoogleSheetToMeetDetailsTransformer.Process(
+        sheet,
+        out IEnumerable<MeetDetailsModel> meetDetailsModels);
+
+      return meetDetailsModels;
+    }
+
+    public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets(string leaderName)
+    {
+      var allMeets = await RetrieveMeets();
+
+      if (allMeets == null)
+      {
+        return null;
+      }
+
+      try
+      {
+        return allMeets
+          .Where(m =>
+            m
+              .LeaderField()
+              .Value
+              .Equals(leaderName, StringComparison.OrdinalIgnoreCase));
+      }
+      catch (MissingFieldException ex)
+      {
+        _logger.LogError(
+          $"Exception while retrieving meets for leader \"{leaderName}\".",
+          ClassName,
+          ex);
+
+        throw new MeetsServiceException(
+          "Exception while retrieving meets for leader.",
+          ex);
+      }
+    }
+
+    public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets(DateTime earliestDate)
+    {
+      var allMeets = await RetrieveMeets();
+
+      if (allMeets == null)
+      {
+        return null;
+      }
+
+      try
+      {
+        var invalidDate = DateTime.MinValue;
+
+        return allMeets
+          .Where(m =>
+          {
+            var date = DateTime.MinValue;
+
+            if (m.DateField(false) != null)
+            {
+              date = m
+                .DateField()
+                .ValueAsDate ?? invalidDate;
+            }
+
+            return date >= earliestDate || date == invalidDate;
+          });
+      }
+      catch (MissingFieldException ex)
+      {
+        _logger.LogError(
+          $"Exception while retrieving meets from earliest date \"{earliestDate:f}\".",
+          ClassName,
+          ex);
+
+        throw new MeetsServiceException(
+          "Exception while retrieving meets for earliest date.",
+          ex);
+      }
+    }
+
+    public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets(
+      DateTime earliestDate,
+      DateTime latestDate)
+    {
+      var allMeets = await RetrieveMeets();
+
+      if (allMeets == null)
+      {
+        return null;
+      }
+
+      try
+      {
+        return allMeets
+          .Where(m =>
+          {
+            bool dateIsOnOrAfterEarliestDate =
+              m
+                .DateField()
+                .ValueAsDate
+                .Value
+                .Date >= earliestDate;
+
+            bool dateIsOnOrBeforeLatestDate =
+              m
+                .DateField()
+                .ValueAsDate
+                .Value
+                .Date <= latestDate;
+
+            return dateIsOnOrAfterEarliestDate && dateIsOnOrBeforeLatestDate;
+          });
+      }
+      catch (MissingFieldException ex)
+      {
+        _logger.LogError(
+          $"Exception while retrieving meets in date range \"{earliestDate:f}\" to \"{latestDate:f}\".",
+          ClassName,
+          ex);
+
+        throw new MeetsServiceException(
+          "Exception while retrieving meets in date range.",
+          ex);
+      }
+    }
+
+    private IMeetsGoogleSheet CreateMeetSheet()
+    {
+      var url = $"{GoogleSheetsBaseUrl}{_meetsGoogleSheetId}/values/Sheet1!{SheetRange}?key={_googleAppKey}";
 
       Uri uri;
 
@@ -54,32 +220,29 @@ namespace McsaMeetsMailer.Services
       }
       catch (UriFormatException ex)
       {
-        _logger.LogError($"{LoggingClassName} Failed to build URI from URL \"{url}\".", ex);
-        return null;
+        _logger.LogError($"Failed to build URI from URL \"{url}\".", ClassName, ex);
+
+        throw new MeetsServiceException(
+          "Exception while building URI.",
+          ex);
       }
 
-      _logger.LogDebug($"{LoggingClassName} Retrieving meets from \"{url}\"...");
-
-      IMeetsGoogleSheet sheet = _googleSheetFactory.CreateSheet(
+      return _googleSheetFactory.CreateSheet(
         uri,
         _requestMaker,
         _logger);
+    }
+
+    private async Task RetrieveMeetSheet(IMeetsGoogleSheet sheet)
+    {
+      _logger.LogDebug("Retrieving all meets...", ClassName);
 
       bool result = await sheet.Retrieve();
 
-      if (result == false)
+      if (!result)
       {
-        _logger.LogError($"{LoggingClassName} Failed to retrieve meets.");
-        return null;
+        throw new MeetsServiceException("Failed to retrieve all meets.");
       }
-
-      _logger.LogDebug($"{LoggingClassName} Retrieved meets, transforming into models...");
-
-      GoogleSheetToMeetDetailsTransformer.Process(
-        sheet,
-        out IEnumerable<MeetDetailsModel> meetDetailsModels);
-
-      return meetDetailsModels;
     }
   }
 }

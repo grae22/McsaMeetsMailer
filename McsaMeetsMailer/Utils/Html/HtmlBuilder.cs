@@ -46,6 +46,20 @@ namespace McsaMeetsMailer.Utils.Html
       _htmlBuilder.Append("</tr>");
     }
 
+    public void AddParagraph(string text)
+    {
+      _htmlBuilder.Append($"<p>{text}</p>");
+    }
+
+    public void AddLineBreak()
+    {
+      _htmlBuilder.Append("<br>");
+    }
+
+    public void AddStyleSheet(string path)
+    {
+      _htmlBuilder.Append($"<link href=\"@Url.Content(\"{path}\" )\" rel=\"stylesheet\" type=\"text/css\" />");}
+
     public string GetHtml()
     {
       return _htmlBuilder.ToString();
