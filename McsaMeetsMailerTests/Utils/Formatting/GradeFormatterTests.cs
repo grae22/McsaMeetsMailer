@@ -27,7 +27,7 @@ namespace McsaMeetsMailerTests.Utils.Formatting
     }
 
     [Test]
-    public void Format_GivenUnknownGrade_ShouldReturnGradeWithUnknown()
+    public void Format_GivenUnknownGrade_ShouldReturnUnchanged()
     {
       // Arrange.
       var testObject = new GradeFormatter();
@@ -36,7 +36,26 @@ namespace McsaMeetsMailerTests.Utils.Formatting
       string result = testObject.Format("abc");
 
       // Assert.
-      Assert.AreEqual("abc (???)", result);
+      Assert.AreEqual("abc", result);
+    }
+
+    [TestCase("1 & 2", "1 (Family Friendly), 2 (Easy Hike)")]
+    [TestCase("1 & 2", "1 (Family Friendly), 2 (Easy Hike)")]
+    [TestCase("1 2", "1 (Family Friendly), 2 (Easy Hike)")]
+    [TestCase("1,2", "1 (Family Friendly), 2 (Easy Hike)")]
+    [TestCase("1, 2 & 999", "1 (Family Friendly), 2 (Easy Hike), 999")]
+    public void Format_GivenMultipleGrades_ShouldFormatEachWithCorrectFriendlyText(
+      in string input,
+      in string expected)
+    {
+      // Arrange.
+      var testObject = new GradeFormatter();
+
+      // Act.
+      string result = testObject.Format(input);
+
+      // Assert.
+      Assert.AreEqual(expected, result);
     }
   }
 }
