@@ -7,10 +7,8 @@ using McsaMeetsMailer.Models;
 using McsaMeetsMailer.BusinessLogic;
 using McsaMeetsMailer.Services;
 using McsaMeetsMailer.Utils.Extensions;
-using McsaMeetsMailer.Utils.Html;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace McsaMeetsMailer.Pages
@@ -20,10 +18,14 @@ namespace McsaMeetsMailer.Pages
     public string html;
 
     private readonly IMeetsService _meetsService;
+    private readonly IHostingEnvironment _hostingEnvironment;
 
-    public FullSchedulePreviewModel(IMeetsService meetsService)
+    public FullSchedulePreviewModel(
+      IMeetsService meetsService,
+      IHostingEnvironment hostingEnvironment)
     {
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
+      _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
     }
 
     public async Task OnGet()
@@ -44,11 +46,14 @@ namespace McsaMeetsMailer.Pages
                 m
                   .LeaderField()
                   .Value
-                  .Equals(Request.Query["leader"], StringComparison.OrdinalIgnoreCase)));
+                  .Equals(Request.Query["leader"], StringComparison.OrdinalIgnoreCase)),
+            $@"{_hostingEnvironment.WebRootPath}\templates");
       }
       else
       {
-        html = FullScheduleEmailBuilder.Build(meets);
+        html = FullScheduleEmailBuilder.Build(
+          meets,
+          $@"{_hostingEnvironment.WebRootPath}\templates");
       }
     }
   }
