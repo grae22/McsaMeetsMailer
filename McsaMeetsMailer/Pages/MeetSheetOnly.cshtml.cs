@@ -6,6 +6,7 @@ using McsaMeetsMailer.Models;
 using McsaMeetsMailer.BusinessLogic;
 using McsaMeetsMailer.Services;
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace McsaMeetsMailer.Pages
@@ -15,10 +16,14 @@ namespace McsaMeetsMailer.Pages
     public string Html { get; private set; }
 
     private readonly IMeetsService _meetsService;
+    private readonly IHostingEnvironment _hostingEnvironment;
 
-    public MeetSheetOnlyModel(IMeetsService meetsService)
+    public MeetSheetOnlyModel(
+      IMeetsService meetsService,
+      IHostingEnvironment hostingEnvironment)
     {
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
+      _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
     }
 
     public async Task OnGet()
@@ -39,7 +44,9 @@ namespace McsaMeetsMailer.Pages
         return;
       }
 
-      Html = FullScheduleEmailBuilder.Build(meets);
+      Html = FullScheduleEmailBuilder.Build(
+        meets,
+        $@"{_hostingEnvironment.WebRootPath}\templates");
     }
   }
 }

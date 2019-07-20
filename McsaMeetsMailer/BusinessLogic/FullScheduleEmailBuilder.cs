@@ -26,14 +26,16 @@ namespace McsaMeetsMailer.BusinessLogic
     private const string endOfRow = "</tr>";
     private const string endOfAnchor = "</a>";
 
-    public static string Build(in IEnumerable<MeetDetailsModel> meetsDetails,
-                               in string customMessage = "",
-                               in string onlineScheduleUrl = "",
-                               in bool previewMode = true)
+    public static string Build(
+      in IEnumerable<MeetDetailsModel> meetsDetails,
+      in string templatesPath,
+      in string customMessage = "",
+      in string onlineScheduleUrl = "",
+      in bool previewMode = true)
     {
       string html;
 
-      using (var reader = new StreamReader("Pages/Templates/FullScheduleEmailTemplate.html"))
+      using (var reader = new StreamReader($@"{templatesPath}\FullScheduleEmailTemplate.html"))
       {
         html = reader.ReadToEnd();
       }
