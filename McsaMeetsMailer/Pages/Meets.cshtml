@@ -6,11 +6,13 @@
 }
 
 <div style="text-align: center;">
-  <img src="@Url.Content("images/header.jpg")" class="img-responsive" style="max-height: 200px;" />
+  <p><img src="@Url.Content("images/header.jpg")" class="img-responsive" style="max-height: 200px;" /></p>
   
-  <div style="display: inline-block;">
-    @Html.Raw(Model.Html)
-  </div>
+  <p>
+    <div style="display: inline-block;">
+      @Html.Raw(Model.Html)
+    </div>
+  </p>
 
-  <img src="@Url.Content("images/footer.jpg")" class="img-responsive" style="max-height: 100px;" />
+  <p><img src="@Url.Content("images/footer.jpg")" class="img-responsive" style="max-height: 100px;" /></p>
 </div>
