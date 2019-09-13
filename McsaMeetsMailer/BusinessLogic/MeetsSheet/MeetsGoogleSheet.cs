@@ -337,11 +337,6 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         return new DateFormatter("HH:mm");
       }
 
-      if (columnHeaderText.Contains("grade", StringComparison.OrdinalIgnoreCase))
-      {
-        return new GradeFormatter();
-      }
-
       return NullFormatter.Instance();
     }
   }

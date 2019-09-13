@@ -10,7 +10,7 @@
     <select id="leaders" class="form-control" onchange="refreshContentFrame()">
       <option value="All">ALL</option>
       @{
-        foreach (var leaderName in Model.LeaderNames)
+        foreach (var leaderName in Model.LeaderNames.OrderBy(n => n))
         {
           <option value="@leaderName">@leaderName</option>
         }
