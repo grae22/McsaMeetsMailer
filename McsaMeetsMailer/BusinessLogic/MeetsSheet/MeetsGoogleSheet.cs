@@ -16,7 +16,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     public IEnumerable<MeetField> Fields => _fields;
     public IEnumerable<IEnumerable<MeetFieldValue>> ValuesByRow => _valuesByRow;
 
-    private static readonly string ClassName = typeof(MeetsGoogleSheet).Name;
+    private const string ClassName = nameof(MeetsGoogleSheet);
 
     private const string HeaderText_Date = "# Date*";
     private const string HeaderText_MeetTitle = "# Meet Title*";

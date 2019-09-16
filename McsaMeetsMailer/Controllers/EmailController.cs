@@ -19,7 +19,7 @@ namespace McsaMeetsMailer.Controllers
   [ApiController]
   public class EmailController : ControllerBase
   {
-    private static readonly string ClassName = $"[{typeof(TestController).Name}]";
+    private const string ClassName = nameof(EmailController);
 
     private const string SettingName_MeetsPageUrl = "MCSA-KZN_Meets_MeetsPageUrl";
 
