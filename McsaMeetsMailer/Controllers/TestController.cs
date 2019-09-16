@@ -11,7 +11,7 @@ namespace McsaMeetsMailer.Controllers
   [ApiController]
   public class TestController : ControllerBase
   {
-    private static readonly string ClassName = $"[{typeof(TestController).Name}]";
+    private const string ClassName = nameof(TestController);
 
     private readonly ILogger _logger;
     private readonly IEmailAddressService _emailAddressService;

@@ -18,7 +18,7 @@ namespace McsaMeetsMailer.BusinessLogic.EmailAddressSheet
       FullSchedule
     }
 
-    private static readonly string ClassName = typeof(EmailAddressGoogleSheet).Name;
+    private const string ClassName = nameof(EmailAddressGoogleSheet);
 
     private static readonly string[] ColumnHeaders =
     {

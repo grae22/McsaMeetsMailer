@@ -16,7 +16,7 @@ namespace McsaMeetsMailer.Services
 {
   public class MeetsService : IMeetsService
   {
-    private static readonly string ClassName = typeof(MeetsService).Name;
+    private const string ClassName = nameof(MeetsService);
 
     private const string SettingName_MeetsGoogleSheetId = "MCSA-KZN_Meets_MeetsGoogleSheetId";
     private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";

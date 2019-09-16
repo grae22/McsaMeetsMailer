@@ -10,7 +10,7 @@ namespace McsaMeetsMailer.Services
 {
   public class EmailAddressService : IEmailAddressService
   {
-    private static readonly string ClassName = typeof(EmailAddressService).Name;
+    private const string ClassName = nameof(EmailAddressService);
 
     private const string SettingName_EmailAddressGoogleSheetId = "MCSA-KZN_Meets_EmailAddressGoogleSheetId";
     private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";
