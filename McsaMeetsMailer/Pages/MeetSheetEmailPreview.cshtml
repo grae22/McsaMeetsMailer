@@ -28,13 +28,18 @@
 </div>
 
 <div class="container" style="padding-top: 10px;">
-  <input id="sendToAddress" type="button" class="btn btn-success" value="Send to Address" onclick="sendEmailToAddress()"/>
-  <input id="sendToAddressDisabled" type="button" class="btn btn-default" value="Send to Address" disabled="disabled" style="display: none;"/>
-  <input id="emailAddress" type="email"/>
-  <input id="sendToAll" type="button" class="btn btn-danger pull-right" value="Send to all Members" onclick="sendEmailToAll()"/>
-  <input id="sendToAllDisabled" type="button" class="btn btn-default pull-right" value="Send to all Members" disabled="disabled" style="display: none;"/>
-  <br/>
-  <input id="sendStatus" type="text" class="text-center" style="border: none; width: 100%; font-weight: bold;" readonly/>
+  <div class="row">
+    <input id="sendToAddress" type="button" class="btn btn-success" value="Send to Address" onclick="sendEmailToAddress()"/>
+    <input id="sendToAddressDisabled" type="button" class="btn btn-default" value="Send to Address" disabled="disabled" style="display: none;"/>
+    <input id="emailAddress" type="email"/>
+  </div>
+  <div class="row">
+    <input id="sendToAll" type="button" class="btn btn-danger pull-right" value="Send to all Members" onclick="sendEmailToAll()"/>
+    <input id="sendToAllDisabled" type="button" class="btn btn-default pull-right" value="Send to all Members" disabled="disabled" style="display: none;"/>
+  </div>
+  <div class="row">
+    <input id="sendStatus" type="text" class="text-center" style="border: none; width: 100%; font-weight: bold;" readonly/>
+  </div>
 </div>
 
 <script language="javascript">
