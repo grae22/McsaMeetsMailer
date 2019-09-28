@@ -23,10 +23,6 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       {
         validatorChain.AddValidator(new EmailValidator());
       }
-      else if (meetField.RawText.Contains("grade", StringComparison.OrdinalIgnoreCase))
-      {
-        validatorChain.AddValidator(new GradeValidator());
-      }
 
       return validatorChain;
     }
