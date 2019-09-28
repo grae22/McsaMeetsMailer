@@ -74,7 +74,7 @@ namespace McsaMeetsMailer.Controllers
 
         string[] emailAddresses = emailContent.Address.Split(';');
 
-        IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets();
+        IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets(DateTime.Now);
 
         string emailBody = FullScheduleEmailBuilder.Build(
           meets,
