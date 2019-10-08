@@ -454,55 +454,5 @@ namespace McsaMeetsMailerTests.Services
       Assert.IsNotNull(result);
       Assert.AreEqual(2, result.Count());
     }
-
-    [Test]
-    public async Task RetrieveMeets_GivenSecondRequestWithinCacheLifetime_ShouldReturnCachedData()
-    {
-      // Arrange.
-      var settings = Substitute.For<ISettings>();
-      var requestMaker = Substitute.For<IRestRequestMaker>();
-      var googleSheetFactory = Substitute.For<IMeetsGoogleSheetFactory>();
-      var googleSheet = Substitute.For<IMeetsGoogleSheet>();
-      var dateTimeService = Substitute.For<IDateTimeService>();
-      var logger = Substitute.For<ILogger>();
-
-      settings
-        .GetValidString(Arg.Any<string>())
-        .Returns("SomeSheetId");
-
-      settings
-        .GetValidString(Arg.Any<string>())
-        .Returns("SomeAppKey");
-
-      googleSheetFactory
-        .CreateSheet(
-          Arg.Any<Uri>(),
-          Arg.Any<IRestRequestMaker>(),
-          Arg.Any<ILogger>())
-        .Returns(googleSheet);
-
-      googleSheet
-        .Retrieve()
-        .Returns(true);
-
-      var testObject = new MeetsService(
-        settings,
-        requestMaker,
-        googleSheetFactory,
-        dateTimeService,
-        logger);
-
-      // Act.
-      await testObject.RetrieveMeets();
-      await testObject.RetrieveMeets();
-
-      // Assert.
-      googleSheetFactory
-        .Received(1)
-        .CreateSheet(
-          Arg.Any<Uri>(),
-          Arg.Any<IRestRequestMaker>(),
-          Arg.Any<ILogger>());
-    }
   }
 }
