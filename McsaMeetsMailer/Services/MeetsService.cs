@@ -20,10 +20,8 @@ namespace McsaMeetsMailer.Services
 
     private const string SettingName_MeetsGoogleSheetId = "MCSA-KZN_Meets_MeetsGoogleSheetId";
     private const string SettingName_GoogleAppKey = "MCSA-KZN_Meets_GoogleAppKey";
-    private const string SettingName_CacheMeetSheetLifetimeInSeconds = "MCSA-KZN_Meets_CacheMeetSheetLifetimeInSeconds";
     private const string GoogleSheetsBaseUrl = "https://sheets.googleapis.com/v4/spreadsheets/";
     private const string SheetRange = "A1:Z500";
-    private const int DefaultCacheMeetSheetLifetimeInSeconds = 5;
 
     private readonly string _meetsGoogleSheetId;
     private readonly string _googleAppKey;
@@ -50,41 +48,18 @@ namespace McsaMeetsMailer.Services
 
       _meetsGoogleSheetId = settings.GetValidString(SettingName_MeetsGoogleSheetId);
       _googleAppKey = settings.GetValidString(SettingName_GoogleAppKey);
-
-      var cachedMeetSheetLifetimeInSeconds = (uint)settings.GetInteger(
-        SettingName_CacheMeetSheetLifetimeInSeconds,
-        DefaultCacheMeetSheetLifetimeInSeconds);
-
-      IMeetsGoogleSheet meetSheet = CreateMeetSheet();
-
-      _refreshedMeetSheet = new TimeBasedAutoRefresher<IMeetsGoogleSheet>(
-        meetSheet,
-        dateTimeService,
-        cachedMeetSheetLifetimeInSeconds,
-        async () => await RetrieveMeetSheet(meetSheet));
     }
 
     public async Task<IEnumerable<MeetDetailsModel>> RetrieveMeets()
     {
-      IMeetsGoogleSheet sheet;
+      IMeetsGoogleSheet meetSheet = CreateMeetSheet();
 
-      try
-      {
-        sheet = await _refreshedMeetSheet.Instance();
-      }
-      catch (MeetsGoogleSheetFormatException ex)
-      {
-        _logger.LogError("Exception while retrieving all meets.", ClassName, ex);
-
-        throw new MeetsServiceException(
-          "Exception while retrieving all meets.",
-          ex);
-      }
+      await RetrieveMeetSheet(meetSheet);
 
       _logger.LogDebug("Retrieved all meets, transforming into models...", ClassName);
 
       GoogleSheetToMeetDetailsTransformer.Process(
-        sheet,
+        meetSheet,
         out IEnumerable<MeetDetailsModel> meetDetailsModels);
 
       return meetDetailsModels;
@@ -237,11 +212,23 @@ namespace McsaMeetsMailer.Services
     {
       _logger.LogDebug("Retrieving all meets...", ClassName);
 
-      bool result = await sheet.Retrieve();
-
-      if (!result)
+      try
       {
-        throw new MeetsServiceException("Failed to retrieve all meets.");
+        bool result = await sheet.Retrieve();
+
+        if (!result)
+        {
+          throw new MeetsServiceException("Failed to retrieve all meets.");
+        }
+      }
+      catch (MeetsGoogleSheetFormatException ex)
+      {
+        _logger.LogError(
+          "Exception while retrieving all meets.",
+          ClassName,
+          ex);
+
+        throw new MeetsServiceException("Exception while retrieving all meets.", ex);
       }
     }
   }
