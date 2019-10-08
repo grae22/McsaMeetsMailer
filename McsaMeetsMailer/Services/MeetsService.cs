@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using McsaMeetsMailer.BusinessLogic.MeetsSheet;
 using McsaMeetsMailer.Models;
 using McsaMeetsMailer.Services.Exceptions;
-using McsaMeetsMailer.Utils.Cache;
 using McsaMeetsMailer.Utils.Extensions;
 using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
@@ -28,7 +27,6 @@ namespace McsaMeetsMailer.Services
     private readonly IRestRequestMaker _requestMaker;
     private readonly IMeetsGoogleSheetFactory _googleSheetFactory;
     private readonly ILogger _logger;
-    private readonly TimeBasedAutoRefresher<IMeetsGoogleSheet> _refreshedMeetSheet;
 
     public MeetsService(
       in ISettings settings,
