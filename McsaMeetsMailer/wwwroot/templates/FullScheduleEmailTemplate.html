@@ -7,121 +7,125 @@
 
   <br>
   
-  <p><img src="https://mcsa-kzn-meets.azurewebsites.net/images/header.jpg" class="img-responsive" style="max-height: 200px;" /></p>
-<div>
-  <table style="border-collapse: collapse; border-spacing: 0; border: 1px solid #F0F0F0; margin: 0px auto; width: auto;">
-    <tr>
-      <!--HeaderHeading-->
-      <th style="background: #A8B4CC; color: black; border: 2px solid white; padding: 10px;">
-        {Heading}
-      </th>
-    </tr>
-    <!--HeaderValues-->
-    <tr>
-      <!--HeaderValue-->
-      <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
-        {Value}
-      </td>
-
-      <!--HeaderLinkValue-->
-      <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
-        <a href="#{Value}" style="text-decoration: none;">
-          <span>{Value}</span>
-        </a>
-      </td>
-    </tr>
-    <!--HeaderValues_Invalid-->
-    <tr style="color: white; background-color: red;">
-      <!--HeaderValue-->
-      <td style="background-color: red; border: 2px solid white; padding: 10px;">
-        {Value}
-      </td>
-
-      <!--HeaderLinkValue-->
-      <td style="background-color: red; border: 2px solid white; padding: 10px;">
-        <a href="#{Value}"  style="text-decoration: none; color: white;">
-          <span>{Value}</span>
-        </a>
-      </td>
-    </tr>
-  </table>
-  
-  <div style="font-size: small;">
-    <p>Meet Grades range from <b>1</b> (easy walk) to <b>5</b> (serious 'Berg pass), <b>R</b> indicates rock-climbing.</p>
-    <p>For example, 3R could describe a meet involving a moderate hike and rock-climbing (which may be an optional activity).</p>
+  <div style="padding-top: 10px; padding-bottom: 20px; display: flex;">
+    <img src="https://mcsa-kzn-meets.azurewebsites.net/images/header.jpg" style="max-height: 200px; margin: auto;" />
   </div>
 
-  <br>
-  <h3>Meet Details</h3>
-
-  <!--Details-->
-  <br>
-  <a id="{Anchor}" style="text-decoration: none; color: black;">
+  <div>
     <table style="border-collapse: collapse; border-spacing: 0; border: 1px solid #F0F0F0; margin: 0px auto; width: auto;">
-      <!--DetailHeader-->
-      <tr style="">
-        <td style="border: 2px solid white; padding: 10px; width: 20%; background-color: #365583;">
-        </td>
-
-        <td style="border: 2px solid white; padding: 10px; width: 80%; background-color: #A8B4CC;">
-          <b>{Value}</b>
-        </td>
-      </tr>
-      <!--DetailHeader_Invalid-->
-      <tr style="background-color: lightgray">
-        <td style="border: 2px solid white; padding: 10px; width: 20%;">
-        </td>
-
-        <td style="border: 2px solid white; padding: 10px; width: 80%;">
-          <b>{Value}</b>
-        </td>
-      </tr>
-      <!--Detail-->
       <tr>
-        <td style="border: 2px solid white; padding: 10px; background-color: #A8B4CC;">
-          {Title}
-        </td>
-
+        <!--HeaderHeading-->
+        <th style="background: #A8B4CC; color: black; border: 2px solid white; padding: 10px;">
+          {Heading}
+        </th>
+      </tr>
+      <!--HeaderValues-->
+      <tr>
+        <!--HeaderValue-->
         <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
           {Value}
         </td>
+
+        <!--HeaderLinkValue-->
+        <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
+          <a href="#{Value}" style="text-decoration: none;">
+            <span>{Value}</span>
+          </a>
+        </td>
       </tr>
-      <!--Detail_Invalid-->
-      <tr>
-        <td style="border: 2px solid white; padding: 10px; color: white; background-color: red;">
-          {Title}
+      <!--HeaderValues_Invalid-->
+      <tr style="color: white; background-color: red;">
+        <!--HeaderValue-->
+        <td style="background-color: red; border: 2px solid white; padding: 10px;">
+          {Value}
         </td>
 
-        <td style="border: 2px solid white; padding: 10px; color: white; background-color: red;">
-          {Value}
+        <!--HeaderLinkValue-->
+        <td style="background-color: red; border: 2px solid white; padding: 10px;">
+          <a href="#{Value}"  style="text-decoration: none; color: white;">
+            <span>{Value}</span>
+          </a>
         </td>
       </tr>
     </table>
-  </a>
-  
-  <div style="font-size: small; text-align: left; margin: 0px auto; width: 60%;">
-    <p><b>GRADES</b> - Where a Berg or other climbing meet has been allocated a grade 1, 2 or 3 as well as the usual R, this means that non-climbers are most welcome as hikers on the meet.</p>
+    
+    <div style="font-size: small; text-align: center; margin: 0px auto; width: 70%;">
+      <p>Meet Grades range from <b>1</b> (easy walk) to <b>5</b> (serious 'Berg pass), <b>R</b> indicates rock-climbing.</p>
+      <p>For example, 3R could describe a meet involving a moderate hike and rock-climbing (which may be an optional activity).</p>
+    </div>
 
-    <p><b>BACK-UP MEET LEADERS</b> - When unable to take their meet, the meet leader should have contact details of a backup leader.</p>
+    <h3 style="text-align: center; padding-top: 10px;">Meet Details</h3>
 
-    <p><b>IMPROMPTU MEETS</b> - May be arranged at short notice and the details will be distributed by email, on the website and in the newsletter if time permits. Be sure that you are on the Google-mail list for MCSA members to receive notice of the many short notice meets. Scott Sinclair (scott.sinclair.za@gmail.com) controls the list or kzn.mcsa.comm@gmail.com</p>
-			
-    <p><b>ADDITIONAL MEETS</b> - Please advise Clem Robins of your plans for a meet which you are prepared to arrange/lead and it will be added to this or the appropriate future Meet Sheet.</p>
-			
-    <p><b>MONTHLY ADVENTURE TALKS & SOCIAL EVENINGS</b> - If you know of someone who has interesting slides to show on hiking, climbing or travelling please contact Ian Bailey (Pietermaritzburg) 083 269 6201, ianbailey@telkomsa.net, or Neil Williamson (Durban) 0836589494, dendro-p@hotmail.com.</p>
-			
-    <p><b>DMG</b> - A monthly meet of trad climbers with partners pushing their grades & then slaking theit thirst, but other climbers are welcome to come along to the venue for the cameraderie.</p>
-			
-    <p><b>UPDATES</b> - Check the newsletter and website for changes and for details of new meets. The latest meetsheet can be viewed on the club's website athttp://kzn.mcsa.org.za/meets</p>
-			
-    <p><b>CAMBALALA HUT</b> - Booking calendar on-line (http://kzn.mcsa.org.za/Resources/cambalala-hut) or Clem Robins at clemnolarobins@gmail.com</p>
+    <!--Details-->
+    <a id="{Anchor}" style="text-decoration: none; color: black;">
+      <table style="border-collapse: collapse; border-spacing: 0; border: 1px solid #F0F0F0; margin: 0px auto; width: auto;">
+        <!--DetailHeader-->
+        <tr style="">
+          <td style="border: 2px solid white; padding: 10px; width: 20%; background-color: #365583;">
+          </td>
 
-    <p><b>GUIDE TO MEET LEADERS</b> - Meet Leaders please note the Guide to Meet Leaders and Indemnity Form on the MCSA KZN website.</p>
+          <td style="border: 2px solid white; padding: 10px; width: 80%; background-color: #A8B4CC;">
+            <b>{Value}</b>
+          </td>
+        </tr>
+        <!--DetailHeader_Invalid-->
+        <tr style="background-color: lightgray">
+          <td style="border: 2px solid white; padding: 10px; width: 20%;">
+          </td>
 
-    <p><b>CLIMBING ON TUESDAYS</b> - Contact Bruce Sobey, 0834406753.</p>
+          <td style="border: 2px solid white; padding: 10px; width: 80%;">
+            <b>{Value}</b>
+          </td>
+        </tr>
+        <!--Detail-->
+        <tr>
+          <td style="border: 2px solid white; padding: 10px; background-color: #A8B4CC;">
+            {Title}
+          </td>
 
-    <p><b>DISCLAIMER</b> - Hiking and climbing in mountainous areas are potentially hazardous activities. Participation in MCSA meets is at your own risk. It is your own responsibility to be properly equipped with adequate food, clothing, footwear, sleeping bag, shelter and maps. The club and the meet leaders cannot be held liable for any injuries or mishaps whatsoever. An Indemnity Form is available for leaders use.</p>
+          <td style="border: 2px solid white; padding: 10px; background-color: #F3F3F3;">
+            {Value}
+          </td>
+        </tr>
+        <!--Detail_Invalid-->
+        <tr>
+          <td style="border: 2px solid white; padding: 10px; color: white; background-color: red;">
+            {Title}
+          </td>
+
+          <td style="border: 2px solid white; padding: 10px; color: white; background-color: red;">
+            {Value}
+          </td>
+        </tr>
+      </table>
+    </a>
+    
+    <div style="font-size: small; text-align: left; margin: 0px auto; width: 70%; padding-top: 20px;">
+      <p><b>GRADES</b> - Where a Berg or other climbing meet has been allocated a grade 1, 2 or 3 as well as the usual R, this means that non-climbers are most welcome as hikers on the meet.</p>
+
+      <p><b>BACK-UP MEET LEADERS</b> - When unable to take their meet, the meet leader should have contact details of a backup leader.</p>
+
+      <p><b>IMPROMPTU MEETS</b> - May be arranged at short notice and the details will be distributed by email, on the website and in the newsletter if time permits. Be sure that you are on the Google-mail list for MCSA members to receive notice of the many short notice meets. Scott Sinclair (scott.sinclair.za@gmail.com) controls the list or kzn.mcsa.comm@gmail.com</p>
+			  
+      <p><b>ADDITIONAL MEETS</b> - Please advise Clem Robins of your plans for a meet which you are prepared to arrange/lead and it will be added to this or the appropriate future Meet Sheet.</p>
+			  
+      <p><b>MONTHLY ADVENTURE TALKS & SOCIAL EVENINGS</b> - If you know of someone who has interesting slides to show on hiking, climbing or travelling please contact Ian Bailey (Pietermaritzburg) 083 269 6201, ianbailey@telkomsa.net, or Neil Williamson (Durban) 0836589494, dendro-p@hotmail.com.</p>
+			  
+      <p><b>DMG</b> - A monthly meet of trad climbers with partners pushing their grades & then slaking their thirst, but other climbers are welcome to come along to the venue for the camaraderie.</p>
+			  
+      <p><b>UPDATES</b> - Check the newsletter and website for changes and for details of new meets. The latest Meet Sheet can be viewed on the club's website at http://kzn.mcsa.org.za/meets</p>
+			  
+      <p><b>CAMBALALA HUT</b> - Booking calendar on-line (http://kzn.mcsa.org.za/Resources/cambalala-hut) or Clem Robins at clemnolarobins@gmail.com</p>
+
+      <p><b>GUIDE TO MEET LEADERS</b> - Meet Leaders please note the Guide to Meet Leaders and Indemnity Form on the MCSA KZN website.</p>
+
+      <p><b>CLIMBING ON TUESDAYS</b> - Contact Bruce Sobey, 0834406753.</p>
+
+      <p><b>DISCLAIMER</b> - Hiking and climbing in mountainous areas are potentially hazardous activities. Participation in MCSA meets is at your own risk. It is your own responsibility to be properly equipped with adequate food, clothing, footwear, sleeping bag, shelter and maps. The club and the meet leaders cannot be held liable for any injuries or mishaps whatsoever. An Indemnity Form is available for leaders use.</p>
+    </div>
   </div>
-</div>
-  <p><img src="https://mcsa-kzn-meets.azurewebsites.net/images/footer.jpg" class="img-responsive" style="max-height: 200px;" /></p>
+
+  <div style="padding-top: 10px; padding-bottom: 20px; display: flex;">
+    <img src="https://mcsa-kzn-meets.azurewebsites.net/images/footer.jpg" style="max-height: 200px; margin: auto;" />
+  </div>
 </body>
