@@ -139,6 +139,7 @@ namespace McsaMeetsMailer.BusinessLogic
 
       var meetValues = new StringBuilder("");
       var allMeetValues = new List<string>();
+      var meetIndex = 0;
 
       foreach (MeetDetailsModel meetDetail in meetDetails)
       {
@@ -160,12 +161,20 @@ namespace McsaMeetsMailer.BusinessLogic
           {
             if (!invalid)
             {
-              meetValues.Append(anchorTemplate_Valid.Replace("{Value}", field.FormattedValue));
+              meetValues.Append(
+                anchorTemplate_Valid
+                  .Replace("{Value}", field.FormattedValue)
+                  .Replace("{Anchor}", $"Meet{meetIndex}"));
             }
             else
             {
-              meetValues.Append(anchorTemplate_Invalid.Replace("{Value}", field.Value));
+              meetValues.Append(
+                anchorTemplate_Invalid
+                  .Replace("{Value}", field.Value)
+                  .Replace("{Anchor}", $"Meet{meetIndex}"));
             }
+
+            meetIndex++;
           }
           else
           {
@@ -226,6 +235,7 @@ namespace McsaMeetsMailer.BusinessLogic
 
       var values = new StringBuilder("");
       var detailsHtml = new StringBuilder();
+      var meetIndex = 0;
 
       foreach (MeetDetailsModel meetDetail in meetDetails)
       {
@@ -239,7 +249,7 @@ namespace McsaMeetsMailer.BusinessLogic
         sortedFields.Remove(meetTitleField);
         sortedFields.Insert(0, meetTitleField);
 
-        string currentTableTemplate = detailsTableTemplate.Replace("{Anchor}", sortedFields.FirstOrDefault()?.Value);
+        string currentTableTemplate = detailsTableTemplate.Replace("{Anchor}", $"Meet{meetIndex}");
 
         foreach (MeetFieldValue field in sortedFields)
         {
@@ -274,6 +284,8 @@ namespace McsaMeetsMailer.BusinessLogic
         var index = currentTableTemplate.IndexOf(detailHeaderStart, StringComparison.Ordinal);
         detailsHtml = detailsHtml.Append(currentTableTemplate.Insert(index, values.ToString()));
         values = values.Clear();
+
+        meetIndex++;
       }
 
       return detailsHtml.ToString();
