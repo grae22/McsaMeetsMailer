@@ -17,9 +17,5 @@
   },
   "homepage": "https://github.com/grae22/McsaMeetsMailer#readme",
   "devDependencies": {
-    "grunt": "^1.0.4",
-    "grunt-contrib-less": "^2.0.0",
-    "grunt-contrib-watch": "^1.1.0",
-    "jit-grunt": "^0.10.0"
   }
 }
