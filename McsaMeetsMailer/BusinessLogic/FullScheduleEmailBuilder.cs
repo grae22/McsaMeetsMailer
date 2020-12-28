@@ -31,7 +31,8 @@ namespace McsaMeetsMailer.BusinessLogic
       in string templatesPath,
       in string customMessage = "",
       in string onlineScheduleUrl = "",
-      in bool previewMode = true)
+      in bool previewMode = true,
+      in bool showHeaderAndFooterImages = true)
     {
       string html;
 
@@ -61,6 +62,11 @@ namespace McsaMeetsMailer.BusinessLogic
         html,
         "{OnlineScheduleDisplayStyle}",
         !string.IsNullOrWhiteSpace(onlineScheduleUrl));
+
+      html = SetDisplayStyleVisible(
+        html,
+        "{HeaderAndFooterImageVisibility}",
+        showHeaderAndFooterImages);
 
       html = UpdateHtml(html, summaryHeadingStart, endOfHeadingColumn, headerHeadings);
 

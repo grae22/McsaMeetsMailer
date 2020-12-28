@@ -39,6 +39,7 @@ namespace McsaMeetsMailer.Pages
       }
 
       bool printerFriendly = Request.Query.ContainsKey("printerFriendly");
+      bool hideHeaderAndFooterImages = Request.Query.ContainsKey("hideHeaderAndFooter");
 
       if (printerFriendly)
       {
@@ -49,7 +50,8 @@ namespace McsaMeetsMailer.Pages
         Html = FullScheduleEmailBuilder.Build(
           meetsDetails: meets,
           templatesPath: $@"{_hostingEnvironment.WebRootPath}\templates",
-          previewMode: false);
+          previewMode: false,
+          showHeaderAndFooterImages: !hideHeaderAndFooterImages);
       }
     }
 
