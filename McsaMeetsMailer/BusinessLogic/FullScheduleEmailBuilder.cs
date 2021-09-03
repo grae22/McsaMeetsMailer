@@ -47,7 +47,9 @@ namespace McsaMeetsMailer.BusinessLogic
       string headerValues = GetHeaderValues(html, meets, previewMode);
       string details = GetDetails(html, meets, previewMode);
 
-      string customMessageHtml = customMessage.Replace("\n", "<br />");
+      string customMessageHtml = customMessage
+        .Replace("\n", "<br />")
+        .Replace("&#xA;", "<br />");
 
       html = html
         .Replace("{CustomMessage}", customMessageHtml)

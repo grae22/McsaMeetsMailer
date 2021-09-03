@@ -72,9 +72,19 @@ namespace McsaMeetsMailer.Controllers
           return BadRequest("Email body cannot be empty");
         }
 
+        if (string.IsNullOrWhiteSpace(emailContent.SendMeetsUpUntilThisDate) ||
+            !DateTime.TryParse(
+              emailContent.SendMeetsUpUntilThisDate,
+              out DateTime latestDate))
+        {
+          return BadRequest($"Meets date range is invalid: \"{emailContent.SendMeetsUpUntilThisDate}\".");
+        }
+
         string[] emailAddresses = emailContent.Address.Split(';');
 
-        IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets(DateTime.Now);
+        IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets(
+          DateTime.Now,
+          latestDate);
 
         string emailBody = FullScheduleEmailBuilder.Build(
           meets,

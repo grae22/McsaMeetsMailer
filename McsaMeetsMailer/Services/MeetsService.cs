@@ -146,6 +146,14 @@ namespace McsaMeetsMailer.Services
         return null;
       }
 
+      latestDate = new DateTime(
+        latestDate.Year,
+        latestDate.Month,
+        latestDate.Day,
+        23,
+        59,
+        59);
+
       try
       {
         return allMeets

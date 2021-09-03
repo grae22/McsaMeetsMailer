@@ -1,0 +1,248 @@
+﻿@page
+@model McsaMeetsMailer.Pages.SendEmailModel
+@{
+  ViewData["Title"] = "Send Meet-Sheet Email";
+
+  // TODO: Pull this from config.
+  // NOTE: This is duplicated in MeetSheetEmailPreview.cshtml
+  const string defaultBody =
+    "Hi\n\n" +
+    "Please find the latest MCSA-KZN Meet Sheet below.\n\n" +
+    "Queries specific to a particular Meet should be directed to the Meet Leader.\n\n" +
+    "Please do not reply to this email as the address is not monitored.\n\n" +
+    "Yours in adventure,\n" +
+    "The Mountain Club of South Africa, KwaZulu-Natal Section.";
+
+  const string defaultBodyAbridged =
+    "Hi\n\n" +
+    "Below you will find an abridged MCSA-KZN Meet Sheet, it lists meets in the upcoming weeks.\n\n" +
+    "Queries specific to a particular Meet should be directed to the Meet Leader.\n\n" +
+    "Please do not reply to this email as the address is not monitored.\n\n" +
+    "Yours in adventure,\n" +
+    "The Mountain Club of South Africa, KwaZulu-Natal Section.";
+
+  const string emailSubject = "MCSA-KZN Meet Sheet";
+  const string emailSubjectAbridged = "MCSA-KZN Meet Sheet - Upcoming meets!";
+
+  // Figure out date for Sunday in roughly a week's time.
+  DateTime sundayNextWeek = DateTime.Now.AddDays(5);
+
+  while (sundayNextWeek.DayOfWeek != DayOfWeek.Sunday)
+  {
+    sundayNextWeek = sundayNextWeek.AddDays(1);
+  }
+
+  string sundayNextWeekFriendly = sundayNextWeek.ToString("ddd d MMM");
+
+  // Figure out date for Sunday in roughly a two week's time.
+  DateTime sundayNextFortnight = sundayNextWeek.AddDays(7);
+  string sundayNextFortnightFriendly = sundayNextFortnight.ToString("ddd d MMM");
+
+  // Format dates yyyy/mm/dd.
+  string sundayNextWeekFormatted = sundayNextWeek.ToString("yyyy/MM/dd");
+  string sundayNextFortnightFormatted = sundayNextFortnight.ToString("yyyy/MM/dd");
+  string allTimeFormatted = DateTime.Now.AddYears(10).ToString("yyyy/MM/dd");
+}
+
+<div class="container" style="padding-top: 100px;">
+  <input id="sendToAll" type="button" class="btn btn-success" value="Send to all Members (ALL meets)" onclick="sendEmailToAll('all')" />
+  <input id="sendToAllDisabled" type="button" class="btn btn-default" value="Send to all Members (ALL meets)" disabled="disabled" style="display: none;" />
+  <br />
+  <br />
+  <input id="sendToAllOneWeek" type="button" class="btn btn-success" value="Send to all Members (meets until @sundayNextWeekFriendly)" onclick="sendEmailToAll('@sundayNextWeekFormatted')" />
+  <input id="sendToAllOneWeekDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayNextWeekFriendly)" disabled="disabled" style="display: none;" />
+  <br />
+  <br />
+  <input id="sendToAllTwoWeeks" type="button" class="btn btn-success" value="Send to all Members (meets until @sundayNextFortnightFriendly)" onclick="sendEmailToAll('@sundayNextFortnightFormatted')" />
+  <input id="sendToAllTwoWeeksDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayNextFortnightFriendly)" disabled="disabled" style="display: none;" />
+  <br />
+  <hr />
+  <input id="sendToAddress" type="button" class="btn btn-default" value="Send to Address (ALL meets)" onclick="sendEmailToAddress('all')" />
+  <input id="sendToAddressDisabled" type="button" class="btn btn-default" value="Send to Address (ALL meets)" disabled="disabled" style="display: none;" />
+  <input id="emailAddress" type="email" />
+  <br />
+  <br />
+  <input id="sendToAddressOneWeek" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextWeekFriendly)" onclick="sendEmailToAddress('@sundayNextWeekFormatted')" />
+  <input id="sendToAddressOneWeekDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextWeekFriendly)" disabled="disabled" style="display: none;" />
+  <br />
+  <br />
+  <input id="sendToAddressTwoWeeks" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextFortnightFriendly)" onclick="sendEmailToAddress('@sundayNextFortnightFormatted')" />
+  <input id="sendToAddressTwoWeeksDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextFortnightFriendly)" disabled="disabled" style="display: none;" />
+  <br />
+  <br />
+  <input id="sendStatus" type="text" class="text-center" style="border: none; width: 100%; font-weight: bold;" readonly />
+</div>
+
+<script language="javascript">
+
+  function disableButton(button, disabledButton) {
+    button.style.display = 'none';
+    disabledButton.style.display = 'inline';
+  }
+
+  function enableButton(button, disabledButton) {
+    button.style.display = 'inline';
+    disabledButton.style.display = 'none';
+  }
+
+  function disableSendButtons() {
+    disableButton(
+      document.getElementById("sendToAll"),
+      document.getElementById("sendToAllDisabled"))
+
+    disableButton(
+      document.getElementById("sendToAllOneWeek"),
+      document.getElementById("sendToAllOneWeekDisabled"))
+
+    disableButton(
+      document.getElementById("sendToAllTwoWeeks"),
+      document.getElementById("sendToAllTwoWeeksDisabled"))
+
+    disableButton(
+      document.getElementById("sendToAddress"),
+      document.getElementById("sendToAddressDisabled"))
+
+    disableButton(
+      document.getElementById("sendToAddressOneWeek"),
+      document.getElementById("sendToAddressOneWeekDisabled"))
+
+    disableButton(
+      document.getElementById("sendToAddressTwoWeeks"),
+      document.getElementById("sendToAddressTwoWeeksDisabled"))
+  }
+
+  function enableSendButtons() {
+    enableButton(
+      document.getElementById("sendToAll"),
+      document.getElementById("sendToAllDisabled"))
+
+    enableButton(
+      document.getElementById("sendToAllOneWeek"),
+      document.getElementById("sendToAllOneWeekDisabled"))
+
+    enableButton(
+      document.getElementById("sendToAllTwoWeeks"),
+      document.getElementById("sendToAllTwoWeeksDisabled"))
+
+    enableButton(
+      document.getElementById("sendToAddress"),
+      document.getElementById("sendToAddressDisabled"))
+
+    enableButton(
+      document.getElementById("sendToAddressOneWeek"),
+      document.getElementById("sendToAddressOneWeekDisabled"))
+
+    enableButton(
+      document.getElementById("sendToAddressTwoWeeks"),
+      document.getElementById("sendToAddressTwoWeeksDisabled"))
+  }
+
+  function getSerialisedEmailContentModel(sendMeetsUpUntilThisDate) {
+    var subject = "@emailSubjectAbridged";
+    var body = "@defaultBodyAbridged";
+
+    if (sendMeetsUpUntilThisDate == 'all') {
+      sendMeetsUpUntilThisDate = "@allTimeFormatted";
+      subject = "@emailSubject";
+      body = "@defaultBody";
+    }
+
+    var emailAddress = document.getElementById("emailAddress").value;
+
+    var emailContent = new Object();
+    emailContent.Address = emailAddress;
+    emailContent.Subject = subject;
+    emailContent.Body = body;
+    emailContent.SendMeetsUpUntilThisDate = sendMeetsUpUntilThisDate;
+
+    return JSON.stringify(emailContent);
+  }
+
+  function sendEmailToAddress(sendMeetsUpUntilThisDate) {
+    var emailAddress = document.getElementById("emailAddress").value;
+    var sendStatus = document.getElementById("sendStatus");
+
+    if (emailAddress === "") {
+      alert("Please enter an email address first.");
+      return;
+    }
+
+    var confirmResult = false;
+
+    if (sendMeetsUpUntilThisDate == "all") {
+      confirmResult = confirm(
+        "This will email " + emailAddress + " with all the meets - continue?")
+    }
+    else {
+      confirmResult = confirm(
+        "This will email " + emailAddress + " with the meets until " + sendMeetsUpUntilThisDate + " - continue?")
+    }
+
+    if (confirmResult == false) {
+      return;
+    }
+
+    disableSendButtons();
+
+    sendStatus.value = 'Sending...';
+
+    $.ajax({
+      url: 'api/email/sendFullScheduleToAddress',
+      data: getSerialisedEmailContentModel(sendMeetsUpUntilThisDate),
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (result) {
+        sendStatus.value = 'Sent successfully.';
+      },
+      error: function (xhr, exception) {
+        sendStatus.value = 'Send failed.';
+        alert('Failed to send email, the following message may be helpful: (' + xhr.status + ') ' + xhr.responseText);
+      },
+      complete: function () {
+        enableSendButtons();
+      }
+    });
+  }
+
+  function sendEmailToAll(sendMeetsUpUntilThisDate) {
+    var confirmResult = false;
+
+    if (sendMeetsUpUntilThisDate == "all") {
+      confirmResult = confirm(
+        "This will email all members with all the meets - continue?")
+    }
+    else {
+      confirmResult = confirm(
+        "This will email all members with the meets until " + sendMeetsUpUntilThisDate + " - continue?")
+    }
+
+    if (confirmResult == false) {
+      return;
+    }
+
+    var sendStatus = document.getElementById("sendStatus");
+
+    disableSendButtons();
+
+    sendStatus.value = 'Sending...';
+
+    $.ajax({
+      url: 'api/email/sendFullScheduleToAll',
+      data: getSerialisedEmailContentModel(sendMeetsUpUntilThisDate),
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (result) {
+        sendStatus.value = 'Sent successfully.';
+      },
+      error: function (xhr, exception) {
+        sendStatus.value = 'Send failed.';
+        alert('Failed to send email, the following message may be helpful: (' + xhr.status + ') ' + xhr.responseText);
+      },
+      complete: function () {
+        enableSendButtons();
+      }
+    });
+  }
+</script>
