@@ -32,29 +32,30 @@
     sundayNextWeek = sundayNextWeek.AddDays(1);
   }
 
-  string sundayNextWeekFriendly = sundayNextWeek.ToString("ddd d MMM");
-
   // Figure out date for Sunday in roughly a two week's time.
   DateTime sundayNextFortnight = sundayNextWeek.AddDays(7);
   string sundayNextFortnightFriendly = sundayNextFortnight.ToString("ddd d MMM");
 
+  // Figure out date for Sunday in roughly a three week's time.
+  DateTime sundayThreeWeeks = sundayNextWeek.AddDays(14);
+  string sundayThreeWeeksFriendly = sundayThreeWeeks.ToString("ddd d MMM");
+
   // Format dates yyyy/mm/dd.
-  string sundayNextWeekFormatted = sundayNextWeek.ToString("yyyy/MM/dd");
   string sundayNextFortnightFormatted = sundayNextFortnight.ToString("yyyy/MM/dd");
-  string allTimeFormatted = DateTime.Now.AddYears(10).ToString("yyyy/MM/dd");
-}
+  string sundayThreeWeeksFormatted = sundayThreeWeeks.ToString("yyyy/MM/dd");
+  string allTimeFormatted = DateTime.Now.AddYears(10).ToString("yyyy/MM/dd");}
 
 <div class="container" style="padding-top: 100px;">
   <input id="sendToAll" type="button" class="btn btn-success" value="Send to all Members (ALL meets)" onclick="sendEmailToAll('all')" />
   <input id="sendToAllDisabled" type="button" class="btn btn-default" value="Send to all Members (ALL meets)" disabled="disabled" style="display: none;" />
   <br />
   <br />
-  <input id="sendToAllOneWeek" type="button" class="btn btn-success" value="Send to all Members (meets until @sundayNextWeekFriendly)" onclick="sendEmailToAll('@sundayNextWeekFormatted')" />
-  <input id="sendToAllOneWeekDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayNextWeekFriendly)" disabled="disabled" style="display: none;" />
-  <br />
-  <br />
   <input id="sendToAllTwoWeeks" type="button" class="btn btn-success" value="Send to all Members (meets until @sundayNextFortnightFriendly)" onclick="sendEmailToAll('@sundayNextFortnightFormatted')" />
   <input id="sendToAllTwoWeeksDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayNextFortnightFriendly)" disabled="disabled" style="display: none;" />
+  <br />
+  <br />
+  <input id="sendToAllThreeWeeks" type="button" class="btn btn-success" value="Send to all Members (meets until @sundayThreeWeeksFriendly)" onclick="sendEmailToAll('@sundayThreeWeeksFormatted')" />
+  <input id="sendToAllThreeWeeksDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayThreeWeeksFriendly)" disabled="disabled" style="display: none;" />
   <br />
   <hr />
   <input id="sendToAddress" type="button" class="btn btn-default" value="Send to Address (ALL meets)" onclick="sendEmailToAddress('all')" />
@@ -62,12 +63,12 @@
   <input id="emailAddress" type="email" />
   <br />
   <br />
-  <input id="sendToAddressOneWeek" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextWeekFriendly)" onclick="sendEmailToAddress('@sundayNextWeekFormatted')" />
-  <input id="sendToAddressOneWeekDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextWeekFriendly)" disabled="disabled" style="display: none;" />
-  <br />
-  <br />
   <input id="sendToAddressTwoWeeks" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextFortnightFriendly)" onclick="sendEmailToAddress('@sundayNextFortnightFormatted')" />
   <input id="sendToAddressTwoWeeksDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextFortnightFriendly)" disabled="disabled" style="display: none;" />
+  <br />
+  <br />
+  <input id="sendToAddressThreeWeeks" type="button" class="btn btn-default" value="Send to Address (meets until @sundayThreeWeeksFriendly)" onclick="sendEmailToAddress('@sundayThreeWeeksFormatted')" />
+  <input id="sendToAddressThreeWeeksDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayThreeWeeksFriendly)" disabled="disabled" style="display: none;" />
   <br />
   <br />
   <input id="sendStatus" type="text" class="text-center" style="border: none; width: 100%; font-weight: bold;" readonly />
@@ -91,24 +92,24 @@
       document.getElementById("sendToAllDisabled"))
 
     disableButton(
-      document.getElementById("sendToAllOneWeek"),
-      document.getElementById("sendToAllOneWeekDisabled"))
-
-    disableButton(
       document.getElementById("sendToAllTwoWeeks"),
       document.getElementById("sendToAllTwoWeeksDisabled"))
+
+    disableButton(
+      document.getElementById("sendToAllThreeWeeks"),
+      document.getElementById("sendToAllThreeWeeksDisabled"))
 
     disableButton(
       document.getElementById("sendToAddress"),
       document.getElementById("sendToAddressDisabled"))
 
     disableButton(
-      document.getElementById("sendToAddressOneWeek"),
-      document.getElementById("sendToAddressOneWeekDisabled"))
-
-    disableButton(
       document.getElementById("sendToAddressTwoWeeks"),
       document.getElementById("sendToAddressTwoWeeksDisabled"))
+
+    disableButton(
+      document.getElementById("sendToAddressThreeWeeks"),
+      document.getElementById("sendToAddressThreeWeeksDisabled"))
   }
 
   function enableSendButtons() {
@@ -117,24 +118,24 @@
       document.getElementById("sendToAllDisabled"))
 
     enableButton(
-      document.getElementById("sendToAllOneWeek"),
-      document.getElementById("sendToAllOneWeekDisabled"))
-
-    enableButton(
       document.getElementById("sendToAllTwoWeeks"),
       document.getElementById("sendToAllTwoWeeksDisabled"))
+
+    enableButton(
+      document.getElementById("sendToAllThreeWeeks"),
+      document.getElementById("sendToAllThreeWeeksDisabled"))
 
     enableButton(
       document.getElementById("sendToAddress"),
       document.getElementById("sendToAddressDisabled"))
 
     enableButton(
-      document.getElementById("sendToAddressOneWeek"),
-      document.getElementById("sendToAddressOneWeekDisabled"))
-
-    enableButton(
       document.getElementById("sendToAddressTwoWeeks"),
       document.getElementById("sendToAddressTwoWeeksDisabled"))
+
+    enableButton(
+      document.getElementById("sendToAddressThreeWeeks"),
+      document.getElementById("sendToAddressThreeWeeksDisabled"))
   }
 
   function getSerialisedEmailContentModel(sendMeetsUpUntilThisDate) {
