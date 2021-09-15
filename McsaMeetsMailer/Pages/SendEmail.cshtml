@@ -46,15 +46,15 @@
   string allTimeFormatted = DateTime.Now.AddYears(10).ToString("yyyy/MM/dd");}
 
 <div class="container" style="padding-top: 100px;">
-  <input id="sendToAll" type="button" class="btn btn-success" value="Send to all Members (ALL meets)" onclick="sendEmailToAll('all')" />
+  <input id="sendToAll" type="button" class="btn btn-success" value="Send ALL meets" onclick="sendEmailToAll('all')" />
   <input id="sendToAllDisabled" type="button" class="btn btn-default" value="Send to all Members (ALL meets)" disabled="disabled" style="display: none;" />
   <br />
   <br />
-  <input id="sendToAllTwoWeeks" type="button" class="btn btn-success" value="Send to all Members (meets until @sundayNextFortnightFriendly)" onclick="sendEmailToAll('@sundayNextFortnightFormatted')" />
+  <input id="sendToAllTwoWeeks" type="button" class="btn btn-success" value="Send meets for next 2 weeks (until @sundayNextFortnightFriendly)" onclick="sendEmailToAll('@sundayNextFortnightFormatted')" />
   <input id="sendToAllTwoWeeksDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayNextFortnightFriendly)" disabled="disabled" style="display: none;" />
   <br />
   <br />
-  <input id="sendToAllThreeWeeks" type="button" class="btn btn-success" value="Send to all Members (meets until @sundayThreeWeeksFriendly)" onclick="sendEmailToAll('@sundayThreeWeeksFormatted')" />
+  <input id="sendToAllThreeWeeks" type="button" class="btn btn-success" value="Send meets for next 3 weeks (until @sundayThreeWeeksFriendly)" onclick="sendEmailToAll('@sundayThreeWeeksFormatted')" />
   <input id="sendToAllThreeWeeksDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayThreeWeeksFriendly)" disabled="disabled" style="display: none;" />
   <br />
   <hr />
