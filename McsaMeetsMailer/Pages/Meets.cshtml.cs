@@ -31,7 +31,7 @@ namespace McsaMeetsMailer.Pages
 
     public async Task OnGet()
     {
-      IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets(DateTime.Now);
+      IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets(DateTime.Now.Date);
 
       if (meets == null)
       {
