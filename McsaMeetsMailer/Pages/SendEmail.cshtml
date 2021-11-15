@@ -57,19 +57,21 @@
   <input id="sendToAllThreeWeeks" type="button" class="btn btn-success" value="Send meets for next 3 weeks (until @sundayThreeWeeksFriendly)" onclick="sendEmailToAll('@sundayThreeWeeksFormatted')" />
   <input id="sendToAllThreeWeeksDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayThreeWeeksFriendly)" disabled="disabled" style="display: none;" />
   <br />
-  <hr />
-  <input id="sendToAddress" type="button" class="btn btn-default" value="Send to Address (ALL meets)" onclick="sendEmailToAddress('all')" />
-  <input id="sendToAddressDisabled" type="button" class="btn btn-default" value="Send to Address (ALL meets)" disabled="disabled" style="display: none;" />
-  <input id="emailAddress" type="email" />
-  <br />
-  <br />
-  <input id="sendToAddressTwoWeeks" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextFortnightFriendly)" onclick="sendEmailToAddress('@sundayNextFortnightFormatted')" />
-  <input id="sendToAddressTwoWeeksDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextFortnightFriendly)" disabled="disabled" style="display: none;" />
-  <br />
-  <br />
-  <input id="sendToAddressThreeWeeks" type="button" class="btn btn-default" value="Send to Address (meets until @sundayThreeWeeksFriendly)" onclick="sendEmailToAddress('@sundayThreeWeeksFormatted')" />
-  <input id="sendToAddressThreeWeeksDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayThreeWeeksFriendly)" disabled="disabled" style="display: none;" />
-  <br />
+  <div style="visibility: @Model.DebugOptionsVisibility">
+    <hr />
+    <input id="sendToAddress" type="button" class="btn btn-default" value="Send to Address (ALL meets)" onclick="sendEmailToAddress('all')" />
+    <input id="sendToAddressDisabled" type="button" class="btn btn-default" value="Send to Address (ALL meets)" disabled="disabled" style="display: none;" />
+    <input id="emailAddress" type="email" />
+    <br />
+    <br />
+    <input id="sendToAddressTwoWeeks" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextFortnightFriendly)" onclick="sendEmailToAddress('@sundayNextFortnightFormatted')" />
+    <input id="sendToAddressTwoWeeksDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayNextFortnightFriendly)" disabled="disabled" style="display: none;" />
+    <br />
+    <br />
+    <input id="sendToAddressThreeWeeks" type="button" class="btn btn-default" value="Send to Address (meets until @sundayThreeWeeksFriendly)" onclick="sendEmailToAddress('@sundayThreeWeeksFormatted')" />
+    <input id="sendToAddressThreeWeeksDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayThreeWeeksFriendly)" disabled="disabled" style="display: none;" />
+    <br />
+  </div>
   <br />
   <input id="sendStatus" type="text" class="text-center" style="border: none; width: 100%; font-weight: bold;" readonly />
 </div>
