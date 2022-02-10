@@ -40,9 +40,14 @@
   DateTime sundayThreeWeeks = sundayNextWeek.AddDays(14);
   string sundayThreeWeeksFriendly = sundayThreeWeeks.ToString("ddd d MMM");
 
+  // Figure out date for Sunday in roughly a four week's time.
+  DateTime sundayFourWeeks = sundayNextWeek.AddDays(21);
+  string sundayFourWeeksFriendly = sundayFourWeeks.ToString("ddd d MMM");
+
   // Format dates yyyy/mm/dd.
   string sundayNextFortnightFormatted = sundayNextFortnight.ToString("yyyy/MM/dd");
   string sundayThreeWeeksFormatted = sundayThreeWeeks.ToString("yyyy/MM/dd");
+  string sundayFourWeeksFormatted = sundayFourWeeks.ToString("yyyy/MM/dd");
   string allTimeFormatted = DateTime.Now.AddYears(10).ToString("yyyy/MM/dd");}
 
 <div class="container" style="padding-top: 100px;">
@@ -57,6 +62,10 @@
   <input id="sendToAllThreeWeeks" type="button" class="btn btn-success" value="Send meets for next 3 weeks (until @sundayThreeWeeksFriendly)" onclick="sendEmailToAll('@sundayThreeWeeksFormatted')" />
   <input id="sendToAllThreeWeeksDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayThreeWeeksFriendly)" disabled="disabled" style="display: none;" />
   <br />
+  <br />
+  <input id="sendToAllFourWeeks" type="button" class="btn btn-success" value="Send meets for next 4 weeks (until @sundayFourWeeksFriendly)" onclick="sendEmailToAll('@sundayFourWeeksFormatted')" />
+  <input id="sendToAllFourWeeksDisabled" type="button" class="btn btn-default" value="Send to all Members (meets until @sundayFourWeeksFriendly)" disabled="disabled" style="display: none;" />
+  <br />
   <div style="visibility: @Model.DebugOptionsVisibility">
     <hr />
     <input id="sendToAddress" type="button" class="btn btn-default" value="Send to Address (ALL meets)" onclick="sendEmailToAddress('all')" />
@@ -70,6 +79,10 @@
     <br />
     <input id="sendToAddressThreeWeeks" type="button" class="btn btn-default" value="Send to Address (meets until @sundayThreeWeeksFriendly)" onclick="sendEmailToAddress('@sundayThreeWeeksFormatted')" />
     <input id="sendToAddressThreeWeeksDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayThreeWeeksFriendly)" disabled="disabled" style="display: none;" />
+    <br />
+    <br />
+    <input id="sendToAddressFourWeeks" type="button" class="btn btn-default" value="Send to Address (meets until @sundayFourWeeksFriendly)" onclick="sendEmailToAddress('@sundayFourWeeksFormatted')" />
+    <input id="sendToAddressFourWeeksDisabled" type="button" class="btn btn-default" value="Send to Address (meets until @sundayFourWeeksFriendly)" disabled="disabled" style="display: none;" />
     <br />
   </div>
   <br />
@@ -102,6 +115,10 @@
       document.getElementById("sendToAllThreeWeeksDisabled"))
 
     disableButton(
+      document.getElementById("sendToAllFourWeeks"),
+      document.getElementById("sendToAllFourWeeksDisabled"))
+
+    disableButton(
       document.getElementById("sendToAddress"),
       document.getElementById("sendToAddressDisabled"))
 
@@ -112,6 +129,10 @@
     disableButton(
       document.getElementById("sendToAddressThreeWeeks"),
       document.getElementById("sendToAddressThreeWeeksDisabled"))
+
+    disableButton(
+      document.getElementById("sendToAddressFourWeeks"),
+      document.getElementById("sendToAddressFourWeeksDisabled"))
   }
 
   function enableSendButtons() {
@@ -128,6 +149,10 @@
       document.getElementById("sendToAllThreeWeeksDisabled"))
 
     enableButton(
+      document.getElementById("sendToAllFourWeeks"),
+      document.getElementById("sendToAllFourWeeksDisabled"))
+
+    enableButton(
       document.getElementById("sendToAddress"),
       document.getElementById("sendToAddressDisabled"))
 
@@ -138,6 +163,10 @@
     enableButton(
       document.getElementById("sendToAddressThreeWeeks"),
       document.getElementById("sendToAddressThreeWeeksDisabled"))
+
+    enableButton(
+      document.getElementById("sendToAddressFourWeeks"),
+      document.getElementById("sendToAddressFourWeeksDisabled"))
   }
 
   function getSerialisedEmailContentModel(sendMeetsUpUntilThisDate) {

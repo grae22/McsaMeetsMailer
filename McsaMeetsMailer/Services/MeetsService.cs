@@ -159,21 +159,17 @@ namespace McsaMeetsMailer.Services
         return allMeets
           .Where(m =>
           {
-            bool dateIsOnOrAfterEarliestDate =
-              m
-                .DateField()
-                .ValueAsDate
-                .Value
-                .Date >= earliestDate;
+            DateTime meetDate = m
+              .DateField()
+              .ValueAsDate
+              .Value
+              .Date;
 
-            bool dateIsOnOrBeforeLatestDate =
-              m
-                .DateField()
-                .ValueAsDate
-                .Value
-                .Date <= latestDate;
+            bool dateIsOnOrAfterEarliestDate = meetDate >= earliestDate;
+            bool dateIsOnOrBeforeLatestDate = meetDate <= latestDate;
 
-            return dateIsOnOrAfterEarliestDate && dateIsOnOrBeforeLatestDate;
+            return (dateIsOnOrAfterEarliestDate && dateIsOnOrBeforeLatestDate) ||
+              meetDate.IsStillToBeAnnounced();
           });
       }
       catch (MissingFieldException ex)
