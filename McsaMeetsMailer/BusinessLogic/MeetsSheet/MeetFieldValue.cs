@@ -1,5 +1,6 @@
 ﻿using System;
 
+using McsaMeetsMailer.Utils.Extensions;
 using McsaMeetsMailer.Utils.Validation.Validators;
 
 namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
@@ -35,7 +36,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         return result;
       }
 
-      return null;
+      return DateTimeExtensions.ValueIndicatingDateStillToBeAnnounced;
     }
   }
 }
