@@ -12,6 +12,8 @@
     "Please do not reply to this email as the address is not monitored.\n\n" +
     "Yours in adventure,\n" +
     "The Mountain Club of South Africa, KwaZulu-Natal Section.";
+
+  string allTimeFormatted = DateTime.Now.AddYears(10).ToString("yyyy/MM/dd");
 }
 
 <div class="container" style="padding-top: 20px;">
@@ -89,6 +91,7 @@
     emailContent.Address = emailAddress;
     emailContent.Subject = emailSubject;
     emailContent.Body = emailBody;
+    emailContent.SendMeetsUpUntilThisDate = "@allTimeFormatted";
 
     return JSON.stringify(emailContent);
   }
