@@ -52,8 +52,8 @@ namespace McsaMeetsMailer.Controllers
       _meetsPageUrl = settings.GetValidString(SettingName_MeetsPageUrl);
     }
 
-    [Route("sendFullScheduleToAddress")]
-    public async Task<ActionResult> SendFullScheduleToAddress(EmailContent emailContent)
+    [Route("sendToAddress")]
+    public async Task<ActionResult> SendToAddress(EmailContent emailContent)
     {
       try
       {
@@ -109,8 +109,42 @@ namespace McsaMeetsMailer.Controllers
       return new JsonResult(Ok());
     }
 
-    [Route("sendFullScheduleToAll")]
-    public async Task<ActionResult> SendFullScheduleToAll(EmailContent emailContent)
+    [Route("sendDefaultAbridgedToAddress")]
+    public async Task<ActionResult> SendDefaultAbridgedToAddress(string address)
+    {
+      try
+      {
+        string[] emailAddresses = address.Split(';');
+
+        IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets(
+          DateTime.Now,
+          DateTime.Now.AddMonths(1));
+
+        string emailBody = FullScheduleEmailBuilder.Build(
+          meets,
+          $@"{_hostingEnvironment.WebRootPath}\templates",
+          EmailConstants.DefaultBodyAbridged,
+          _meetsPageUrl,
+          false);
+
+        _logger.LogInfo($"Sending full schedule email to address \"{emailAddresses.Join(";")}\"...", ClassName);
+
+        _emailSenderService.Send(
+          EmailConstants.EmailSubjectAbridged,
+          emailBody,
+          emailAddresses);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError("Exception while sending full schedule email to address.", ClassName, ex);
+        return StatusCode(500, ex.Message);
+      }
+
+      return new JsonResult(Ok());
+    }
+
+    [Route("sendToAll")]
+    public async Task<ActionResult> SendToAll(EmailContent emailContent)
     {
       try
       {
@@ -122,7 +156,29 @@ namespace McsaMeetsMailer.Controllers
           .FullScheduleEmailAddresses
           .Join(";");
 
-        return await SendFullScheduleToAddress(emailContent);
+        return await SendToAddress(emailContent);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError("Exception while sending full schedule email to all.", ClassName, ex);
+        return StatusCode(500, ex.Message);
+      }
+    }
+
+    [Route("sendDefaultAbridgedToAll")]
+    public async Task<ActionResult> SendDefaultAbdridgedToAll()
+    {
+      try
+      {
+        IEmailAddresses emailAddresses = await _emailAddressService.RetrieveEmailAddresses();
+
+        _logger.LogInfo("Sending full schedule email to all...", ClassName);
+
+        string addresses = emailAddresses
+          .FullScheduleEmailAddresses
+          .Join(";");
+
+        return await SendDefaultAbridgedToAddress(addresses);
       }
       catch (Exception ex)
       {

@@ -3,27 +3,6 @@
 @{
   ViewData["Title"] = "Send Meet-Sheet Email";
 
-  // TODO: Pull this from config.
-  // NOTE: This is duplicated in MeetSheetEmailPreview.cshtml
-  const string defaultBody =
-    "Hi\n\n" +
-    "Please find the latest MCSA-KZN Meet Sheet below.\n\n" +
-    "Queries specific to a particular Meet should be directed to the Meet Leader.\n\n" +
-    "Please do not reply to this email as the address is not monitored.\n\n" +
-    "Yours in adventure,\n" +
-    "The Mountain Club of South Africa, KwaZulu-Natal Section.";
-
-  const string defaultBodyAbridged =
-    "Hi\n\n" +
-    "Below you will find an abridged MCSA-KZN Meet Sheet, it lists meets in the upcoming weeks.\n\n" +
-    "Queries specific to a particular Meet should be directed to the Meet Leader.\n\n" +
-    "Please do not reply to this email as the address is not monitored.\n\n" +
-    "Yours in adventure,\n" +
-    "The Mountain Club of South Africa, KwaZulu-Natal Section.";
-
-  const string emailSubject = "MCSA-KZN Meet Sheet";
-  const string emailSubjectAbridged = "MCSA-KZN Meet Sheet - Upcoming meets!";
-
   // Figure out date for Sunday in roughly a week's time.
   DateTime sundayNextWeek = DateTime.Now.AddDays(5);
 
@@ -170,13 +149,13 @@
   }
 
   function getSerialisedEmailContentModel(sendMeetsUpUntilThisDate) {
-    var subject = "@emailSubjectAbridged";
-    var body = "@defaultBodyAbridged";
+    var subject = "@BusinessLogic.EmailConstants.EmailSubjectAbridged";
+    var body = "@BusinessLogic.EmailConstants.DefaultBodyAbridged";
 
     if (sendMeetsUpUntilThisDate == 'all') {
       sendMeetsUpUntilThisDate = "@allTimeFormatted";
-      subject = "@emailSubject";
-      body = "@defaultBody";
+      subject = "@BusinessLogic.EmailConstants.EmailSubject";
+      body = "@BusinessLogic.EmailConstants.DefaultBody";
     }
 
     var emailAddress = document.getElementById("emailAddress").value;
@@ -219,7 +198,7 @@
     sendStatus.value = 'Sending...';
 
     $.ajax({
-      url: 'api/email/sendFullScheduleToAddress',
+      url: 'api/email/sendToAddress',
       data: getSerialisedEmailContentModel(sendMeetsUpUntilThisDate),
       type: 'POST',
       contentType: 'application/json',
@@ -260,7 +239,7 @@
     sendStatus.value = 'Sending...';
 
     $.ajax({
-      url: 'api/email/sendFullScheduleToAll',
+      url: 'api/email/sendToAll',
       data: getSerialisedEmailContentModel(sendMeetsUpUntilThisDate),
       type: 'POST',
       contentType: 'application/json',
