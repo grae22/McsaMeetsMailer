@@ -13,6 +13,8 @@ namespace McsaMeetsMailer
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
       WebHost
         .CreateDefaultBuilder(args)
+        //.UseSetting("detailedErrors", "true")
+        //.CaptureStartupErrors(true)
         .UseStartup<Startup>();
   }
 }
