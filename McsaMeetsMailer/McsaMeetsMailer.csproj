@@ -6,15 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="web.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="web.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="web.config" />
     <None Include="wwwroot\css\fullSchedulePreview.less" />
     <None Include="wwwroot\templates\FullScheduleEmailTemplate.html" />
   </ItemGroup>
