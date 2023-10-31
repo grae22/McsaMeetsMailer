@@ -1,0 +1,1 @@
+Invoke-RestMethod -Uri 'https://mcsa-kzn-meets.azurewebsites.net/Api/Email/sendDefaultAbridgedToAddress?address=grae22%40gmail.com'
