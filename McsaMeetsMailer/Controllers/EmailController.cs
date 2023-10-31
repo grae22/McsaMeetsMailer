@@ -11,7 +11,6 @@ using McsaMeetsMailer.Utils.Settings;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace McsaMeetsMailer.Controllers
 {
@@ -27,7 +26,7 @@ namespace McsaMeetsMailer.Controllers
     private readonly IEmailAddressService _emailAddressService;
     private readonly IEmailSenderService _emailSenderService;
     private readonly IMeetsService _meetsService;
-    private readonly IHostingEnvironment _hostingEnvironment;
+    private readonly IWebHostEnvironment _hostingEnvironment;
     private readonly string _meetsPageUrl;
 
     public EmailController(
@@ -36,7 +35,7 @@ namespace McsaMeetsMailer.Controllers
       IEmailAddressService emailAddressService,
       IEmailSenderService emailSenderService,
       IMeetsService meetsService,
-      IHostingEnvironment hostingEnvironment)
+      IWebHostEnvironment hostingEnvironment)
     {
       if (settings == null)
       {
@@ -93,7 +92,7 @@ namespace McsaMeetsMailer.Controllers
           _meetsPageUrl,
           false);
 
-        _logger.LogInfo($"Sending full schedule email to address \"{emailAddresses.Join(";")}\"...", ClassName);
+        _logger.LogInfo($"Sending full schedule email to address \"{string.Join(";", emailAddresses)}\"...", ClassName);
 
         _emailSenderService.Send(
           emailContent.Subject,
@@ -127,7 +126,7 @@ namespace McsaMeetsMailer.Controllers
           _meetsPageUrl,
           false);
 
-        _logger.LogInfo($"Sending full schedule email to address \"{emailAddresses.Join(";")}\"...", ClassName);
+        _logger.LogInfo($"Sending full schedule email to address \"{string.Join(";", emailAddresses)}\"...", ClassName);
 
         _emailSenderService.Send(
           EmailConstants.EmailSubjectAbridged,
@@ -152,9 +151,7 @@ namespace McsaMeetsMailer.Controllers
 
         _logger.LogInfo("Sending full schedule email to all...", ClassName);
 
-        emailContent.Address = addresses
-          .FullScheduleEmailAddresses
-          .Join(";");
+        emailContent.Address = string.Join(";", addresses.FullScheduleEmailAddresses);
 
         return await SendToAddress(emailContent);
       }
@@ -174,9 +171,7 @@ namespace McsaMeetsMailer.Controllers
 
         _logger.LogInfo("Sending full schedule email to all...", ClassName);
 
-        string addresses = emailAddresses
-          .FullScheduleEmailAddresses
-          .Join(";");
+        string addresses = string.Join(";", emailAddresses.FullScheduleEmailAddresses);
 
         return await SendDefaultAbridgedToAddress(addresses);
       }

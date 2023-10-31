@@ -16,11 +16,11 @@ namespace McsaMeetsMailer.Pages
     public string Html { get; private set; }
 
     private readonly IMeetsService _meetsService;
-    private readonly IHostingEnvironment _hostingEnvironment;
+    private readonly IWebHostEnvironment _hostingEnvironment;
 
     public MeetSheetOnlyModel(
       IMeetsService meetsService,
-      IHostingEnvironment hostingEnvironment)
+      IWebHostEnvironment hostingEnvironment)
     {
       _meetsService = meetsService ?? throw new ArgumentNullException(nameof(meetsService));
       _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
