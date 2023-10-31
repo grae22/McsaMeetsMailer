@@ -73,7 +73,13 @@ namespace McsaMeetsMailer
       app.UseStaticFiles();
 
       app.UseRouting();
-      app.UseEndpoints(endpoints => endpoints.MapControllers());
+      app.UseEndpoints(endpoints =>
+      {
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}");
+        endpoints.MapRazorPages();
+      });
     }
   }
 }
