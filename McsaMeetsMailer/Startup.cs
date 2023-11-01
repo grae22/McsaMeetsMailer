@@ -24,8 +24,6 @@ namespace McsaMeetsMailer
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddControllers();
-      services.AddControllersWithViews();
       services.AddRazorPages();
 
       var logger = new ConsoleLogger();
@@ -72,13 +70,11 @@ namespace McsaMeetsMailer
 
       app.UseHttpsRedirection();
       app.UseStaticFiles();
-
       app.UseRouting();
+
       app.UseEndpoints(endpoints =>
       {
-        endpoints.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Home}");
+        endpoints.MapControllers();
         endpoints.MapRazorPages();
       });
     }
