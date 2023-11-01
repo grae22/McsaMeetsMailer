@@ -108,6 +108,7 @@ namespace McsaMeetsMailer.Controllers
       return new JsonResult(Ok());
     }
 
+    [HttpGet]
     [Route("sendDefaultAbridgedToAddress")]
     public async Task<ActionResult> SendDefaultAbridgedToAddress(string address)
     {
