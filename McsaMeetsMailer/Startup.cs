@@ -69,7 +69,7 @@ namespace McsaMeetsMailer
       }
 
       app.UseHttpsRedirection();
-      app.UseStaticFiles();
+      //app.UseStaticFiles();
       app.UseRouting();
 
       app.UseEndpoints(endpoints =>
