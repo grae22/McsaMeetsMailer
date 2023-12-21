@@ -291,15 +291,15 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       await testObject.Retrieve();
 
       // Assert.
-      Assert.IsTrue(testObject.Fields.ElementAt(0).DisplayInHeader);
+      Assert.IsTrue(testObject.Fields.ElementAt(0).HeaderStatus != MeetField.HeaderStatusType.ExcludeFromHeader);
       Assert.IsTrue(testObject.Fields.ElementAt(0).IsRequired);
       Assert.AreEqual(0, testObject.Fields.ElementAt(0).SortOrder);
 
-      Assert.IsTrue(testObject.Fields.ElementAt(1).DisplayInHeader);
+      Assert.IsTrue(testObject.Fields.ElementAt(1).HeaderStatus != MeetField.HeaderStatusType.ExcludeFromHeader);
       Assert.IsFalse(testObject.Fields.ElementAt(1).IsRequired);
       Assert.AreEqual(1, testObject.Fields.ElementAt(1).SortOrder);
 
-      Assert.IsFalse(testObject.Fields.ElementAt(2).DisplayInHeader);
+      Assert.IsTrue(testObject.Fields.ElementAt(2).HeaderStatus == MeetField.HeaderStatusType.ExcludeFromHeader);
       Assert.IsTrue(testObject.Fields.ElementAt(2).IsRequired);
       Assert.AreEqual(2, testObject.Fields.ElementAt(2).SortOrder);
     }

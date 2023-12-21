@@ -193,7 +193,7 @@ namespace McsaMeetsMailerTests.Services
         .Returns(googleSheet);
 
       var leaderField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Leader",
         "Leader",
@@ -265,7 +265,7 @@ namespace McsaMeetsMailerTests.Services
         .Returns(googleSheet);
 
       var dateField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Date",
         "Date",
@@ -337,7 +337,7 @@ namespace McsaMeetsMailerTests.Services
         .Returns(googleSheet);
 
       var dateField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Date",
         "Date",
@@ -409,7 +409,7 @@ namespace McsaMeetsMailerTests.Services
         .Returns(googleSheet);
 
       var dateField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Date",
         "Date",

@@ -22,17 +22,17 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       var sheet = Substitute.For<IMeetsGoogleSheet>();
       var validatorChain = new ValidatorChain();
       var formatter = NullFormatter.Instance();
-      var field = new MeetField(false, false, string.Empty, string.Empty, 0, false, formatter);
+      var field = new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, string.Empty, 0, false, formatter);
 
       sheet
         .Fields
         .Returns(new[]
         {
-          new MeetField(false, false, string.Empty, "Column 1", 0, false, formatter),
-          new MeetField(false, false, string.Empty, "Column 2", 0, false, formatter),
-          new MeetField(false, false, string.Empty, "Column 3", 0, true, formatter),
-          new MeetField(true, false, string.Empty, "Column 4", 0, false, formatter),
-          new MeetField(false, true, string.Empty, "Column 5", 0, false, formatter),
+          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, "Column 1", 0, false, formatter),
+          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, "Column 2", 0, false, formatter),
+          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, "Column 3", 0, true, formatter),
+          new MeetField(MeetField.HeaderStatusType.AlignLeft, false, string.Empty, "Column 4", 0, false, formatter),
+          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, true, string.Empty, "Column 5", 0, false, formatter),
         });
 
       sheet
@@ -83,7 +83,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       Assert.AreEqual("Column 1", models.ElementAt(0).AllFields.ElementAt(0).FriendlyText);
       Assert.AreEqual("Column 5", models.ElementAt(0).AllFields.ElementAt(4).FriendlyText);
 
-      Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(3).DisplayInHeader);
+      Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(3).HeaderStatus != MeetField.HeaderStatusType.ExcludeFromHeader);
       Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(4).IsRequired);
       Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(2).IsMeetTitle);
     }

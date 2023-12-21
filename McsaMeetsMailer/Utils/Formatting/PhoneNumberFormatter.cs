@@ -22,15 +22,15 @@ namespace McsaMeetsMailer.Utils.Formatting
       }
       // Probably 10 digit number missing the leading zero.
       else if (
-        input.Length == 9 &&
-        input[0] != '0')
+        inputWithoutSpaces.Length == 9 &&
+        inputWithoutSpaces[0] != '0')
       {
         inputWithoutSpaces = inputWithoutSpaces.Insert(0, "0");
       }
       // Probably 12 digit number missing the leading plus.
       else if (
-        input.Length == 11 &&
-        input[0] != '+')
+        inputWithoutSpaces.Length == 11 &&
+        inputWithoutSpaces[0] != '+')
       {
         inputWithoutSpaces = inputWithoutSpaces.Insert(0, "+");
       }
