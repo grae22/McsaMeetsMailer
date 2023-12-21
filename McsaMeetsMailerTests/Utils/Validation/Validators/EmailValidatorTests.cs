@@ -38,5 +38,20 @@ namespace McsaMeetsMailerTests.Utils.Validation.Validators
       Assert.IsFalse(result);
       Assert.IsFalse(testObject.IsValid);
     }
+
+    [TestCase("")]
+    [TestCase("  ")]
+    public void Validate_GivenEmptyAddress_ShouldReturnTrue(in string emailAddress)
+    {
+      // Arrange.
+      var testObject = new EmailValidator();
+
+      // Act.
+      bool result = testObject.Validate(emailAddress);
+
+      // Assert.
+      Assert.IsTrue(result);
+      Assert.IsTrue(testObject.IsValid);
+    }
   }
 }
