@@ -89,7 +89,7 @@ namespace McsaMeetsMailer.BusinessLogic
       IEnumerable<string> sortedHeadings = meets.FirstOrDefault()?
         .FieldValues
         .OrderBy(x => x.Field.SortOrder)
-        .Where(x => x.Field.DisplayInHeader)
+        .Where(x => x.Field.HeaderStatus != MeetField.HeaderStatusType.ExcludeFromHeader)
         .Select(x => x.Field.FriendlyText);
 
       int startIndex = html.IndexOf(summaryHeadingStart, StringComparison.Ordinal) + summaryHeadingStart.Length;
@@ -160,7 +160,7 @@ namespace McsaMeetsMailer.BusinessLogic
 
         foreach (MeetFieldValue field in sortedFields)
         {
-          if (!field.Field.DisplayInHeader)
+          if (field.Field.HeaderStatus == MeetField.HeaderStatusType.ExcludeFromHeader)
           {
             continue;
           }
@@ -186,13 +186,33 @@ namespace McsaMeetsMailer.BusinessLogic
           }
           else
           {
+            string alignOpenTag =
+              field.Field.HeaderStatus == MeetField.HeaderStatusType.AlignCentre
+              ? "<div style='text-align:center;'>"
+              : string.Empty;
+
+            string alignCloseTag =
+              field.Field.HeaderStatus == MeetField.HeaderStatusType.AlignCentre
+              ? "</div>"
+              : string.Empty;
+
             if (!invalid)
             {
-              meetValues.Append(valueTemplate_Valid.Replace("{Value}", field.FormattedValue));
+              meetValues
+                .Append(
+                  valueTemplate_Valid
+                    .Replace(
+                      "{Value}",
+                      $"{alignOpenTag}{field.FormattedValue}{alignCloseTag}"));
             }
             else
             {
-              meetValues.Append(valueTemplate_Invalid.Replace("{Value}", field.Value));
+              meetValues
+                .Append(
+                  valueTemplate_Invalid
+                    .Replace(
+                      "{Value}",
+                      $"{alignOpenTag}{field.Value}{alignCloseTag}"));
             }
           }
         }
@@ -205,7 +225,7 @@ namespace McsaMeetsMailer.BusinessLogic
         {
           allMeetValues.Add(valuesTemplate_Invalid.Insert(valueTemplateStartIndex_Invalid, meetValues.ToString()));
         }
-        
+
         meetValues.Clear();
       }
 
@@ -274,14 +294,14 @@ namespace McsaMeetsMailer.BusinessLogic
 
           if (field.Field.IsMeetTitle)
           {
-            htmlBlob = !invalid ? 
-              valueHeaderTemplate.Replace("{Title}", field.Field.FriendlyText) : 
+            htmlBlob = !invalid ?
+              valueHeaderTemplate.Replace("{Title}", field.Field.FriendlyText) :
               invalidValueHeaderTemplate.Replace("{Title}", field.Field.FriendlyText);
           }
           else
           {
-            htmlBlob = !invalid ? 
-              valueTemplate.Replace("{Title}", field.Field.FriendlyText) : 
+            htmlBlob = !invalid ?
+              valueTemplate.Replace("{Title}", field.Field.FriendlyText) :
               invalidValueTemplate.Replace("{Title}", field.Field.FriendlyText);
           }
 

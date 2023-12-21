@@ -9,6 +9,8 @@ using McsaMeetsMailer.Utils.Logging;
 using McsaMeetsMailer.Utils.RestRequest;
 using McsaMeetsMailer.Utils.Validation.Validators;
 
+using static McsaMeetsMailer.BusinessLogic.MeetsSheet.MeetField;
+
 namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public class MeetsGoogleSheet : IMeetsGoogleSheet
@@ -21,7 +23,8 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     private const string HeaderText_Date = "# Date*";
     private const string HeaderText_MeetTitle = "# Meet Title*";
     private const string FirstCellText = HeaderText_Date;
-    private const char HeaderSpecialChar_DisplayInHeader = '#';
+    private const char HeaderSpecialChar_AlignLeftInHeader = '#';
+    private const char HeaderSpecialChar_AlignCentreInHeader = '%';
     private const char HeaderSpecialChar_Required = '*';
 
     private readonly Uri _googleSheetUri;
@@ -216,7 +219,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         string value = sheet.values[headerRow][column].Trim();
 
         var field = new MeetField(
-          IsColumnHeaderForHeaderDisplayField(value),
+          GetColumnHeaderDisplayStatus(value),
           IsColumnHeaderForRequiredField(value),
           value,
           StripSpecialCharactersFromColumnHeader(value),
@@ -300,10 +303,24 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         ClassName);
     }
 
-    private static bool IsColumnHeaderForHeaderDisplayField(in string columnHeaderText)
+    private static HeaderStatusType GetColumnHeaderDisplayStatus(in string columnHeaderText)
     {
-      return columnHeaderText.Length > 0 &&
-             columnHeaderText[0] == HeaderSpecialChar_DisplayInHeader;
+      if (columnHeaderText.Length == 0)
+      {
+        return HeaderStatusType.ExcludeFromHeader;
+      }
+
+      if (columnHeaderText[0] == HeaderSpecialChar_AlignLeftInHeader)
+      {
+        return HeaderStatusType.AlignLeft;
+      }
+
+      if (columnHeaderText[0] == HeaderSpecialChar_AlignCentreInHeader)
+      {
+        return HeaderStatusType.AlignCentre;
+      }
+
+      return HeaderStatusType.ExcludeFromHeader;
     }
 
     private static bool IsColumnHeaderForRequiredField(in string columnHeaderText)
@@ -320,7 +337,8 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     private static string StripSpecialCharactersFromColumnHeader(in string columnHeaderText)
     {
       return columnHeaderText
-        .Replace($"{HeaderSpecialChar_DisplayInHeader}", "")
+        .Replace($"{HeaderSpecialChar_AlignLeftInHeader}", "")
+        .Replace($"{HeaderSpecialChar_AlignCentreInHeader}", "")
         .Replace($"{HeaderSpecialChar_Required}", "")
         .Trim();
     }
