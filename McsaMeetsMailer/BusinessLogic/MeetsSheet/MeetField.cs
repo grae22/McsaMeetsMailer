@@ -6,7 +6,14 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
 {
   public class MeetField
   {
-    public bool DisplayInHeader { get; }
+    public enum HeaderStatusType
+    {
+      ExcludeFromHeader,
+      AlignLeft,
+      AlignCentre
+    }
+
+    public HeaderStatusType HeaderStatus { get; }
     public bool IsRequired { get; }
     public string RawText { get; }
     public string FriendlyText { get; }
@@ -15,7 +22,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     public IFormatter ValueFormatter { get; }
 
     public MeetField(
-      in bool displayInHeader,
+      in HeaderStatusType headerStatus,
       in bool isRequired,
       in string rawText,
       in string friendlyText,
@@ -23,7 +30,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       in bool isMeetTitle,
       in IFormatter valueFormatter)
     {
-      DisplayInHeader = displayInHeader;
+      HeaderStatus = headerStatus;
       IsRequired = isRequired;
       RawText = rawText;
       FriendlyText = friendlyText;
