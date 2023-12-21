@@ -12,6 +12,7 @@ namespace McsaMeetsMailer.Utils.Validation.Validators
     {
       if (string.IsNullOrWhiteSpace(input))
       {
+        IsValid = true;
         return true;
       }
 
