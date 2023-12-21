@@ -10,6 +10,11 @@ namespace McsaMeetsMailer.Utils.Validation.Validators
 
     public bool Validate(in string input)
     {
+      if (string.IsNullOrWhiteSpace(input))
+      {
+        return true;
+      }
+
       try
       {
         new MailAddress(input);
