@@ -337,6 +337,11 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
         return new DateFormatter("HH:mm");
       }
 
+      if (columnHeaderText.Contains("cell", StringComparison.OrdinalIgnoreCase))
+      {
+        return new PhoneNumberFormatter();
+      }
+
       return NullFormatter.Instance();
     }
   }
