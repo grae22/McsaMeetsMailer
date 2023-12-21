@@ -20,7 +20,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       var formatter = Substitute.For<IFormatter>();
 
       var field = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         string.Empty,
         string.Empty,
@@ -52,7 +52,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       var formatter = Substitute.For<IFormatter>();
 
       var field = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         string.Empty,
         string.Empty,
@@ -80,7 +80,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       var formatter = Substitute.For<IFormatter>();
 
       var field = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         string.Empty,
         string.Empty,
@@ -107,7 +107,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       var formatter = Substitute.For<IFormatter>();
 
       var field = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         string.Empty,
         string.Empty,

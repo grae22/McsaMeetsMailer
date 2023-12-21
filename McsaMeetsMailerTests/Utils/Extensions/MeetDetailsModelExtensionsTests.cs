@@ -20,7 +20,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
       var formatter = Substitute.For<IFormatter>();
 
       var dateField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Date",
         "Date",
@@ -29,7 +29,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         formatter);
 
       var leaderField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Leader",
         "Leader",
@@ -61,7 +61,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
       var formatter = Substitute.For<IFormatter>();
 
       var dateField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Date",
         "Date",
@@ -70,7 +70,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         formatter);
 
       var notesField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Notes",
         "Notes",
@@ -107,7 +107,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
       var formatter = Substitute.For<IFormatter>();
 
       var dateField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Date",
         "Date",
@@ -116,7 +116,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         formatter);
 
       var leaderField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Leader",
         "Leader",
@@ -148,7 +148,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
       var formatter = Substitute.For<IFormatter>();
 
       var dateField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Leader",
         "Leader",
@@ -157,7 +157,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         formatter);
 
       var notesField = new MeetField(
-        false,
+        MeetField.HeaderStatusType.ExcludeFromHeader,
         false,
         "Notes",
         "Notes",
