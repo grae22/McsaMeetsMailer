@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 using McsaMeetsMailer.BusinessLogic;
@@ -92,7 +93,7 @@ namespace McsaMeetsMailer.Controllers
           _meetsPageUrl,
           false);
 
-        _logger.LogInfo($"Sending full schedule email to address \"{string.Join(";", emailAddresses)}\"...", ClassName);
+        _logger.LogInfo($"Sending to address \"{string.Join(";", emailAddresses)}\"...", ClassName);
 
         _emailSenderService.Send(
           emailContent.Subject,
@@ -101,7 +102,7 @@ namespace McsaMeetsMailer.Controllers
       }
       catch (Exception ex)
       {
-        _logger.LogError("Exception while sending full schedule email to address.", ClassName, ex);
+        _logger.LogError("Exception while sending to address.", ClassName, ex);
         return StatusCode(500, ex.Message);
       }
 
@@ -126,7 +127,7 @@ namespace McsaMeetsMailer.Controllers
           _meetsPageUrl,
           false);
 
-        _logger.LogInfo($"Sending full schedule email to address \"{string.Join(";", emailAddresses)}\"...", ClassName);
+        _logger.LogInfo($"Sending default abridged to address \"{string.Join(";", emailAddresses)}\"...", ClassName);
 
         _emailSenderService.Send(
           EmailConstants.EmailSubjectAbridged,
@@ -135,7 +136,7 @@ namespace McsaMeetsMailer.Controllers
       }
       catch (Exception ex)
       {
-        _logger.LogError("Exception while sending full schedule email to address.", ClassName, ex);
+        _logger.LogError("Exception while sending default abridged to address.", ClassName, ex);
         return StatusCode(500, ex.Message);
       }
 
@@ -169,7 +170,7 @@ namespace McsaMeetsMailer.Controllers
       {
         IEmailAddresses emailAddresses = await _emailAddressService.RetrieveEmailAddresses();
 
-        _logger.LogInfo("Sending full schedule email to all...", ClassName);
+        _logger.LogInfo("Sending default abridged email to all...", ClassName);
 
         string addresses = string.Join(";", emailAddresses.FullScheduleEmailAddresses);
 
@@ -177,9 +178,41 @@ namespace McsaMeetsMailer.Controllers
       }
       catch (Exception ex)
       {
-        _logger.LogError("Exception while sending full schedule email to all.", ClassName, ex);
+        _logger.LogError("Exception while sending default abridged to all.", ClassName, ex);
         return StatusCode(500, ex.Message);
       }
+    }
+
+    [Route("sendDefaultToAll")]
+    public async Task<ActionResult> SendDefaultToAll()
+    {
+      try
+      {
+        IEmailAddresses emailAddresses = await _emailAddressService.RetrieveEmailAddresses();
+
+        IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets(DateTime.Now);
+
+        string emailBody = FullScheduleEmailBuilder.Build(
+          meets,
+          $@"{_hostingEnvironment.WebRootPath}\templates",
+          EmailConstants.DefaultBody,
+          _meetsPageUrl,
+          false);
+
+        _logger.LogInfo($"Sending default to all...", ClassName);
+
+        _emailSenderService.Send(
+          EmailConstants.EmailSubjectAbridged,
+          emailBody,
+          emailAddresses.FullScheduleEmailAddresses);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError("Exception while sending default to all.", ClassName, ex);
+        return StatusCode(500, ex.Message);
+      }
+
+      return new JsonResult(Ok());
     }
   }
 }
