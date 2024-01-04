@@ -3,6 +3,12 @@
 @{
   ViewData["Title"] = "Send Meet-Sheet Email";
 
+  if (!Model.OptionsEnabled)
+  {
+    @:<div class="container" style="padding-top: 100px;"><b>The Meet Sheet is now sent automatically.</b></div>
+    return;
+  }
+
   // Figure out date for Sunday in roughly a week's time.
   DateTime sundayNextWeek = DateTime.Now.AddDays(5);
 
@@ -27,7 +33,8 @@
   string sundayNextFortnightFormatted = sundayNextFortnight.ToString("yyyy/MM/dd");
   string sundayThreeWeeksFormatted = sundayThreeWeeks.ToString("yyyy/MM/dd");
   string sundayFourWeeksFormatted = sundayFourWeeks.ToString("yyyy/MM/dd");
-  string allTimeFormatted = DateTime.Now.AddYears(10).ToString("yyyy/MM/dd");}
+  string allTimeFormatted = DateTime.Now.AddYears(10).ToString("yyyy/MM/dd");
+}
 
 <div class="container" style="padding-top: 100px;">
   <input id="sendToAll" type="button" class="btn btn-success" value="Send ALL meets" onclick="sendEmailToAll('all')" />
