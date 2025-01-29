@@ -190,7 +190,10 @@ namespace McsaMeetsMailer.Controllers
       {
         IEmailAddresses emailAddresses = await _emailAddressService.RetrieveEmailAddresses();
 
-        IEnumerable<MeetDetailsModel> meets = await _meetsService.RetrieveMeets(DateTime.Now);
+        IEnumerable<MeetDetailsModel> meets =
+          await _meetsService.RetrieveMeets(
+            DateTime.Now,
+            DateTime.Now.AddMonths(6));
 
         string emailBody = FullScheduleEmailBuilder.Build(
           meets,
