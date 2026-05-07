@@ -19,6 +19,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     public string FriendlyText { get; }
     public int SortOrder { get; }
     public bool IsMeetTitle { get; }
+    public bool IsObfuscatedForWebPage { get; }
     public IFormatter ValueFormatter { get; }
 
     public MeetField(
@@ -28,6 +29,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       in string friendlyText,
       in int sortOrder,
       in bool isMeetTitle,
+      in bool isObfuscatedForWebPage,
       in IFormatter valueFormatter)
     {
       HeaderStatus = headerStatus;
@@ -36,6 +38,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       FriendlyText = friendlyText;
       SortOrder = sortOrder;
       IsMeetTitle = isMeetTitle;
+      IsObfuscatedForWebPage = isObfuscatedForWebPage;
       ValueFormatter = valueFormatter ?? throw new ArgumentNullException(nameof(valueFormatter));
     }
   }

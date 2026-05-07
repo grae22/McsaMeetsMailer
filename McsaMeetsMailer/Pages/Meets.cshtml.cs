@@ -50,6 +50,7 @@ namespace McsaMeetsMailer.Pages
         Html = FullScheduleEmailBuilder.Build(
           meetsDetails: meets,
           templatesPath: $@"{_hostingEnvironment.WebRootPath}\templates",
+          isForEmail: false,
           previewMode: false,
           showHeaderAndFooterImages: !hideHeaderAndFooterImages);
       }

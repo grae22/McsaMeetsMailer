@@ -26,11 +26,13 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         string.Empty,
         0,
         false,
+        false,
         formatter);
 
       var testObject = new MeetFieldValue(
         field,
         "2019-7-1",
+        false,
         new ValidatorChain());
 
       // Act.
@@ -58,11 +60,13 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         string.Empty,
         0,
         false,
+        false,
         formatter);
 
       var testObject = new MeetFieldValue(
         field,
         "2019-7-x",
+        false,
         new ValidatorChain());
 
       // Act.
@@ -86,11 +90,13 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         string.Empty,
         0,
         false,
+        false,
         formatter);
 
       var testObject = new MeetFieldValue(
         field,
         string.Empty,
+        false,
         new ValidatorChain());
 
       // Act.
@@ -113,6 +119,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         string.Empty,
         0,
         false,
+        false,
         formatter);
 
       formatter
@@ -123,6 +130,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       var testObject = new MeetFieldValue(
         field,
         "321",
+        false,
         new ValidatorChain());
 
       // Assert.

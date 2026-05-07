@@ -26,6 +26,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     private const char HeaderSpecialChar_AlignLeftInHeader = '#';
     private const char HeaderSpecialChar_AlignCentreInHeader = '%';
     private const char HeaderSpecialChar_Required = '*';
+    private const char HeaderSpecialChar_ObfuscateForWebPage = '^';
 
     private readonly Uri _googleSheetUri;
     private readonly IRestRequestMaker _requestMaker;
@@ -225,6 +226,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           StripSpecialCharactersFromColumnHeader(value),
           fields.Count,
           IsColumnHeaderForMeetTitle(value),
+          IsColumnHeaderForObfuscatedData(value),
           GetFormatterForColumnHeader(value));
 
         fields.Add(field);
@@ -271,6 +273,7 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           var newFieldValue = new MeetFieldValue(
             _fields[fieldIndex],
             cellValue,
+            field.IsObfuscatedForWebPage,
             validatorChain);
 
           LogFieldValueValidationErrors(newFieldValue);
@@ -334,12 +337,18 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       return columnHeaderText.Equals(HeaderText_MeetTitle, StringComparison.OrdinalIgnoreCase);
     }
 
+    private static bool IsColumnHeaderForObfuscatedData(in string columnHeaderText)
+    {
+      return columnHeaderText.Contains(HeaderSpecialChar_ObfuscateForWebPage);
+    }
+
     private static string StripSpecialCharactersFromColumnHeader(in string columnHeaderText)
     {
       return columnHeaderText
         .Replace($"{HeaderSpecialChar_AlignLeftInHeader}", "")
         .Replace($"{HeaderSpecialChar_AlignCentreInHeader}", "")
         .Replace($"{HeaderSpecialChar_Required}", "")
+        .Replace($"{HeaderSpecialChar_ObfuscateForWebPage}", "")
         .Trim();
     }
 

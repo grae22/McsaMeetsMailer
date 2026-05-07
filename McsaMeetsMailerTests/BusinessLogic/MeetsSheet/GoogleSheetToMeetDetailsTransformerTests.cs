@@ -22,17 +22,17 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       var sheet = Substitute.For<IMeetsGoogleSheet>();
       var validatorChain = new ValidatorChain();
       var formatter = NullFormatter.Instance();
-      var field = new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, string.Empty, 0, false, formatter);
+      var field = new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, string.Empty, 0, false, false, formatter);
 
       sheet
         .Fields
         .Returns(new[]
         {
-          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, "Column 1", 0, false, formatter),
-          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, "Column 2", 0, false, formatter),
-          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, "Column 3", 0, true, formatter),
-          new MeetField(MeetField.HeaderStatusType.AlignLeft, false, string.Empty, "Column 4", 0, false, formatter),
-          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, true, string.Empty, "Column 5", 0, false, formatter),
+          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, "Column 1", 0, false, false, formatter),
+          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, "Column 2", 0, false, false, formatter),
+          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, false, string.Empty, "Column 3", 0, true, false, formatter),
+          new MeetField(MeetField.HeaderStatusType.AlignLeft, false, string.Empty, "Column 4", 0, false, false, formatter),
+          new MeetField(MeetField.HeaderStatusType.ExcludeFromHeader, true, string.Empty, "Column 5", 0, false, true, formatter),
         });
 
       sheet
@@ -41,19 +41,19 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
         {
           new[]
           {
-            new MeetFieldValue(field, "R1C1", validatorChain),
-            new MeetFieldValue(field, "R1C2", validatorChain),
-            new MeetFieldValue(field, "R1C3", validatorChain),
-            new MeetFieldValue(field, "R1C4", validatorChain),
-            new MeetFieldValue(field, "R1C5", validatorChain)
+            new MeetFieldValue(field, "R1C1", false, validatorChain),
+            new MeetFieldValue(field, "R1C2", false, validatorChain),
+            new MeetFieldValue(field, "R1C3", false, validatorChain),
+            new MeetFieldValue(field, "R1C4", false, validatorChain),
+            new MeetFieldValue(field, "R1C5", false, validatorChain)
           },
           new[]
           {
-            new MeetFieldValue(field, "R2C1", validatorChain),
-            new MeetFieldValue(field, "R2C2", validatorChain),
-            new MeetFieldValue(field, "R2C3", validatorChain),
-            new MeetFieldValue(field, "R2C4", validatorChain),
-            new MeetFieldValue(field, "R2C5", validatorChain)
+            new MeetFieldValue(field, "R2C1", false, validatorChain),
+            new MeetFieldValue(field, "R2C2", false, validatorChain),
+            new MeetFieldValue(field, "R2C3", false, validatorChain),
+            new MeetFieldValue(field, "R2C4", false, validatorChain),
+            new MeetFieldValue(field, "R2C5", false, validatorChain)
           },
         });
 
@@ -86,6 +86,7 @@ namespace McsaMeetsMailerTests.BusinessLogic.MeetsSheet
       Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(3).HeaderStatus != MeetField.HeaderStatusType.ExcludeFromHeader);
       Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(4).IsRequired);
       Assert.IsTrue(models.ElementAt(0).AllFields.ElementAt(2).IsMeetTitle);
+      Assert.IsTrue(models.ElementAt(1).AllFields.ElementAt(4).IsObfuscatedForWebPage);
     }
   }
 }
