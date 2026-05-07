@@ -47,13 +47,15 @@ namespace McsaMeetsMailer.Pages
                   .LeaderField()
                   .Value
                   .Equals(Request.Query["leader"], StringComparison.OrdinalIgnoreCase)),
-            $@"{_hostingEnvironment.WebRootPath}\templates");
+            $@"{_hostingEnvironment.WebRootPath}\templates",
+            false);
       }
       else
       {
         html = FullScheduleEmailBuilder.Build(
           meets,
-          $@"{_hostingEnvironment.WebRootPath}\templates");
+          $@"{_hostingEnvironment.WebRootPath}\templates",
+          false);
       }
     }
   }

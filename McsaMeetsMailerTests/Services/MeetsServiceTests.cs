@@ -199,6 +199,7 @@ namespace McsaMeetsMailerTests.Services
         "Leader",
         0,
         false,
+        false,
         formatter);
 
       googleSheet
@@ -217,9 +218,9 @@ namespace McsaMeetsMailerTests.Services
         .Returns(
           new[]
           {
-            new[] { new MeetFieldValue(leaderField, "Leader A", new ValidatorChain()) },
-            new[] { new MeetFieldValue(leaderField, "Leader B", new ValidatorChain()) },
-            new[] { new MeetFieldValue(leaderField, "Leader A", new ValidatorChain()) }
+            new[] { new MeetFieldValue(leaderField, "Leader A", false, new ValidatorChain()) },
+            new[] { new MeetFieldValue(leaderField, "Leader B", false, new ValidatorChain()) },
+            new[] { new MeetFieldValue(leaderField, "Leader A", false, new ValidatorChain()) }
           });
 
       var testObject = new MeetsService(
@@ -271,6 +272,7 @@ namespace McsaMeetsMailerTests.Services
         "Date",
         0,
         false,
+        false,
         formatter);
 
       googleSheet
@@ -289,9 +291,9 @@ namespace McsaMeetsMailerTests.Services
         .Returns(
           new[]
           {
-            new[] { new MeetFieldValue(dateField, "2019-7-15", new ValidatorChain()) },
-            new[] { new MeetFieldValue(dateField, "2019-7-31", new ValidatorChain()) },
-            new[] { new MeetFieldValue(dateField, "2019-7-1", new ValidatorChain()) }
+            new[] { new MeetFieldValue(dateField, "2019-7-15", false, new ValidatorChain()) },
+            new[] { new MeetFieldValue(dateField, "2019-7-31", false, new ValidatorChain()) },
+            new[] { new MeetFieldValue(dateField, "2019-7-1", false, new ValidatorChain()) }
           });
 
       var testObject = new MeetsService(
@@ -343,6 +345,7 @@ namespace McsaMeetsMailerTests.Services
         "Date",
         0,
         false,
+        false,
         formatter);
 
       googleSheet
@@ -361,9 +364,9 @@ namespace McsaMeetsMailerTests.Services
         .Returns(
           new[]
           {
-            new[] { new MeetFieldValue(dateField, "2019-7-15", new ValidatorChain()) },
-            new[] { new MeetFieldValue(dateField, "2019-7-x", new ValidatorChain()) },
-            new[] { new MeetFieldValue(dateField, "2019-7-1", new ValidatorChain()) }
+            new[] { new MeetFieldValue(dateField, "2019-7-15", false, new ValidatorChain()) },
+            new[] { new MeetFieldValue(dateField, "2019-7-x", false,new ValidatorChain()) },
+            new[] { new MeetFieldValue(dateField, "2019-7-1", false, new ValidatorChain()) }
           });
 
       var testObject = new MeetsService(
@@ -415,6 +418,7 @@ namespace McsaMeetsMailerTests.Services
         "Date",
         0,
         false,
+        false,
         formatter);
 
       googleSheet
@@ -433,9 +437,9 @@ namespace McsaMeetsMailerTests.Services
         .Returns(
           new[]
           {
-            new[] { new MeetFieldValue(dateField, "2019-7-15", new ValidatorChain()) },
-            new[] { new MeetFieldValue(dateField, "2019-7-31", new ValidatorChain()) },
-            new[] { new MeetFieldValue(dateField, "2019-7-1", new ValidatorChain()) }
+            new[] { new MeetFieldValue(dateField, "2019-7-15", false, new ValidatorChain()) },
+            new[] { new MeetFieldValue(dateField, "2019-7-31", false, new ValidatorChain()) },
+            new[] { new MeetFieldValue(dateField, "2019-7-1", false, new ValidatorChain()) }
           });
 
       var testObject = new MeetsService(

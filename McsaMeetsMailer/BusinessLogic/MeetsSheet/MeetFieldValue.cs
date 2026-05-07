@@ -12,16 +12,19 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     public string FormattedValue { get; }
     public IValidationResults ValidationResults => _validatorChain;
     public DateTime? ValueAsDate => GetValueAsDate();
+    public bool IsObfuscatedForWebPage { get; }
 
     private readonly IValidatorChain _validatorChain;
 
     public MeetFieldValue(
       in MeetField field,
       in string value,
+      in bool isObfuscatedForWebPage,
       in IValidatorChain validatorChain)
     {
       Field = field;
       Value = value;
+      IsObfuscatedForWebPage = isObfuscatedForWebPage;
 
       FormattedValue = Field.ValueFormatter.Format(Value);
 

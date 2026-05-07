@@ -89,6 +89,7 @@ namespace McsaMeetsMailer.Controllers
         string emailBody = FullScheduleEmailBuilder.Build(
           meets,
           $@"{_hostingEnvironment.WebRootPath}\templates",
+          true,
           emailContent.Body,
           _meetsPageUrl,
           false);
@@ -123,6 +124,7 @@ namespace McsaMeetsMailer.Controllers
         string emailBody = FullScheduleEmailBuilder.Build(
           meets,
           $@"{_hostingEnvironment.WebRootPath}\templates",
+          true,
           EmailConstants.DefaultBodyAbridged,
           _meetsPageUrl,
           false);
@@ -198,6 +200,7 @@ namespace McsaMeetsMailer.Controllers
         string emailBody = FullScheduleEmailBuilder.Build(
           meets,
           $@"{_hostingEnvironment.WebRootPath}\templates",
+          true,
           EmailConstants.DefaultBody,
           _meetsPageUrl,
           false);

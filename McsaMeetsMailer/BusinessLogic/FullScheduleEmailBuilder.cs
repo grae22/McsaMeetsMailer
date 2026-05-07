@@ -29,6 +29,7 @@ namespace McsaMeetsMailer.BusinessLogic
     public static string Build(
       in IEnumerable<MeetDetailsModel> meetsDetails,
       in string templatesPath,
+      in bool isForEmail,
       in string customMessage = "",
       in string onlineScheduleUrl = "",
       in bool previewMode = true,
@@ -45,7 +46,7 @@ namespace McsaMeetsMailer.BusinessLogic
 
       string headerHeadings = GetHeaderHeadings(html, meets);
       string headerValues = GetHeaderValues(html, meets, previewMode);
-      string details = GetDetails(html, meets, previewMode);
+      string details = GetDetails(html, meets, previewMode, isForEmail);
 
       string customMessageHtml = customMessage
         .Replace("\n", "<br />")
@@ -232,7 +233,11 @@ namespace McsaMeetsMailer.BusinessLogic
       return string.Join("", allMeetValues);
     }
 
-    private static string GetDetails(string html, List<MeetDetailsModel> meetDetails, bool previewMode)
+    private static string GetDetails(
+      string html,
+      List<MeetDetailsModel> meetDetails,
+      bool previewMode,
+      bool isForEmail)
     {
       // Details table template
       int detailsTableTemplateStartIndex = html.IndexOf(detailsStart, StringComparison.Ordinal) + detailsStart.Length;
@@ -286,6 +291,21 @@ namespace McsaMeetsMailer.BusinessLogic
           if (string.IsNullOrWhiteSpace(value) && field.ValidationResults.IsValid)
           {
             continue;
+          }
+
+          if (!isForEmail &&
+              field.IsObfuscatedForWebPage)
+          {
+            int step = value.Length / 5;
+            step = step == 0 ? 1 : step;
+
+            const string junk = "<span style='display:none;'>555</span>";
+
+            for (int i = step; i < value.Length - 1; i += step)
+            {
+              value = value.Insert(i, junk);
+              i += junk.Length;
+            }
           }
 
           string htmlBlob;

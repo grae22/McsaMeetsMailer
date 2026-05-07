@@ -26,6 +26,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Date",
         0,
         false,
+        false,
         formatter);
 
       var leaderField = new MeetField(
@@ -35,14 +36,15 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Leader",
         0,
         false,
+        false,
         formatter);
 
       var testObject = new MeetDetailsModel
       {
         FieldValues = new[]
         {
-          new MeetFieldValue(dateField, string.Empty, new ValidatorChain()),
-          new MeetFieldValue(leaderField, "Leader Name", new ValidatorChain())
+          new MeetFieldValue(dateField, string.Empty, false,new ValidatorChain()),
+          new MeetFieldValue(leaderField, "Leader Name", false,new ValidatorChain())
         }
       };
 
@@ -67,6 +69,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Date",
         0,
         false,
+        false,
         formatter);
 
       var notesField = new MeetField(
@@ -76,14 +79,15 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Notes",
         0,
         false,
+        false,
         formatter);
 
       var testObject = new MeetDetailsModel
       {
         FieldValues = new[]
         {
-          new MeetFieldValue(dateField, string.Empty, new ValidatorChain()),
-          new MeetFieldValue(notesField, string.Empty, new ValidatorChain())
+          new MeetFieldValue(dateField, string.Empty, false,new ValidatorChain()),
+          new MeetFieldValue(notesField, string.Empty, false,new ValidatorChain())
         }
       };
 
@@ -113,6 +117,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Date",
         0,
         false,
+        false,
         formatter);
 
       var leaderField = new MeetField(
@@ -122,14 +127,15 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Leader",
         0,
         false,
+        false,
         formatter);
 
       var testObject = new MeetDetailsModel
       {
         FieldValues = new[]
         {
-          new MeetFieldValue(dateField, "2019-7-1", new ValidatorChain()),
-          new MeetFieldValue(leaderField, "Leader Name", new ValidatorChain())
+          new MeetFieldValue(dateField, "2019-7-1", false,new ValidatorChain()),
+          new MeetFieldValue(leaderField, "Leader Name", false,new ValidatorChain())
         }
       };
 
@@ -154,6 +160,7 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Leader",
         0,
         false,
+        false,
         formatter);
 
       var notesField = new MeetField(
@@ -163,14 +170,15 @@ namespace McsaMeetsMailerTests.Utils.Extensions
         "Notes",
         0,
         false,
+        false,
         formatter);
 
       var testObject = new MeetDetailsModel
       {
         FieldValues = new[]
         {
-          new MeetFieldValue(dateField, string.Empty, new ValidatorChain()),
-          new MeetFieldValue(notesField, string.Empty, new ValidatorChain())
+          new MeetFieldValue(dateField, string.Empty, false,new ValidatorChain()),
+          new MeetFieldValue(notesField, string.Empty, false,new ValidatorChain())
         }
       };
 
