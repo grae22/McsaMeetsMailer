@@ -24,13 +24,20 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     private const string HeaderText_MeetTitle = "# Meet Title*";
     private const string FirstCellText = HeaderText_Date;
     private const char HeaderSpecialChar_AlignLeftInHeader = '#';
-    private const char HeaderSpecialChar_AlignCentreInHeader = '%';
+    private const char HeaderSpecialChar_AlignCentreInHeader = '_';
     private const char HeaderSpecialChar_Required = '*';
     private const char HeaderSpecialChar_ObfuscateForWebPage = '^';
+
+    private class Emoji
+    {
+      public string Code { get; set; }
+      public List<string> Keywords { get; set; }
+    }
 
     private readonly Uri _googleSheetUri;
     private readonly IRestRequestMaker _requestMaker;
     private readonly ILogger _logger;
+    private readonly List<Emoji> _emojis = new List<Emoji>();
     private List<MeetField> _fields = new List<MeetField>();
     private List<List<MeetFieldValue>> _valuesByRow = new List<List<MeetFieldValue>>();
 
@@ -57,6 +64,8 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           _logger.LogError("Null meets google-sheet returned.", ClassName);
           return false;
         }
+
+        LoadEmojis(sheet);
 
         FindFirstCellCoordinates(
           sheet,
@@ -124,6 +133,50 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
       }
 
       return -1;
+    }
+
+    private void LoadEmojis(
+      in GoogleSheet sheet)
+    {
+      if (sheet.values.Length == 0)
+      {
+        return;
+      }
+
+      string data = null;
+
+      for (var i = 0; i < sheet.values.Length; i++)
+      {
+        if (sheet.values[0][i]?.StartsWith("Emojis") ?? false)
+        {
+          data = sheet.values[0][i];
+          break;
+        }
+      }
+
+      if (data is null)
+      {
+        return;
+      }
+
+      string[] emojiData = data.Split("\n");
+
+      for (var i = 1; i < emojiData.Length; i++)
+      {
+        string[] codeAndKeywords = emojiData[i].Split("=");
+
+        if (codeAndKeywords.Length != 2)
+        {
+          continue;
+        }
+
+        _emojis.Add(
+          new Emoji
+          {
+            Code = codeAndKeywords[0],
+            Keywords = codeAndKeywords[1].Split(",").ToList()
+          });
+      }
     }
 
     private static void FindFirstCellCoordinates(
@@ -267,6 +320,23 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
           }
 
           MeetField field = _fields[fieldIndex];
+
+          if (field.IsMeetTitle)
+          {
+            foreach (var e in _emojis)
+            {
+              foreach (var k in e.Keywords)
+              {
+                if (cellValue.ToLower().Contains(k) &&
+                    !cellValue.Contains(e.Code))
+                {
+                  var space = cellValue.Contains("&#") ? "" : " ";
+
+                  cellValue = $"{cellValue}{space}{e.Code}";
+                }
+              }
+            }
+          }
 
           IValidatorChain validatorChain = MeetSheetValueValidatorFactory.CreateValidator(field);
 
