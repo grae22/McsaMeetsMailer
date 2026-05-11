@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using McsaMeetsMailer.Models;
@@ -296,12 +297,35 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
     {
       dataByRow.Clear();
 
+      // Find the column with the meet description.
+      var descriptionColumnIndex = -1;
+
+      for (var col = headerColumn; col < headerColumnCount; col++)
+      {
+        bool isValidCell =
+          headerRow < sheet.values.Length &&
+          col < sheet.values[headerRow].Length;
+
+        if (!isValidCell)
+        {
+          break;
+        }
+
+        if (sheet.values[headerRow][col].Contains("description", StringComparison.OrdinalIgnoreCase))
+        {
+          descriptionColumnIndex = col;
+          break;
+        }
+      }
+
+      // Loop through each meet row.
       for (var row = headerRow + 1; row <= lastRow; row++)
       {
         bool rowHasData = false;
 
         var rowData = new List<MeetFieldValue>();
 
+        // Loop through each column for a meet.
         for (var column = headerColumn; column < headerColumn + headerColumnCount; column++)
         {
           if (column >= sheet.values[row].Length)
@@ -327,7 +351,33 @@ namespace McsaMeetsMailer.BusinessLogic.MeetsSheet
             {
               foreach (var k in e.Keywords)
               {
-                if (cellValue.ToLower().Contains(k) &&
+                bool doesTitleContainKeyword = false;
+                bool doesDescriptionContainKeyword = false;
+
+                if (k.Length > 0 &&
+                    k[0] == ' ')
+                {
+                  var pattern = $@"\b{Regex.Escape(k.Trim())}\b";
+
+                  doesTitleContainKeyword = Regex.IsMatch(
+                    cellValue,
+                    pattern,
+                    RegexOptions.IgnoreCase);
+
+                  doesDescriptionContainKeyword = Regex.IsMatch(
+                    sheet.values[row][descriptionColumnIndex],
+                    pattern,
+                    RegexOptions.IgnoreCase);
+                }
+                else
+                {
+                  doesTitleContainKeyword = cellValue.Contains(k, StringComparison.OrdinalIgnoreCase);
+                  doesDescriptionContainKeyword = sheet.values[row][descriptionColumnIndex].Contains(k, StringComparison.OrdinalIgnoreCase);
+                }
+
+                bool doesTitleOrDescriptionContainerKeyword = doesTitleContainKeyword || doesDescriptionContainKeyword;
+
+                if (doesTitleOrDescriptionContainerKeyword &&
                     !cellValue.Contains(e.Code))
                 {
                   var space = cellValue.Contains("&#") ? "" : " ";
